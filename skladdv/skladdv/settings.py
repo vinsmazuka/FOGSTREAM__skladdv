@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from .dbconfig import configuration
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
+    'mptt',
 ]
 
 MIDDLEWARE = [
@@ -66,8 +69,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'skladdv',
-        'USER': 'postgres',
-        'PASSWORD': 'Art1988em',
+        'USER': configuration['user_name'],
+        'PASSWORD': configuration['password'],
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
