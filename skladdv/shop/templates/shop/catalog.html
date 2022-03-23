@@ -5,6 +5,26 @@
     <title>Каталог</title>
 </head>
 <body>
-    <h1>здесь будет каталог товаров</h1>
+
+{% load mptt_tags %}
+<ul>
+    {% recursetree categories %}
+        <li>
+            {{ node.name }}
+            {% if not node.is_leaf_node %}
+                <ul class="children">
+                    {{ children }}
+                </ul>
+            {% else %}
+                <ul>
+                    {% for good in node.get_goods %}
+                        <li> <a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endrecursetree %}
+
+</ul>
 </body>
 </html>
