@@ -18,7 +18,9 @@
                 {% else %}
                     <ul>
                         {% for good in node.get_goods %}
-                            <li> <a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></li>
+                            {% if good.available_for_order %}
+                                <li> <a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 {% endif %}
