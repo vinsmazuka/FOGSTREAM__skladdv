@@ -5,24 +5,31 @@
 
 {% block content %}
 
-<ul>
-    {% recursetree categories %}
-        <li>
-            {{ node.name }}
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    {{ children }}
-                </ul>
-            {% else %}
-                <ul>
-                    {% for good in node.get_goods %}
-                        <li> <a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </li>
-    {% endrecursetree %}
+{% if categories %}
 
-</ul>
+    <ul>
+        {% recursetree categories %}
+            <li>
+                {{ node.name }}
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% else %}
+                    <ul>
+                        {% for good in node.get_goods %}
+                            <li> <a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+
+{% else %}
+
+<p>Нет товаров для отображения</p>
+
+{% endif %}
 
 {% endblock %}
