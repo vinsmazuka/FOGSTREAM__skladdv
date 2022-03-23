@@ -26,6 +26,11 @@ class Good(models.Model):
                                               verbose_name='продается')
     artikul = models.CharField(max_length=100, verbose_name='артикул')
 
+    class Meta:
+        verbose_name = 'Товары'
+        verbose_name_plural = 'Товары'
+        ordering = ['title']
+
     def __str__(self):
         return self.title
 
@@ -40,6 +45,10 @@ class Category(MPTTModel):
                             related_name='children',
                             verbose_name='родительская категория'
                             )
+
+    class Meta:
+        verbose_name = 'Категории товаров'
+        verbose_name_plural = 'Категории товаров'
 
     def __str__(self):
         return self.name
