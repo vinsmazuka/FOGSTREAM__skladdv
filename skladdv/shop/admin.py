@@ -10,7 +10,7 @@ class CategoryAdmin(DjangoMpttAdmin):
 
 class GoodAdmin(admin.ModelAdmin):
     list_display = ['title', 'available_for_order']
-    ordering = ['title']
+    search_fields = ['title']
 
 
 admin.site.register(Category, CategoryAdmin)
