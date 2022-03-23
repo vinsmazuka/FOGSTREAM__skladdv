@@ -5,6 +5,10 @@ from django.db import models
 
 class Good(models.Model):
     """представляет товар"""
+    UNITS = (
+        ('кг', 'килограммы'),
+        ('шт', 'штуки')
+    )
     title = models.CharField(max_length=100, verbose_name='название')
     category = TreeForeignKey('Category',
                               on_delete=models.PROTECT,
@@ -13,7 +17,8 @@ class Good(models.Model):
                               verbose_name='категория'
                               )
     price = models.IntegerField(verbose_name='цена')
-    quantity = models.IntegerField(verbose_name='кол-во на складе')
+    quantity = models.IntegerField(verbose_name='кол-во на складе', null=True)
+    unit = models.CharField(max_length=2, choices=UNITS, null=False)
     time_create = models.DateTimeField(auto_now_add=True,
                                        verbose_name='время создания'
                                        )
@@ -35,3 +40,6 @@ class Category(MPTTModel):
                             related_name='children',
                             verbose_name='родительская категория'
                             )
+
+    def __str__(self):
+        return self.name
