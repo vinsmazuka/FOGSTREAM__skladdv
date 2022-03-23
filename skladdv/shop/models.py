@@ -1,3 +1,37 @@
+from mptt.models import MPTTModel, TreeForeignKey
+
 from django.db import models
 
-# Create your models here.
+
+class Good(models.Model):
+    """представляет товар"""
+    title = models.CharField(max_length=100, verbose_name='название')
+    category = TreeForeignKey('Category',
+                              on_delete=models.PROTECT,
+                              related_name='goods',
+                              null=False,
+                              verbose_name='категория'
+                              )
+    price = models.IntegerField(verbose_name='цена')
+    quantity = models.IntegerField(verbose_name='кол-во на складе')
+    time_create = models.DateTimeField(auto_now_add=True,
+                                       verbose_name='время создания'
+                                       )
+    available_for_order = models.BooleanField(default=True,
+                                              verbose_name='продается')
+    artikul = models.CharField(max_length=100, verbose_name='артикул')
+
+    def __str__(self):
+        return self.title
+
+
+class Category(MPTTModel):
+    """представляет категорию товара"""
+    name = models.CharField(max_length=100, unique=True)
+    parent = TreeForeignKey('self',
+                            on_delete=models.PROTECT,
+                            null=True,
+                            blank=True,
+                            related_name='children',
+                            verbose_name='родительская категория'
+                            )
