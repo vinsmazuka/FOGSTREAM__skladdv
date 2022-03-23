@@ -43,3 +43,13 @@ class Category(MPTTModel):
 
     def __str__(self):
         return self.name
+
+    def get_goods(self):
+        """
+        возвращает все товары, соответствующие
+        данному экземпляру сласса Category
+        :return: QuerySet
+        """
+        goods = Good.objects.filter(category=self.id)
+        return goods
+
