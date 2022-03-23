@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
     'mptt',
+    'django_mptt_admin',
 ]
 
 MIDDLEWARE = [
