@@ -21,10 +21,8 @@ def detail(request, good_id):
         form = CartAddGood(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data.get("quantity")
-
-            context['message'] = 'Заказ создан, кол-во заказанного товара:' + quantity \
-            + f' id товара {good_id}'
-
+            context['messages'] = [f'Заказ создан, кол-во заказанного товара: {quantity}',
+                                   f'id товара {good_id}']
             form = CartAddGood()
             context['form'] = form
 
