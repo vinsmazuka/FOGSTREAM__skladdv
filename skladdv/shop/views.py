@@ -23,7 +23,7 @@ def detail(request, good_id):
             quantity = form.cleaned_data.get("quantity")
             context['messages'] = [f'Заказ создан, кол-во заказанного товара: {quantity}',
                                    f'id товара {good_id}',
-                                   f'имя пользователя {request.user.username}']
+                                   f'id пользователя {request.user.id}']
             form = CartAddGood()
             context['form'] = form
 
