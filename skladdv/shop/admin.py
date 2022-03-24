@@ -14,8 +14,8 @@ class GoodAdmin(admin.ModelAdmin):
 
 
 class SupplierAdmin(admin.ModelAdmin):
-    list_display = ['name', 'is_actual']
-    search_fields = ['name']
+    list_display = ['name', 'inn', 'ogrn', 'is_actual']
+    search_fields = ['name', 'inn', 'ogrn']
 
 
 class OrderAdmin(admin.ModelAdmin):
