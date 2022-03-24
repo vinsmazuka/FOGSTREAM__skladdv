@@ -8,11 +8,19 @@
 <div> Артикул: {{ good.artikul }} </div>
 <div> Цена: {{ good.price }} руб. за 1 {{ good.unit }} </div>
 
+{% if user.is_authenticated %}
+
 <form method="post" action="">
     {% csrf_token %}
     {{ form.quantity }}
     <button type="submit" > Добавить в заказ </button>
 </form>
+
+{% else %}
+
+<i>Авторизуйтесь, чтобы сделать заказ</i>
+
+{% endif %}
 
 {% for message in messages %}
     <i>{{ message }}</i><br>
