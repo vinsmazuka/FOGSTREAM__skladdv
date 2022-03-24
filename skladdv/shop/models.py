@@ -10,6 +10,18 @@ class Supplier(models.Model):
         unique=False,
         verbose_name='юридическое название'
     )
+    inn = models.CharField(
+        max_length=200,
+        unique=False,
+        null=True,
+        verbose_name='ИНН'
+    )
+    ogrn = models.CharField(
+        max_length=200,
+        unique=False,
+        null=True,
+        verbose_name='ОГРН'
+    )
     address = models.CharField(
         max_length=200,
         unique=False,
