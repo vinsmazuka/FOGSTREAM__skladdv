@@ -8,5 +8,16 @@
 <div>
     {% block content %}{% endblock %}
 </div>
+
+{% if user.is_authenticated %}
+
+<a href="/accounts/logout/"> Разлогиниться </a>
+
+{% else %}
+
+<a href="/accounts/login/"> Залогиниться </a>
+
+{% endif %}
+
 </body>
 </html>
