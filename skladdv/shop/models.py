@@ -125,7 +125,7 @@ class Supply(models.Model):
     STATUS_list = (
         ('создан', 'создан'),
         ('заказан', 'заказан'),
-        ('поступил на склад', 'поступил на склад')
+        ('поступил', 'поступил на склад')
     )
     order = models.OneToOneField(
         'Order',
