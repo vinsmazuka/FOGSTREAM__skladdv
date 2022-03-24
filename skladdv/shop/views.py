@@ -5,6 +5,10 @@ from .models import Category, Good
 
 
 def index(request):
+    return render(request, 'shop/index.html')
+
+
+def catalog(request):
     return render(request,
                   'shop/catalog.html',
                   {'categories': Category.objects.all()}
