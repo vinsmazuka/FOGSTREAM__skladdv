@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Category
+from .models import Category, Good
 
 
 def index(request):
@@ -11,5 +11,6 @@ def index(request):
 
 
 def detail(request, good_id):
-    context = {'good_id': good_id}
+    good = Good.objects.get(pk= good_id)
+    context = {'good': good}
     return render(request, 'shop/detail.html', context)
