@@ -2,6 +2,8 @@ from pathlib import Path
 
 from .dbconfig import configuration
 
+from .smtp_email_conf import email_configuration
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -116,3 +118,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
+
+DEFAULT_FROM_EMAIL = email_configuration['DEFAULT_FROM_EMAIL']
+EMAIL_HOST = email_configuration['EMAIL_HOST']
+EMAIL_HOST_USER = email_configuration['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = email_configuration['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = 2525
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
