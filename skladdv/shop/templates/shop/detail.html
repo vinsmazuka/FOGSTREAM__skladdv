@@ -4,9 +4,9 @@
 
 {% block content %}
 
-<h1>Товар: {{ good }}</h1>
-<h1>Артикул: {{ good.artikul }}</h1>
-<h1>Цена: {{ good.price }} руб. за 1 {{ good.unit }} </h1>
+<h1> {{ good }} </h1>
+<div> Артикул: {{ good.artikul }} </div>
+<div> Цена: {{ good.price }} руб. за 1 {{ good.unit }} </div>
 
 <form method="post" action="">
     {% csrf_token %}
@@ -14,6 +14,8 @@
     <button type="submit" > Добавить в заказ </button>
 </form>
 
-<h1>{{ message }}</h1>
+{% for message in messages %}
+    <i>{{ message }}</i><br>
+{% endfor %}
 
 {% endblock %}
