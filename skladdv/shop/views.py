@@ -20,7 +20,10 @@ def catalog(request):
 
 
 def detail(request, good_id):
-    """показывает страничку товара с формой для заказа"""
+    """
+    показывает страницу товара с формой для заказа
+    :param good_id: id товара(тип - int)
+    """
     good = Good.objects.get(pk=good_id)
     good.price = good.price/100
     context = {'good': good}
@@ -68,9 +71,22 @@ def show_customer_cart(request):
 
 
 def remove_good_from_cart(request, good_id):
+    """
+    Удаляет товар из корзины
+    :param good_id: id товара(тип - int)
+    """
     cart = CustomerCart(request)
     good = Good.objects.get(pk=good_id)
     cart.remove(good)
+    return redirect('/catalog/cart/')
+
+
+def clean_cart(request):
+    """
+    Удаляет все товары из корзины
+    """
+    cart = CustomerCart(request)
+    cart.clear()
     return redirect('/catalog/cart/')
 
 
