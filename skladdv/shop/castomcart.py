@@ -71,11 +71,11 @@ class CustomerCart:
             yield item
 
     def __len__(self):
-        """Подсчитывает все товары в корзине"""
+        """Подсчитывает общее количество товаров в корзине"""
         return sum(item['quantity'] for item in self.cart.values())
 
     def get_total_coast(self):
-        """Подсчет стоимости товаров в корзине"""
+        """Подсчитывает общую стоимость товаров в корзине"""
         return sum(item['price'] * item['quantity'] for item in
                    self.cart.values())/100
 
