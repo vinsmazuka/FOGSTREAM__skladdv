@@ -1,8 +1,4 @@
-from decimal import Decimal
-
 from django.conf import settings
-
-from .models import Good
 
 
 class CustomerCart:
@@ -35,7 +31,7 @@ class CustomerCart:
         good_id = str(good.id)
         if good_id not in self.cart:
             self.cart[good_id] = {'quantity': 0,
-                                  'price': str(good.price)}
+                                  'price': good.price}
         if update_quantity:
             self.cart[good_id]['quantity'] = quantity
         else:
