@@ -1,0 +1,19 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+{% for good in cart %}
+    <div> {{ good.title }} {{ good.price }} {{ good.quantity }} {{ good.artikul }} {{ good.total_price }} </div><br>
+{% endfor %}
+
+{% else %}
+
+<i>Авторизуйтесь, чтобы увидеть корзину</i>
+
+{% endif %}
+
+{% endblock %}
