@@ -7,10 +7,12 @@ from .castomcart import CustomerCart
 
 
 def index(request):
+    """показывает главную страницу сайты"""
     return render(request, 'shop/index.html')
 
 
 def catalog(request):
+    """показывает каталог товаров для покупателя"""
     return render(request,
                   'shop/catalog.html',
                   {'categories': Category.objects.all()}
@@ -18,6 +20,7 @@ def catalog(request):
 
 
 def detail(request, good_id):
+    """показывает страничку товара с формой для заказа"""
     good = Good.objects.get(pk=good_id)
     good.price = good.price/100
     context = {'good': good}
@@ -30,7 +33,6 @@ def detail(request, good_id):
             cart = CustomerCart(request)
             good = Good.objects.get(pk=good_id)
             cart.add(good=good, quantity=quantity)
-            print(dict(request.session))
             context['messages'] = [f'Заказ создан, кол-во заказанного товара: {quantity}',
                                    f'id товара {good_id}',
                                    f'id пользователя {request.user.id}']
@@ -49,3 +51,13 @@ def detail(request, good_id):
     responses[request.method]()
 
     return render(request, 'shop/detail.html', context)
+
+
+def show_customer_cart(request):
+    """показывает покупателю содержание его корзины"""
+    cart = CustomerCart(request)
+    context = {
+        'cart': cart
+    }
+
+    return render(request, 'shop/customer_cart.html', context)
