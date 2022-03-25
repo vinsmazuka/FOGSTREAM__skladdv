@@ -7,7 +7,10 @@
 {% if user.is_authenticated %}
 
 {% for good in cart %}
-    <div> {{ good.title }} {{ good.price }} {{ good.quantity }} {{ good.artikul }} {{ good.total_price }} </div><br>
+    <div> {{ good.title }} {{ good.price }} {{ good.quantity }} {{ good.artikul }} {{ good.total_price }}
+        <form method="LINK" action="/delete/{{ good.id }}"> <input type="submit" value="удалить"> </form>
+    </div> <br>
+
 {% endfor %}
 
 <div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
