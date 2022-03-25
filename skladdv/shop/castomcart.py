@@ -77,6 +77,13 @@ class CustomerCart:
         """
         return sum(item['quantity'] for item in self.cart.values())
 
+    def get_total_coast(self):
+        """
+        Подсчет стоимости товаров в корзине.
+        """
+        return sum(item['price'] * item['quantity'] for item in
+                   self.cart.values())/100
+
 
 
 
