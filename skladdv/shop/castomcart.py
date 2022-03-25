@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from .models import Good
+
 
 class CustomerCart:
     """
@@ -53,6 +55,22 @@ class CustomerCart:
         if good_id in self.cart:
             del self.cart[good_id]
             self.save()
+
+    def __iter__(self):
+        """
+        Перебирает элементы в корзине и получает продукты из базы данных.
+        """
+        good_ids = self.cart.keys()
+        goods = Good.objects.filter(id__in=good_ids)
+        for good in goods:
+            self.cart[str(good.id)]['product'] = good.title
+            self.cart[str(good.id)]['artikul'] = good.artikul
+
+        for item in self.cart.values():
+            item['price'] = item['price']/100
+            item['total_price'] = item['price'] * item['quantity']
+            yield item
+
 
 
 
