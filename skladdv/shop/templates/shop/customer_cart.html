@@ -16,6 +16,8 @@
 <div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
 <div> Общая сумма заказа: {{ total_cost }} руб.</div>
 
+<form method="LINK" action="/delete"> <input type="submit" value="очистить корзину"> </form><br>
+
 {% else %}
 
 <i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
