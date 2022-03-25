@@ -71,6 +71,12 @@ class CustomerCart:
             item['total_price'] = item['price'] * item['quantity']
             yield item
 
+    def __len__(self):
+        """
+        Подсчитывает все товары в корзине
+        """
+        return sum(item['quantity'] for item in self.cart.values())
+
 
 
 
