@@ -68,7 +68,7 @@ class CustomerCart:
 
         for item in self.cart.values():
             item['price'] = item['price']/100
-            item['total_price'] = item['price'] * item['quantity']
+            item['total_price'] = int(item['price'] * item['quantity'])
             yield item
 
     def __len__(self):
