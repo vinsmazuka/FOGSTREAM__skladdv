@@ -63,6 +63,7 @@ class CustomerCart:
         for good in goods:
             self.cart[str(good.id)]['title'] = good.title
             self.cart[str(good.id)]['artikul'] = good.artikul
+            self.cart[str(good.id)]['id'] = good.id
 
         for item in self.cart.values():
             item['price'] = item['price']/100
