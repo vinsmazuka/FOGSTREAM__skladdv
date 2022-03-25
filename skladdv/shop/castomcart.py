@@ -63,7 +63,7 @@ class CustomerCart:
         good_ids = self.cart.keys()
         goods = Good.objects.filter(id__in=good_ids)
         for good in goods:
-            self.cart[str(good.id)]['product'] = good.title
+            self.cart[str(good.id)]['title'] = good.title
             self.cart[str(good.id)]['artikul'] = good.artikul
 
         for item in self.cart.values():
