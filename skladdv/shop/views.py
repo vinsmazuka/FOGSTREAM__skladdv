@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from .forms import CartAddGood
 from .models import Category, Good
@@ -65,3 +65,12 @@ def show_customer_cart(request):
     }
 
     return render(request, 'shop/customer_cart.html', context)
+
+
+def remove_good_from_cart(request, good_id):
+    cart = CustomerCart(request)
+    good = Good.objects.get(pk=good_id)
+    cart.remove(good)
+    return redirect('/catalog/cart/')
+
+
