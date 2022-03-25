@@ -9,13 +9,17 @@
     {% block content %}{% endblock %}
 </div>
 
+<a href="/catalog/cart/"> Корзина </a><br>
+<a href="/catalog/"> Каталог </a><br>
+<a href="/"> Главная страница </a><br>
+
 {% if user.is_authenticated %}
 
-<a href="/accounts/logout/"> Разлогиниться </a>
+<a href="/accounts/logout/"> Разлогиниться </a><br>
 
 {% else %}
 
-<a href="/accounts/login/"> Залогиниться </a>
+<a href="/accounts/login/"> Залогиниться </a><br>
 
 {% endif %}
 
