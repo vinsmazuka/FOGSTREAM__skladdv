@@ -47,3 +47,14 @@ class CustomerCart:
         self.session[settings.CART_SESSION_ID] = self.cart
         self.session.modified = True
 
+    def remove(self, good):
+        """
+        Удаляет товар из корзины.
+        """
+        good_id = str(good.id)
+        if good_id in self.cart:
+            del self.cart[good_id]
+            self.save()
+
+
+
