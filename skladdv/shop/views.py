@@ -3,6 +3,8 @@ from django.shortcuts import render
 from .forms import CartAddGood
 from .models import Category, Good
 
+from .castomcart import CustomerCart
+
 
 def index(request):
     return render(request, 'shop/index.html')
@@ -25,6 +27,10 @@ def detail(request, good_id):
         form = CartAddGood(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data.get("quantity")
+            cart = CustomerCart(request)
+            good = Good.objects.get(pk=good_id)
+            cart.add(good=good, quantity=quantity)
+            print(dict(request.session))
             context['messages'] = [f'Заказ создан, кол-во заказанного товара: {quantity}',
                                    f'id товара {good_id}',
                                    f'id пользователя {request.user.id}']
