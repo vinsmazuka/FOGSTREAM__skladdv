@@ -56,8 +56,10 @@ def detail(request, good_id):
 def show_customer_cart(request):
     """показывает покупателю содержание его корзины"""
     cart = CustomerCart(request)
+    total_quantity = len(cart)
     context = {
-        'cart': cart
+        'cart': cart,
+        'total_quantity': total_quantity
     }
 
     return render(request, 'shop/customer_cart.html', context)
