@@ -46,6 +46,8 @@ class CustomerCart:
     def remove(self, good):
         """
         Удаляет товар из корзины.
+        :param good: объект класса Good
+        :return: none
         """
         good_id = str(good.id)
         if good_id in self.cart:
