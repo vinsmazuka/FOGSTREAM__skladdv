@@ -57,9 +57,7 @@ class CustomerCart:
             self.save()
 
     def __iter__(self):
-        """
-        Перебирает элементы в корзине и получает продукты из базы данных.
-        """
+        """Перебирает элементы в корзине и получает продукты из базы данных"""
         good_ids = self.cart.keys()
         goods = Good.objects.filter(id__in=good_ids)
         for good in goods:
@@ -72,17 +70,18 @@ class CustomerCart:
             yield item
 
     def __len__(self):
-        """
-        Подсчитывает все товары в корзине
-        """
+        """Подсчитывает все товары в корзине"""
         return sum(item['quantity'] for item in self.cart.values())
 
     def get_total_coast(self):
-        """
-        Подсчет стоимости товаров в корзине.
-        """
+        """Подсчет стоимости товаров в корзине"""
         return sum(item['price'] * item['quantity'] for item in
                    self.cart.values())/100
+
+    def clear(self):
+        """удаляет корзину из сессии"""
+        del self.session[settings.CART_SESSION_ID]
+        self.session.modified = True
 
 
 
