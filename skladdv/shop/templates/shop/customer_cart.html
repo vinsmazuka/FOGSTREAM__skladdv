@@ -10,9 +10,11 @@
     <div> {{ good.title }} {{ good.price }} {{ good.quantity }} {{ good.artikul }} {{ good.total_price }} </div><br>
 {% endfor %}
 
+<div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
+
 {% else %}
 
-<i>Авторизуйтесь, чтобы увидеть корзину</i>
+<i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
 
 {% endif %}
 
