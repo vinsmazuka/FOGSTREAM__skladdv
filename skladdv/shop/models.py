@@ -283,6 +283,35 @@ class Order(models.Model):
         return f'{self.id}, {self.user}'
 
 
+class OrderItems(models.Model):
+    """представляет список всех позиций в заказе"""
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='номер заказа'
+    )
+    good = models.ForeignKey(
+        'Good',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='товар'
+    )
+    position_price = models.DecimalField(
+        null=False,
+        max_digits=7,
+        decimal_places=2,
+        verbose_name='Сумма по позиции'
+    )
+    position_quantity = models.IntegerField(
+        null=False,
+        verbose_name='кол-во товара в позиции'
+    )
+
+    def __str__(self):
+        return str(self.id)
+
+
 
 
 
