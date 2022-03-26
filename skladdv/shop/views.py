@@ -96,13 +96,13 @@ def сreate_order(request):
     """сохраняет заказ покупателя в БД"""
     user_cart = CustomerCart(request)
     user = User.objects.get(pk=request.user.id)
+    goods = list(user_cart.cart.values())
     order = Order(
         user=user,
         positions=user_cart.count_positions(),
-        total_coast=user_cart.get_total_coast(),
+        total_coast=sum(Decimal(good['price'] * good['quantity']) for good in goods),
     )
     order.save()
-    goods = list(user_cart.cart.values())
     for item in goods:
         good = Good.objects.get(pk=item['id'])
         order_item = OrderItems(
@@ -114,6 +114,7 @@ def сreate_order(request):
         order_item.save()
     user_cart.clear()
     return HttpResponse(f'Заказ оформлен.Номер заказа: {order.id}')
+
 
 
 
