@@ -166,6 +166,10 @@ class Good(models.Model):
         verbose_name='артикул'
     )
     suppliers = models.ManyToManyField(Supplier)
+    photo = models.ImageField(
+        null=True,
+        verbose_name='фото'
+    )
 
     class Meta:
         verbose_name = 'Товары'
