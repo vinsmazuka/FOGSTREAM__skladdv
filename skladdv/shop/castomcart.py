@@ -73,7 +73,6 @@ class CustomerCart:
         for item in self.cart.values():
             item['total_price'] = str(Decimal(item['price']) * item['quantity'])
             yield item
-
         self.save()
 
     def __len__(self):
@@ -93,6 +92,10 @@ class CustomerCart:
         """удаляет корзину из сессии"""
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
+
+    def count_positions(self):
+        """подсчитывает количество позиций в корзине"""
+        return len(self.cart)
 
 
 
