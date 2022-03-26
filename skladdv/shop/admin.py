@@ -28,10 +28,15 @@ class SupplyAdmin(admin.ModelAdmin):
     search_fields = ['id']
 
 
+class PurchasePriceAdmin(admin.ModelAdmin):
+    list_display = ['id', 'supplier', 'good', 'purchase_price']
+    search_fields = ['good', 'supplier']
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Good, GoodAdmin)
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Supply, SupplyAdmin)
-admin.site.register(PurchasePrice)
+admin.site.register(PurchasePrice, PurchasePriceAdmin)
 
