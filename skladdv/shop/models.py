@@ -289,7 +289,7 @@ class OrderItems(models.Model):
         'Order',
         null=True,
         on_delete=models.PROTECT,
-        verbose_name='номер заказа'
+        verbose_name='заказ'
     )
     good = models.ForeignKey(
         'Good',
@@ -311,6 +311,10 @@ class OrderItems(models.Model):
     def __str__(self):
         return str(self.id)
 
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Детализация заказов'
+
 
 class Reserve(models.Model):
     """представляет резерв товара под заказ"""
@@ -318,7 +322,7 @@ class Reserve(models.Model):
         'Order',
         null=True,
         on_delete=models.PROTECT,
-        verbose_name='номер заказа'
+        verbose_name='заказ'
     )
     good = models.ForeignKey(
         'Good',
@@ -330,6 +334,13 @@ class Reserve(models.Model):
         null=False,
         verbose_name='резерв'
     )
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        verbose_name = 'Резерв'
+        verbose_name_plural = 'Резерв'
 
 
 
