@@ -250,7 +250,8 @@ class Order(models.Model):
         max_length=20,
         choices=STATUS_list,
         null=False,
-        verbose_name='статус'
+        verbose_name='статус',
+        default='создан'
     )
     user = models.ForeignKey(
         User,
