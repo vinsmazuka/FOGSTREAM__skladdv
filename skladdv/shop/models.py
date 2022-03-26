@@ -1,10 +1,8 @@
-from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
+from mptt.models import MPTTModel, TreeForeignKey
+
+from django.contrib.auth.models import User
 
 from django.db import models
-
-
-# class Customer(models.Model):
-#     """представляет покупателя товара"""
 
 
 class Supplier(models.Model):
@@ -59,6 +57,51 @@ class Supplier(models.Model):
         return self.name
 
 
+class Supply(models.Model):
+    """представляет заказ на поставку товара"""
+    STATUS_list = (
+        ('создана', 'создана'),
+        ('заказана', 'заказана'),
+        ('поступила', 'поступила на склад')
+    )
+    time_create = models.DateTimeField(
+        auto_now_add=True,
+        null=False,
+        verbose_name='время создания'
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_list,
+        null=False,
+        verbose_name='статус'
+    )
+    quantity = models.IntegerField(
+        verbose_name='кол-во',
+        null=False)
+    good = models.ForeignKey(
+        'Good',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='товар'
+    )
+    supplier = models.ForeignKey(
+        'Supplier',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='поставщик'
+    )
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='номер заказа'
+    )
+
+    class Meta:
+        verbose_name = 'Поставку'
+        verbose_name_plural = 'Поставки'
+
+
 class Good(models.Model):
     """представляет товар"""
     UNITS = (
@@ -78,7 +121,12 @@ class Good(models.Model):
         decimal_places=2,
         verbose_name='цена')
     quantity = models.IntegerField(verbose_name='кол-во на складе', null=True)
-    unit = models.CharField(max_length=2, choices=UNITS, null=False)
+    unit = models.CharField(
+        max_length=2,
+        choices=UNITS,
+        null=False,
+        verbose_name='ед. измерения'
+    )
     time_create = models.DateTimeField(
         auto_now_add=True,
         verbose_name='время создания'
@@ -88,6 +136,12 @@ class Good(models.Model):
         verbose_name='продается')
     artikul = models.CharField(max_length=100, verbose_name='артикул')
     suppliers = models.ManyToManyField(Supplier)
+    purchase_prices = models.ForeignKey(
+        'PurchasePrice',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='закупочные цены'
+    )
 
     class Meta:
         verbose_name = 'Товары'
@@ -96,6 +150,21 @@ class Good(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PurchasePrice(models.Model):
+    """представляет закупочную цену товара"""
+    purchase_price = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        verbose_name='цена закупа'
+    )
+    supplier = models.OneToOneField(
+        'Supplier',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='id_пользователя'
+    )
 
 
 class Category(MPTTModel):
@@ -127,67 +196,26 @@ class Category(MPTTModel):
         return goods
 
 
-class Supply(models.Model):
-    """представляет поставку товара"""
-    STATUS_list = (
-        ('создан', 'создан'),
-        ('заказан', 'заказан'),
-        ('поступил', 'поступил на склад')
-    )
-    order = models.OneToOneField(
-        'Order',
-        null=True,
-        on_delete=models.PROTECT,
-        verbose_name='номер заказа'
-    )
-    supplier = models.OneToOneField(
-        'Supplier',
-        null=False,
-        on_delete=models.PROTECT,
-        verbose_name='id поставщика'
-    )
-    good = models.OneToOneField(
-        'Good',
-        null=False,
-        on_delete=models.PROTECT,
-        verbose_name='id товара'
-    )
-    time_create = models.DateTimeField(
-        auto_now_add=True,
-        null=False,
-        verbose_name='время создания'
-    )
-    time_supply = models.DateTimeField(
-        null=True,
-        verbose_name='время поступления'
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_list,
-        null=False,
-        verbose_name='статус'
-    )
-    quantity = models.IntegerField(
-        verbose_name='кол-во',
-        null=False)
-
-    class Meta:
-        verbose_name = 'Поставку'
-        verbose_name_plural = 'Поставки'
-
-
 class Order(models.Model):
     """представляет заказ товара покупателем"""
     STATUS_list = (
         ('создан', 'создан'),
         ('заказан', 'заказан'),
-        ('собран', 'собран')
+        ('собран', 'собран'),
+        ('исполнен', 'исполнен'),
+        ('отменен', 'отменен')
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_list,
         null=False,
         verbose_name='статус'
+    )
+    user = models.ForeignKey(
+        User,
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='заказы'
     )
 
     class Meta:
