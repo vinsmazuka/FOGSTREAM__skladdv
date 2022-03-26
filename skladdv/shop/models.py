@@ -312,6 +312,28 @@ class OrderItems(models.Model):
         return str(self.id)
 
 
+class Reserve(models.Model):
+    """представляет резерв товара под заказ"""
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='номер заказа'
+    )
+    good = models.ForeignKey(
+        'Good',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='товар'
+    )
+    reserve = models.IntegerField(
+        null=False,
+        verbose_name='резерв'
+    )
+
+
+
+
 
 
 
