@@ -203,6 +203,10 @@ class PurchasePrice(models.Model):
     def __str__(self):
         return f'{self.supplier}, {self.purchase_price}'
 
+    class Meta:
+        verbose_name = 'Закупочную цену'
+        verbose_name_plural = 'Закупочные цены'
+
 
 class Category(MPTTModel):
     """представляет категорию товара"""
