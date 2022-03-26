@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 
 from .models import Good
@@ -33,7 +35,9 @@ class CustomerCart:
         good_id = str(good.id)
         if good_id not in self.cart:
             self.cart[good_id] = {'quantity': 0,
-                                  'price': good.price}
+                                  'price': str(good.price)}
+        else:
+            self.cart[good_id]['price'] = str(good.price)
         if update_quantity:
             self.cart[good_id]['quantity'] = quantity
         else:
@@ -64,11 +68,13 @@ class CustomerCart:
             self.cart[str(good.id)]['title'] = good.title
             self.cart[str(good.id)]['artikul'] = good.artikul
             self.cart[str(good.id)]['id'] = good.id
+            self.cart[str(good.id)]['price'] = str(good.price)
 
         for item in self.cart.values():
-            item['price'] = item['price']/100
-            item['total_price'] = int(item['price'] * item['quantity'])
+            item['total_price'] = str(Decimal(item['price']) * item['quantity'])
             yield item
+
+        self.save()
 
     def __len__(self):
         """Подсчитывает общее количество товаров в корзине"""
@@ -76,8 +82,12 @@ class CustomerCart:
 
     def get_total_coast(self):
         """Подсчитывает общую стоимость товаров в корзине"""
+        good_ids = self.cart.keys()
+        goods = Good.objects.filter(id__in=good_ids)
+        for good in goods:
+            self.cart[str(good.id)]['price'] = good.price
         return sum(item['price'] * item['quantity'] for item in
-                   self.cart.values())/100
+                   self.cart.values())
 
     def clear(self):
         """удаляет корзину из сессии"""
