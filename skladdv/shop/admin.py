@@ -24,7 +24,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class SupplyAdmin(admin.ModelAdmin):
-    list_display = ['id', 'good', 'quantity', 'supplier', 'status', 'time_supply']
+    list_display = ['id', 'good_id', 'quantity', 'supplier', 'status']
     search_fields = ['id']
 
 
