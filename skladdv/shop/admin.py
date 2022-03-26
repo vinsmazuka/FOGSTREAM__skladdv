@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_mptt_admin.admin import DjangoMpttAdmin
 
-from .models import Category, Good, Order, Supplier, Supply
+from .models import Category, Good, Order, PurchasePrice, Supplier, Supply
 
 
 class CategoryAdmin(DjangoMpttAdmin):
@@ -33,4 +33,5 @@ admin.site.register(Good, GoodAdmin)
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Supply, SupplyAdmin)
+admin.site.register(PurchasePrice)
 
