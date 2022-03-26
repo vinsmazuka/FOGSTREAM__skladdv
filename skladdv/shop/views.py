@@ -25,7 +25,7 @@ def detail(request, good_id):
     :param good_id: id товара(тип - int)
     """
     good = Good.objects.get(pk=good_id)
-    good.price = good.price/100
+    good.price = good.price
     context = {'good': good}
 
     def post_response():
