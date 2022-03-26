@@ -129,7 +129,10 @@ class Good(models.Model):
         ('кг', 'килограммы'),
         ('шт', 'штуки')
     )
-    title = models.CharField(max_length=100, verbose_name='название')
+    title = models.CharField(
+        max_length=100,
+        verbose_name='название'
+    )
     category = TreeForeignKey(
         'Category',
         on_delete=models.PROTECT,
@@ -141,7 +144,9 @@ class Good(models.Model):
         max_digits=7,
         decimal_places=2,
         verbose_name='цена')
-    quantity = models.IntegerField(verbose_name='кол-во на складе', null=True)
+    quantity = models.IntegerField(
+        verbose_name='кол-во на складе',
+        null=True)
     unit = models.CharField(
         max_length=2,
         choices=UNITS,
@@ -154,8 +159,12 @@ class Good(models.Model):
     )
     available_for_order = models.BooleanField(
         default=True,
-        verbose_name='продается')
-    artikul = models.CharField(max_length=100, verbose_name='артикул')
+        verbose_name='продается'
+    )
+    artikul = models.CharField(
+        max_length=100,
+        verbose_name='артикул'
+    )
     suppliers = models.ManyToManyField(Supplier)
 
     class Meta:
@@ -239,12 +248,36 @@ class Order(models.Model):
         User,
         null=False,
         on_delete=models.PROTECT,
-        verbose_name='заказы'
+        verbose_name='покупатель'
+    )
+    positions = models.IntegerField(
+        null=False,
+        verbose_name='кол-во позиций'
+    )
+    total_coast = models.DecimalField(
+        null=False,
+        max_digits=7,
+        decimal_places=2,
+        verbose_name='Сумма заказа'
+    )
+    time_create = models.DateTimeField(
+        auto_now_add=True,
+        null=False,
+        verbose_name='время создания'
+    )
+    qr_code = models.TextField(
+        max_length=1000,
+        null=True,
+        verbose_name='QR-код'
     )
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Клиентские заказы'
+
+    def __str__(self):
+        return f'{self.id}, {self.user}'
+
 
 
 
