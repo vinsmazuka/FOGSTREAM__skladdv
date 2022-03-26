@@ -3,6 +3,10 @@ from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 from django.db import models
 
 
+# class Customer(models.Model):
+#     """представляет покупателя товара"""
+
+
 class Supplier(models.Model):
     """представляет поставщика товара"""
     name = models.CharField(
@@ -69,7 +73,10 @@ class Good(models.Model):
         null=False,
         verbose_name='категория'
     )
-    price = models.IntegerField(verbose_name='цена')
+    price = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        verbose_name='цена')
     quantity = models.IntegerField(verbose_name='кол-во на складе', null=True)
     unit = models.CharField(max_length=2, choices=UNITS, null=False)
     time_create = models.DateTimeField(
