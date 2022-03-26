@@ -60,7 +60,6 @@ class Supplier(models.Model):
 class Supply(models.Model):
     """представляет заказ на поставку товара"""
     STATUS_list = (
-        ('создана', 'создана'),
         ('заказана', 'заказана'),
         ('поступила', 'поступила на склад')
     )
@@ -96,10 +95,32 @@ class Supply(models.Model):
         on_delete=models.PROTECT,
         verbose_name='номер заказа'
     )
+    purchase_price = models.DecimalField(
+        null=False,
+        max_digits=7,
+        decimal_places=2,
+        verbose_name='цена закупа'
+    )
 
     class Meta:
         verbose_name = 'Поставку'
         verbose_name_plural = 'Поставки'
+
+    def __str__(self):
+        return str(self.id)
+
+    @staticmethod
+    def get_purchase_price(good, supplier):
+        """
+        возвращает из БД закупочную цену товара
+        :param good: экземпляр класса Good
+        :param supplier: экземпляр класса Supplier
+        :return: закупочную цену товара(типа - Decimal)
+        """
+        purchase_prices = good.purchaseprice_set.all()
+        purchase_price_object = purchase_prices.get(supplier=supplier.id)
+        purchase_price = purchase_price_object.purchase_price
+        return purchase_price
 
 
 class Good(models.Model):
@@ -136,12 +157,6 @@ class Good(models.Model):
         verbose_name='продается')
     artikul = models.CharField(max_length=100, verbose_name='артикул')
     suppliers = models.ManyToManyField(Supplier)
-    purchase_prices = models.ForeignKey(
-        'PurchasePrice',
-        null=True,
-        on_delete=models.PROTECT,
-        verbose_name='закупочные цены'
-    )
 
     class Meta:
         verbose_name = 'Товары'
@@ -159,12 +174,21 @@ class PurchasePrice(models.Model):
         decimal_places=2,
         verbose_name='цена закупа'
     )
-    supplier = models.OneToOneField(
+    supplier = models.ForeignKey(
         'Supplier',
         null=True,
         on_delete=models.PROTECT,
-        verbose_name='id_пользователя'
+        verbose_name='поставщик'
     )
+    good = models.ForeignKey(
+        'Good',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='товар'
+    )
+
+    def __str__(self):
+        return f'{self.supplier}, {self.purchase_price}'
 
 
 class Category(MPTTModel):
