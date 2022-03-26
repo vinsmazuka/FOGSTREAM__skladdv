@@ -1,7 +1,10 @@
-from django.shortcuts import redirect, render
+from decimal import Decimal
+
+from django.shortcuts import redirect, render, HttpResponse
+from django.contrib.auth.models import User
 
 from .forms import CartAddGood
-from .models import Category, Good
+from .models import Category, Good, Order, OrderItems
 
 from .castomcart import CustomerCart
 
@@ -66,7 +69,6 @@ def show_customer_cart(request):
         'total_quantity': total_quantity,
         'total_cost': total_cost
     }
-
     return render(request, 'shop/customer_cart.html', context)
 
 
@@ -88,5 +90,32 @@ def clean_cart(request):
     cart = CustomerCart(request)
     cart.clear()
     return redirect('/catalog/cart/')
+
+
+def сreate_order(request):
+    """сохраняет заказ покупателя в БД"""
+    user_cart = CustomerCart(request)
+    user = User.objects.get(pk=request.user.id)
+    order = Order(
+        user=user,
+        positions=user_cart.count_positions(),
+        total_coast=user_cart.get_total_coast(),
+    )
+    order.save()
+    goods = list(user_cart.cart.values())
+    for item in goods:
+        good = Good.objects.get(pk=item['id'])
+        order_item = OrderItems(
+            order=order,
+            good=good,
+            position_price=Decimal(item['total_price']),
+            position_quantity=item['quantity']
+        )
+        order_item.save()
+    user_cart.clear()
+    return HttpResponse(f'Заказ оформлен.Номер заказа: {order.id}')
+
+
+
 
 
