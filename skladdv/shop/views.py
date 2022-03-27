@@ -97,23 +97,36 @@ def сreate_order(request):
     user_cart = CustomerCart(request)
     user = User.objects.get(pk=request.user.id)
     goods = list(user_cart.cart.values())
-    order = Order(
-        user=user,
-        positions=user_cart.count_positions(),
-        total_coast=sum(Decimal(good['price']) * good['quantity'] for good in goods),
-    )
-    order.save()
-    for item in goods:
-        good = Good.objects.get(pk=item['id'])
-        order_item = OrderItems(
-            order=order,
-            good=good,
-            position_price=Decimal(item['total_price']),
-            position_quantity=item['quantity']
+    try:
+        for item in goods:
+            Good.objects.get(pk=item['id'])
+    except Good.DoesNotExist:
+        message = (f"товар {item['title']}, артикул: {item['artikul']} не существует, "
+                   f"товар был удален из корзины")
+        del user_cart.cart[str(item['id'])]
+        user_cart.save()
+    else:
+        order = Order(
+            user=user,
+            positions=user_cart.count_positions(),
+            total_coast=sum(Decimal(good['price']) * good['quantity'] for good in goods),
         )
-        order_item.save()
-    user_cart.clear()
-    return HttpResponse(f'Заказ оформлен.Номер заказа: {order.id}')
+        order.save()
+        for item in goods:
+            good = Good.objects.get(pk=item['id'])
+            order_item = OrderItems(
+                order=order,
+                good=good,
+                position_price=Decimal(item['total_price']),
+                position_quantity=item['quantity']
+            )
+            order_item.save()
+        message = f'Заказ оформлен.Номер заказа: {order.id}'
+        user_cart.clear()
+    context = {
+        'message': message
+    }
+    return render(request, 'shop/create_order_result.html', context)
 
 
 
