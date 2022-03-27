@@ -100,7 +100,7 @@ def сreate_order(request):
     order = Order(
         user=user,
         positions=user_cart.count_positions(),
-        total_coast=sum(Decimal(good['price'] * good['quantity']) for good in goods),
+        total_coast=sum(Decimal(good['price']) * good['quantity'] for good in goods),
     )
     order.save()
     for item in goods:
