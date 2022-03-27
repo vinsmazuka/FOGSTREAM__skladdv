@@ -340,6 +340,15 @@ class Reserve(models.Model):
         null=False,
         verbose_name='резерв'
     )
+    is_actual = models.BooleanField(
+        null=False,
+        verbose_name='актуальность'
+    )
+    time_create = models.DateTimeField(
+        auto_now_add=True,
+        null=False,
+        verbose_name='время создания'
+    )
 
     def __str__(self):
         return str(self.id)
