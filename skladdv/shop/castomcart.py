@@ -85,7 +85,7 @@ class CustomerCart:
         goods = Good.objects.filter(id__in=good_ids)
         for good in goods:
             self.cart[str(good.id)]['price'] = good.price
-        return sum(item['price'] * item['quantity'] for item in
+        return sum(Decimal(item['price']) * item['quantity'] for item in
                    self.cart.values())
 
     def clear(self):
