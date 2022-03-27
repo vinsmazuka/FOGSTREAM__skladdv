@@ -22,7 +22,7 @@ def catalog(request):
                   )
 
 
-def detail(request, good_id):
+def good_detail(request, good_id):
     """
     показывает страницу товара с формой для заказа
     :param good_id: id товара(тип - int)
@@ -139,6 +139,19 @@ def сreate_order(request):
         'message': message
     }
     return render(request, 'shop/create_order_result.html', context)
+
+
+def cabinet(request):
+    """показывает личный кабинет пользователя"""
+    user_id = request.user.id
+    orders = Order.objects.filter(user_id=user_id)
+    context = {
+        'user_name': request.user.username,
+        'orders': orders
+    }
+
+    return render(request, 'shop/cabinet.html', context)
+
 
 
 
