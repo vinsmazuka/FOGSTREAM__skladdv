@@ -78,8 +78,7 @@ def remove_good_from_cart(request, good_id):
     :param good_id: id товара(тип - int)
     """
     cart = CustomerCart(request)
-    good = Good.objects.get(pk=good_id)
-    cart.remove(good)
+    cart.remove(good_id)
     return redirect('/catalog/cart/')
 
 
