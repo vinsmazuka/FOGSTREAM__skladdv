@@ -150,6 +150,29 @@ def cabinet(request):
     return render(request, 'shop/cabinet.html', context)
 
 
+def order_detail(request, order_id):
+    """показывает страницу заказа"""
+    order_items = OrderItems.objects.filter(order_id=order_id)
+    order_details = []
+    for item in order_items:
+        order_detail = {
+            'title': Good.objects.get(pk=item.good_id).title,
+            'quantity': item.position_quantity,
+            'price': item.position_price/item.position_quantity,
+            'total_price': item.position_price,
+            'unit': Good.objects.get(pk=item.good_id).unit
+        }
+        order_details.append(order_detail)
+
+    context = {
+        'order_details': order_details,
+        'order_id': order_id
+    }
+    return render(request, 'shop/order.html', context)
+
+
+
+
 
 
 
