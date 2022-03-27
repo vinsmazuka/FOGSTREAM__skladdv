@@ -6,6 +6,8 @@
 
 {% if user.is_authenticated %}
 
+{% if cart %}
+
 {% for good in cart %}
     <div> {{ good.title }} {{ good.price }} {{ good.quantity }} {{ good.artikul }} {{ good.total_price }}
         <form method="LINK" action="/delete/{{ good.id }}"> <input type="submit" value="удалить"> </form>
@@ -13,11 +15,17 @@
 
 {% endfor %}
 
+{% endif %}
+
 <div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
 <div> Общая сумма заказа: {{ total_cost }} руб.</div>
 
+{% if cart %}
+
 <form method="LINK" action="/delete"> <input type="submit" value="очистить корзину"> </form><br>
 <form method="LINK" action="/makeorder/"> <input type="submit" value="сделать заказ"> </form><br>
+
+{% endif %}
 
 {% else %}
 
