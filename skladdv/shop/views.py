@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 
 from django.shortcuts import redirect, render, HttpResponse
@@ -144,12 +145,8 @@ def сreate_order(request):
 def cabinet(request):
     """показывает личный кабинет пользователя"""
     user_id = request.user.id
-    orders = Order.objects.filter(user_id=user_id)
-    context = {
-        'user_name': request.user.username,
-        'orders': orders
-    }
-
+    orders = Order.objects.filter(user_id=user_id).order_by('id')
+    context = {'orders': orders}
     return render(request, 'shop/cabinet.html', context)
 
 
