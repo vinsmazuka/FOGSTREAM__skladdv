@@ -43,9 +43,7 @@ def good_detail(request, good_id):
             cart = CustomerCart(request)
             good = Good.objects.get(pk=good_id)
             cart.add(good=good, quantity=quantity)
-            context['messages'] = [f'Заказ создан, кол-во заказанного товара: {quantity}',
-                                   f'id товара {good_id}',
-                                   f'id пользователя {request.user.id}']
+            context['message'] = 'товар добавлен в корзину'
             form = CartAddGood()
             context['form'] = form
 
