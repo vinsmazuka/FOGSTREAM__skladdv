@@ -9,7 +9,7 @@ class CategoryAdmin(DjangoMpttAdmin):
 
 
 class GoodAdmin(admin.ModelAdmin):
-    list_display = ['title', 'available_for_order']
+    list_display = ['title', 'price', 'storage_quantity', 'available_for_order']
     search_fields = ['title']
 
 
@@ -19,12 +19,12 @@ class SupplierAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'status']
+    list_display = ['id', 'user', 'positions', 'total_coast', 'status']
     search_fields = ['id']
 
 
 class SupplyAdmin(admin.ModelAdmin):
-    list_display = ['id', 'good_id', 'quantity', 'supplier', 'status']
+    list_display = ['id', 'good', 'quantity', 'supplier', 'status']
     search_fields = ['id']
 
 
