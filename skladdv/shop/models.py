@@ -287,7 +287,7 @@ class Order(models.Model):
         verbose_name_plural = 'Клиентские заказы'
 
     def __str__(self):
-        return f'{self.id}, {self.user}'
+        return f'{self.id}'
 
 
 class OrderItems(models.Model):
