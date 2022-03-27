@@ -27,7 +27,10 @@ def detail(request, good_id):
     показывает страницу товара с формой для заказа
     :param good_id: id товара(тип - int)
     """
-    good = Good.objects.get(pk=good_id)
+    try:
+        good = Good.objects.get(pk=good_id)
+    except Good.DoesNotExist:
+        return redirect('/catalog/')
     good.price = good.price
     context = {'good': good}
 
