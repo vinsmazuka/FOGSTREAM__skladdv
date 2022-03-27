@@ -336,7 +336,7 @@ class Reserve(models.Model):
         on_delete=models.PROTECT,
         verbose_name='товар'
     )
-    reserve = models.IntegerField(
+    quantity = models.IntegerField(
         null=False,
         verbose_name='резерв'
     )
@@ -347,6 +347,8 @@ class Reserve(models.Model):
     class Meta:
         verbose_name = 'Резерв'
         verbose_name_plural = 'Резерв'
+
+
 
 
 
