@@ -74,9 +74,10 @@ class Supply(models.Model):
         null=False,
         verbose_name='статус'
     )
-    quantity = models.IntegerField(
+    quantity = models.PositiveIntegerField(
         verbose_name='кол-во',
-        null=False)
+        null=False
+    )
     good = models.ForeignKey(
         'Good',
         null=False,
@@ -260,7 +261,7 @@ class Order(models.Model):
         on_delete=models.PROTECT,
         verbose_name='покупатель'
     )
-    positions = models.IntegerField(
+    positions = models.PositiveIntegerField(
         null=False,
         verbose_name='кол-во позиций'
     )
@@ -309,7 +310,7 @@ class OrderItems(models.Model):
         decimal_places=2,
         verbose_name='Сумма по позиции'
     )
-    position_quantity = models.IntegerField(
+    position_quantity = models.PositiveIntegerField(
         null=False,
         verbose_name='кол-во товара в позиции'
     )
@@ -336,7 +337,7 @@ class Reserve(models.Model):
         on_delete=models.PROTECT,
         verbose_name='товар'
     )
-    quantity = models.IntegerField(
+    quantity = models.PositiveIntegerField(
         null=False,
         verbose_name='резерв'
     )
