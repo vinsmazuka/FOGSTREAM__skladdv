@@ -144,7 +144,7 @@ class Good(models.Model):
         max_digits=7,
         decimal_places=2,
         verbose_name='цена')
-    storage_quantity = models.IntegerField(
+    storage_quantity = models.PositiveIntegerField(
         verbose_name='кол-во на складе',
         null=True
     )
