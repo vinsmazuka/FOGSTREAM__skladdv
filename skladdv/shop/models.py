@@ -342,7 +342,8 @@ class Reserve(models.Model):
     )
     is_actual = models.BooleanField(
         null=False,
-        verbose_name='актуальность'
+        verbose_name='актуальность',
+        default=True
     )
     time_create = models.DateTimeField(
         auto_now_add=True,
