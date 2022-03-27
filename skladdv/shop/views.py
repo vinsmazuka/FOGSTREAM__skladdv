@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render, HttpResponse
 from django.contrib.auth.models import User
 
 from .forms import CartAddGood
-from .models import Category, Good, Order, OrderItems
+from .models import Category, Good, Order, OrderItems, Reserve
 
 from .castomcart import CustomerCart
 
@@ -95,34 +95,44 @@ def clean_cart(request):
 def сreate_order(request):
     """сохраняет заказ покупателя в БД"""
     user_cart = CustomerCart(request)
-    user = User.objects.get(pk=request.user.id)
-    goods = list(user_cart.cart.values())
-    try:
-        for item in goods:
-            Good.objects.get(pk=item['id'])
-    except Good.DoesNotExist:
-        message = (f"товар {item['title']}, артикул: {item['artikul']} не существует, "
-                   f"товар был удален из корзины")
-        del user_cart.cart[str(item['id'])]
-        user_cart.save()
-    else:
-        order = Order(
-            user=user,
-            positions=user_cart.count_positions(),
-            total_coast=sum(Decimal(good['price']) * good['quantity'] for good in goods),
-        )
-        order.save()
-        for item in goods:
-            good = Good.objects.get(pk=item['id'])
-            order_item = OrderItems(
-                order=order,
-                good=good,
-                position_price=Decimal(item['total_price']),
-                position_quantity=item['quantity']
+    if user_cart:
+        user = User.objects.get(pk=request.user.id)
+        goods = list(user_cart.cart.values())
+        try:
+            for item in goods:
+                Good.objects.get(pk=item['id'])
+        except Good.DoesNotExist:
+            message = (f"товар {item['title']}, артикул: {item['artikul']} не существует, "
+                       f"товар был удален из корзины")
+            del user_cart.cart[str(item['id'])]
+            user_cart.save()
+            return message
+        else:
+            order = Order(
+                user=user,
+                positions=user_cart.count_positions(),
+                total_coast=sum(Decimal(good['price']) * good['quantity'] for good in goods),
             )
-            order_item.save()
-        message = f'Заказ оформлен.Номер заказа: {order.id}'
-        user_cart.clear()
+            order.save()
+            for item in goods:
+                good = Good.objects.get(pk=item['id'])
+                order_item = OrderItems(
+                    order=order,
+                    good=good,
+                    position_price=Decimal(item['total_price']),
+                    position_quantity=item['quantity']
+                )
+                order_item.save()
+                reserve_quantity = good.storage_quantity if item['quantity'] >= good.storage_quantity else item['quantity']
+                good.storage_quantity = good.storage_quantity - reserve_quantity
+                good.save()
+                reserve = Reserve(order=order, good=good, quantity=reserve_quantity)
+                if reserve_quantity:
+                    reserve.save()
+            message = f'Заказ оформлен.Номер заказа: {order.id}'
+            user_cart.clear()
+    else:
+        message = 'В корзине нет товаров'
     context = {
         'message': message
     }
