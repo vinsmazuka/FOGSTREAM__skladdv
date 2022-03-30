@@ -178,8 +178,9 @@ def order_detail(request, order_id):
 
 @user_is_staff
 def orders(request):
-    """показывает все заказы покупателя"""
-    context = dict()
+    """показывает все заказы покупателей"""
+    orders = Order.objects.all().order_by('id')
+    context = {'orders': orders}
     return render(request, 'shop/orders.html', context)
 
 
