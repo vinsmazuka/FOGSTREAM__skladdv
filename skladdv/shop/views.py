@@ -8,7 +8,7 @@ from .forms import CartAddGood
 from .models import Category, Good, Order, OrderItems, Reserve
 
 from .castomcart import CustomerCart
-from .decorators import user_is_authenticated, user_is_staff
+from .decorators import user_is_authenticated, user_is_staff, user_is_not_staff
 
 
 def index(request):
@@ -63,6 +63,7 @@ def good_detail(request, good_id):
 
 
 @user_is_authenticated
+@user_is_not_staff
 def show_customer_cart(request):
     """показывает покупателю содержание его корзины"""
     cart = CustomerCart(request)
@@ -77,6 +78,7 @@ def show_customer_cart(request):
 
 
 @user_is_authenticated
+@user_is_not_staff
 def remove_good_from_cart(request, good_id):
     """
     Удаляет товар из корзины
@@ -88,6 +90,7 @@ def remove_good_from_cart(request, good_id):
 
 
 @user_is_authenticated
+@user_is_not_staff
 def clean_cart(request):
     """
     Удаляет все товары из корзины
@@ -98,6 +101,7 @@ def clean_cart(request):
 
 
 @user_is_authenticated
+@user_is_not_staff
 def сreate_order(request):
     """сохраняет заказ покупателя в БД"""
     user_cart = CustomerCart(request)
@@ -146,6 +150,7 @@ def сreate_order(request):
 
 
 @user_is_authenticated
+@user_is_not_staff
 def cabinet(request):
     """показывает личный кабинет пользователя"""
     user_id = request.user.id
@@ -176,6 +181,7 @@ def order_detail(request, order_id):
     return render(request, 'shop/order.html', context)
 
 
+@user_is_authenticated
 @user_is_staff
 def orders(request):
     """показывает все заказы покупателей"""
