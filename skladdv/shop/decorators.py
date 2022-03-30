@@ -6,9 +6,9 @@ def user_is_authenticated(func_to_deco):
     :param func_to_deco: функция, которую необходимо обернуть
     :return: функцию-обертку wrapper
     """
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return func_to_deco(request)
+            return func_to_deco(request, *args, **kwargs)
         else:
             return HttpResponse('Вам необходимо залогиниться')
     return wrapper
