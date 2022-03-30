@@ -20,10 +20,10 @@ def user_is_staff(func_to_deco):
     :param func_to_deco: функция, которую необходимо обернуть
     :return: функцию-обертку wrapper
     """
-    def wrapper(request):
+    def wrapper(request, *args, **kwargs):
         """функция-обертка"""
         if request.user.is_staff:
-            return func_to_deco(request)
+            return func_to_deco(request, *args, **kwargs)
         else:
             return HttpResponse('Доступ к данной странице есть только у сотрудников склада,\n'
                                 'для получения доступа обратитесь к администратору')
