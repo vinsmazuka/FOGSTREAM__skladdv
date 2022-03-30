@@ -1,17 +1,18 @@
-import datetime
 from decimal import Decimal
 
 from django.shortcuts import redirect, render, HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 
 from .forms import CartAddGood
 from .models import Category, Good, Order, OrderItems, Reserve
 
 from .castomcart import CustomerCart
+from .decorators import user_is_authenticated, user_is_staff
 
 
 def index(request):
-    """показывает главную страницу сайты"""
+    """показывает главную страницу сайта"""
     return render(request, 'shop/index.html')
 
 
@@ -61,6 +62,7 @@ def good_detail(request, good_id):
     return render(request, 'shop/detail.html', context)
 
 
+@user_is_authenticated
 def show_customer_cart(request):
     """показывает покупателю содержание его корзины"""
     cart = CustomerCart(request)
@@ -74,6 +76,7 @@ def show_customer_cart(request):
     return render(request, 'shop/customer_cart.html', context)
 
 
+@user_is_authenticated
 def remove_good_from_cart(request, good_id):
     """
     Удаляет товар из корзины
@@ -84,6 +87,7 @@ def remove_good_from_cart(request, good_id):
     return redirect('/catalog/cart/')
 
 
+@user_is_authenticated
 def clean_cart(request):
     """
     Удаляет все товары из корзины
@@ -93,6 +97,7 @@ def clean_cart(request):
     return redirect('/catalog/cart/')
 
 
+@user_is_authenticated
 def сreate_order(request):
     """сохраняет заказ покупателя в БД"""
     user_cart = CustomerCart(request)
@@ -140,6 +145,7 @@ def сreate_order(request):
     return render(request, 'shop/create_order_result.html', context)
 
 
+@user_is_authenticated
 def cabinet(request):
     """показывает личный кабинет пользователя"""
     user_id = request.user.id
@@ -148,6 +154,7 @@ def cabinet(request):
     return render(request, 'shop/cabinet.html', context)
 
 
+@user_is_authenticated
 def order_detail(request, order_id):
     """показывает страницу заказа"""
     order_items = OrderItems.objects.filter(order_id=order_id)
@@ -167,6 +174,15 @@ def order_detail(request, order_id):
         'order_id': order_id
     }
     return render(request, 'shop/order.html', context)
+
+
+@user_is_staff
+def orders(request):
+    """показывает все заказы покупателя"""
+    context = dict()
+    return render(request, 'shop/orders.html', context)
+
+
 
 
 
