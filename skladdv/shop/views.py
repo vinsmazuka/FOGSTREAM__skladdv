@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, HttpResponse
 from django.contrib.auth.models import User
 
 from .forms import CartAddGood, OrderChangeStatus
@@ -180,6 +180,9 @@ def cabinet(request):
 def order_detail(request, order_id):
     """показывает страницу заказа"""
     def load_info():
+        """
+        подгружает актуальную информацию о заказе
+        """
         order_items = OrderItems.objects.filter(order_id=order_id)
         order_details = []
         for item in order_items:
@@ -247,15 +250,16 @@ def order_detail(request, order_id):
                                     )
                             good.save()
             context['message'] = f'статус заказа изменен на "{status}"'
-            form = OrderChangeStatus()
-            context['form'] = form
+            context['form'] = OrderChangeStatus()
+            context['order_is_ready'] = True if order.status == 'собран' else False
             context['order_details'] = load_info()
 
     def get_response():
         """формирует ответ в случае поступления GET-запроса"""
-        form = OrderChangeStatus()
-        context['form'] = form
+        context['form'] = OrderChangeStatus()
+        order = Order.objects.get(pk=order_id)
         context['order_details'] = load_info()
+        context['order_is_ready'] = True if order.status == 'собран' else False
 
     responses = {
         'POST': post_response,
@@ -291,6 +295,33 @@ def delete_reserve(request, order_id, reserve_id):
         reserve.save()
         good.save()
     return redirect(f'/order/{order_id}')
+
+
+@user_is_authenticated
+@customer_only
+def close_order(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    order.status = 'исполнен'
+    order.save()
+    try:
+        reserves = order.reserve_set.all()
+    except Reserve.DoesNotExist:
+        pass
+    else:
+        for reserve in reserves:
+            good = Good.objects.get(pk=reserve.good_id)
+            order_item = OrderItems.objects.get(pk=reserve.order_item_id)
+            if reserve.is_actual:
+                reserve.is_actual = False
+                reserve.save()
+                new_storage_quantity = (
+                        good.storage_quantity
+                        + reserve.quantity
+                        - order_item.position_quantity
+                )
+                good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
+            good.save()
+    return redirect('/cabinet/')
 
 
 
