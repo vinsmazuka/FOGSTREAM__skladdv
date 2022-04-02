@@ -47,6 +47,10 @@
     </form>
 {% endif %}
 
+{% if order_is_ready %}
+    <form method="LINK" action="/closeorder/{{ order_id }}/"> <input type="submit" value="Подтвердить получение"> </form><br>
+{% endif %}
+
 {% if message %}
     {{ message }}
 {% endif %}
