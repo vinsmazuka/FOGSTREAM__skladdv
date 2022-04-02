@@ -23,9 +23,8 @@ def staff_only(func_to_deco):
     :return: функцию-обертку wrapper
     """
     def wrapper(request, *args, **kwargs):
-        """функция-обертка
-        :param group - группа, принадлежность к которой нужно проверить(тип - str)"""
-        if request.user.groups.filter(name='Персонал').exists():
+        """функция-обертка"""
+        if request.user.groups.filter(name="Персонал").exists():
             return func_to_deco(request, *args, **kwargs)
         else:
             return HttpResponse('Доступ к данной странице есть только у сотрудников склада,\n'
@@ -33,18 +32,23 @@ def staff_only(func_to_deco):
     return wrapper
 
 
-def user_is_not_staff(func_to_deco):
+def customer_only(func_to_deco):
     """
-    проверяет, что пользователь не относится к категории staff
+    проверяет, принадлежность пользователя относится к группе "Покупатели"
+    Если пользователь не принадлежит к группе - закрывает доступ
+    к страницам для покупателей
     :param func_to_deco: функция, которую необходимо обернуть
     :return: функцию-обертку wrapper
     """
     def wrapper(request, *args, **kwargs):
-        """функция-обертка"""
-        if not request.user.is_staff:
+        """функция-обертка
+        :param group - группа, принадлежность к которой нужно проверить(тип - str)"""
+
+        if request.user.groups.filter(name='Покупатели').exists():
             return func_to_deco(request, *args, **kwargs)
         else:
-            return HttpResponse('Доступ к данной странице есть только у покупателей')
+            return HttpResponse('Доступ к данной странице есть только у покупателей,\n'
+                                'для получения доступа обратитесь к администратору')
     return wrapper
 
 
