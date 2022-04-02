@@ -41,9 +41,7 @@ def customer_only(func_to_deco):
     :return: функцию-обертку wrapper
     """
     def wrapper(request, *args, **kwargs):
-        """функция-обертка
-        :param group - группа, принадлежность к которой нужно проверить(тип - str)"""
-
+        """функция-обертка"""
         if request.user.groups.filter(name='Покупатели').exists():
             return func_to_deco(request, *args, **kwargs)
         else:
