@@ -280,24 +280,6 @@ def orders(request):
 
 
 @user_is_authenticated
-@staff_only
-def delete_reserve(request, order_id, reserve_id):
-    """
-    Расформировывает резерв, сформированный по позиции в заказе
-    :param reserve_id: id резерва в БД(тип - int)
-    :param order_id: id заказа в БД(тип - int)
-    """
-    if reserve_id:
-        reserve = Reserve.objects.get(pk=reserve_id)
-        reserve.is_actual = False
-        good = Good.objects.get(pk=reserve.good_id)
-        good.storage_quantity = good.storage_quantity + reserve.quantity
-        reserve.save()
-        good.save()
-    return redirect(f'/order/{order_id}')
-
-
-@user_is_authenticated
 @customer_only
 def close_order(request, order_id):
     order = Order.objects.get(pk=order_id)
