@@ -15,7 +15,6 @@
             <th>Сумма заказа по товару</th>
             {% if user_is_staff %}
                 <th>Зарезервировано {{ good.unit }}</th>
-                <th>Снять резерв</th>
                 <th>Дозаказать</th>
                 <th>Свободный остаток на складе</th>
             {% endif %}
@@ -30,7 +29,6 @@
             <td>{{ good.total_price }} руб.</td>
             {% if user_is_staff %}
                 <th>{{ good.reserve }}</th>
-                <th><form method="LINK" action="reserve/delete/{{ good.reserve_id }}"> <input type="submit" value="Снять"> </form></th>
                 <th>{{ good.for_order }}</th>
                 <th>{{ good.storage_quantity }}</th>
             {% endif %}
