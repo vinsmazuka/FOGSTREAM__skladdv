@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
-from .forms import CartAddGood
+from .forms import CartAddGood, OrderChangeStatus
 from .models import Category, Good, Order, OrderItems, Reserve
 
 from .castomcart import CustomerCart
@@ -151,7 +151,7 @@ def сreate_order(request):
                 reserve_quantity = good.storage_quantity if item['quantity'] >= good.storage_quantity else item['quantity']
                 good.storage_quantity = good.storage_quantity - reserve_quantity
                 good.save()
-                reserve = Reserve(order=order, good=good, quantity=reserve_quantity)
+                reserve = Reserve(order=order, good=good, quantity=reserve_quantity, order_item=order_item)
                 if reserve_quantity:
                     reserve.save()
             message = f'Заказ оформлен.Номер заказа: {order.id}'
@@ -179,22 +179,90 @@ def cabinet(request):
 @user_is_authenticated
 def order_detail(request, order_id):
     """показывает страницу заказа"""
-    order_items = OrderItems.objects.filter(order_id=order_id)
-    order_details = []
-    for item in order_items:
-        order_detail = {
-            'title': Good.objects.get(pk=item.good_id).title,
-            'quantity': item.position_quantity,
-            'price': item.position_price/item.position_quantity,
-            'total_price': item.position_price,
-            'unit': Good.objects.get(pk=item.good_id).unit
-        }
-        order_details.append(order_detail)
+    def load_info():
+        order_items = OrderItems.objects.filter(order_id=order_id)
+        order_details = []
+        for item in order_items:
+            try:
+                reserve = Reserve.objects.get(order_item_id=item.id)
+            except Reserve.DoesNotExist:
+                reserve_quantity = 0
+            else:
+                reserve_quantity = reserve.quantity if reserve.is_actual else 0
+            good = Good.objects.get(pk=item.good_id)
+            storage_quantity = good.storage_quantity
+            for_order = item.position_quantity - reserve_quantity - storage_quantity
+            for_order_quantity = for_order if for_order > 0 else 0
+            order_detail = {
+                'id': item.good_id,
+                'title': good.title,
+                'quantity': item.position_quantity,
+                'price': item.position_price / item.position_quantity,
+                'total_price': item.position_price,
+                'unit': Good.objects.get(pk=item.good_id).unit,
+                'reserve': reserve_quantity,
+                'for_order': for_order_quantity,
+                'reserve_id': reserve.id if reserve_quantity else 0,
+                'storage_quantity': storage_quantity
+            }
+            order_details.append(order_detail)
+        return order_details
 
     context = {
-        'order_details': order_details,
-        'order_id': order_id
+        'order_id': order_id,
+        'user_is_staff': request.user.groups.filter(name='Персонал').exists()
     }
+
+    def post_response():
+        """формирует ответ в случае поступления POST-запроса"""
+        form = OrderChangeStatus(request.POST)
+        if form.is_valid():
+            status = form.cleaned_data.get("status")
+            order = Order.objects.get(pk=order_id)
+            order.status = status
+            order.save()
+            try:
+                reserves = order.reserve_set.all()
+            except Reserve.DoesNotExist:
+                pass
+            else:
+                if status == 'исполнен' or status == 'отменен':
+                    for reserve in reserves:
+                            good = Good.objects.get(pk=reserve.good_id)
+                            order_item = OrderItems.objects.get(pk=reserve.order_item_id)
+                            if reserve.is_actual:
+                                reserve.is_actual = False
+                                reserve.save()
+                                if status == 'исполнен':
+                                    new_storage_quantity = (
+                                            good.storage_quantity
+                                            + reserve.quantity
+                                            - order_item.position_quantity
+                                    )
+                                    good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
+                                else:
+                                    good.storage_quantity = (
+                                            good.storage_quantity
+                                            + reserve.quantity
+                                    )
+                            good.save()
+            context['message'] = f'статус заказа изменен на "{status}"'
+            form = OrderChangeStatus()
+            context['form'] = form
+            context['order_details'] = load_info()
+
+    def get_response():
+        """формирует ответ в случае поступления GET-запроса"""
+        form = OrderChangeStatus()
+        context['form'] = form
+        context['order_details'] = load_info()
+
+    responses = {
+        'POST': post_response,
+        'GET': get_response
+    }
+
+    responses[request.method]()
     return render(request, 'shop/order.html', context)
 
 
@@ -205,6 +273,24 @@ def orders(request):
     orders = Order.objects.all().order_by('id')
     context = {'orders': orders}
     return render(request, 'shop/orders.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def delete_reserve(request, order_id, reserve_id):
+    """
+    Расформировывает резерв, сформированный по позиции в заказе
+    :param reserve_id: id резерва в БД(тип - int)
+    :param order_id: id заказа в БД(тип - int)
+    """
+    if reserve_id:
+        reserve = Reserve.objects.get(pk=reserve_id)
+        reserve.is_actual = False
+        good = Good.objects.get(pk=reserve.good_id)
+        good.storage_quantity = good.storage_quantity + reserve.quantity
+        reserve.save()
+        good.save()
+    return redirect(f'/order/{order_id}')
 
 
 
