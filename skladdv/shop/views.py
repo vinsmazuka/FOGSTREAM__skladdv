@@ -165,12 +165,14 @@ def сreate_order(request):
 
 
 @user_is_authenticated
-@customer_only
 def cabinet(request):
     """показывает личный кабинет пользователя"""
     user_id = request.user.id
     orders = Order.objects.filter(user_id=user_id).order_by('id')
-    context = {'orders': orders}
+    context = {
+        'orders': orders,
+        'user_is_stuff': request.user.groups.filter(name='Персонал').exists()
+    }
     return render(request, 'shop/cabinet.html', context)
 
 
