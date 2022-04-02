@@ -1,14 +1,13 @@
 from decimal import Decimal
 
-from django.shortcuts import redirect, render, HttpResponse
-from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
 from .forms import CartAddGood
 from .models import Category, Good, Order, OrderItems, Reserve
 
 from .castomcart import CustomerCart
-from .decorators import user_is_authenticated, user_is_staff, user_is_not_staff
+from .decorators import user_is_authenticated, staff_only, user_is_not_staff
 
 
 def index(request):
@@ -198,7 +197,7 @@ def order_detail(request, order_id):
 
 
 @user_is_authenticated
-@user_is_staff
+@staff_only
 def orders(request):
     """показывает все заказы покупателей"""
     orders = Order.objects.all().order_by('id')
