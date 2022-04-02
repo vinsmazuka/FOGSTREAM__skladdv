@@ -171,7 +171,7 @@ def cabinet(request):
     orders = Order.objects.filter(user_id=user_id).order_by('id')
     context = {
         'orders': orders,
-        'user_is_stuff': request.user.groups.filter(name='Персонал').exists()
+        'user_is_customer': request.user.groups.filter(name='Покупатели').exists(),
     }
     return render(request, 'shop/cabinet.html', context)
 
