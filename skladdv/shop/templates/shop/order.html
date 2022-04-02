@@ -13,6 +13,12 @@
             <th>Количество</th>
             <th>Цена</th>
             <th>Сумма заказа по товару</th>
+            {% if user_is_staff %}
+                <th>Зарезервировано {{ good.unit }}</th>
+                <th>Снять резерв</th>
+                <th>Дозаказать</th>
+                <th>Свободный остаток на складе</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -22,9 +28,27 @@
             <td>{{ good.quantity }} {{ good.unit }}</td>
             <td>{{ good.price }} руб.</td>
             <td>{{ good.total_price }} руб.</td>
+            {% if user_is_staff %}
+                <th>{{ good.reserve }}</th>
+                <th><form method="LINK" action="reserve/delete/{{ good.reserve_id }}"> <input type="submit" value="Снять"> </form></th>
+                <th>{{ good.for_order }}</th>
+                <th>{{ good.storage_quantity }}</th>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+{% if user_is_staff %}
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.status }}
+        <button type="submit" > Изменить статус заказа </button>
+    </form>
+{% endif %}
+
+{% if message %}
+    {{ message }}
+{% endif %}
 
 {% endblock %}
