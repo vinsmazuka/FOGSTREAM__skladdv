@@ -10,11 +10,15 @@
 
 {% if user.is_authenticated %}
 
+{% if not user.is_staff %}
+
 <form method="post" action="">
     {% csrf_token %}
     {{ form.quantity }}
     <button type="submit" > Добавить в заказ </button>
 </form>
+
+{% endif %}
 
 {% else %}
 
