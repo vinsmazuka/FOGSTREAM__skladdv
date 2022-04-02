@@ -352,8 +352,15 @@ class Reserve(models.Model):
         verbose_name='время создания'
     )
 
+    order_item = models.OneToOneField(
+        'OrderItems',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='Позиция в заказе'
+    )
+
     def __str__(self):
-        return str(self.id)
+        return str(self.order)
 
     class Meta:
         verbose_name = 'Резерв'
