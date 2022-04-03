@@ -45,8 +45,10 @@
     </form>
 {% endif %}
 
-{% if order_is_ready %}
-    <form method="LINK" action="/closeorder/{{ order_id }}/"> <input type="submit" value="Подтвердить получение"> </form><br>
+{% if user_is_customer %}
+    {% if order_is_ready %}
+        <form method="LINK" action="/closeorder/{{ order_id }}/"> <input type="submit" value="Подтвердить получение"> </form><br>
+    {% endif %}
 {% endif %}
 
 {% if message %}
