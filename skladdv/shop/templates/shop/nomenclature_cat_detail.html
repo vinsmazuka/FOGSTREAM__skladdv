@@ -1,0 +1,15 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Товары из категории{% endblock %}
+
+{% block content %}
+
+{% if goods %}
+    {% for good in goods %}
+        {% if good.available_for_order %}
+            <li> <a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></li>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
