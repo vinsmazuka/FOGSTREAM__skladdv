@@ -97,7 +97,6 @@ class StaffCart:
                 supplier['total_price'] = str(Decimal(supplier['purchase_price']) * supplier['quantity'])
                 yield supplier
         self.save()
-        print(self.cart)
 
     def __len__(self):
         """Подсчитывает общее количество товаров в корзине"""
@@ -116,14 +115,12 @@ class StaffCart:
             good_id = str(good.id)
             suppliers = self.cart[good_id]
             for supplier in suppliers:
-                print(good, supplier)
                 supplier_id = supplier
                 purchase_price = good.purchaseprice_set.get(supplier_id=int(supplier_id)).purchase_price
                 self.cart[good_id][supplier_id]['purchase_price'] = purchase_price
                 total_coast += (Decimal(
                     self.cart[good_id][supplier_id]['purchase_price'])
                                 * self.cart[good_id][supplier_id]['quantity'])
-                print(total_coast)
         return total_coast
 
     def clear(self):
@@ -133,4 +130,9 @@ class StaffCart:
 
     def count_positions(self):
         """подсчитывает количество позиций в корзине"""
-        return len(len(self.cart.values()))
+        count = 0
+        for key, value in self.cart.items():
+            count += len(value)
+        return count
+
+
