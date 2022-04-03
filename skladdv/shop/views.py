@@ -3,10 +3,11 @@ from decimal import Decimal
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib.auth.models import User
 
-from .forms import CartAddGood, OrderChangeStatus
-from .models import Category, Good, Order, OrderItems, Reserve
+from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
+from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier
 
 from .castomcart import CustomerCart
+from .staffcart import StaffCart
 from .decorators import customer_only, staff_only, user_is_authenticated
 
 
@@ -25,7 +26,8 @@ def catalog(request):
 
 def category_detail(request, cat_id):
     """
-    показывает все товары из категории
+    показывает все товары из категории(для каталога
+    покупателя)
     :param cat_id: id категории(тип - int)
     """
     cat = Category.objects.get(pk=cat_id)
@@ -41,7 +43,7 @@ def category_detail(request, cat_id):
 
 def good_detail(request, good_id):
     """
-    показывает страницу товара
+    показывает страницу товара(для покупателя)
     :param good_id: id товара(тип - int)
     """
     try:
@@ -333,6 +335,96 @@ def nomenclature_category_detail(request, cat_id):
 
     context = {'goods': goods}
     return render(request, 'shop/nomenclature_cat_detail.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def nomenclature_good_detail(request, good_id):
+    """
+    показывает страницу товара(для персонала)
+    :param good_id: id товара(тип - int)
+    """
+    context = dict()
+    context['messages'] = []
+    try:
+        good = Good.objects.get(pk=good_id)
+    except Good.DoesNotExist:
+        return redirect('/catalog/')
+    else:
+        suppliers = good.suppliers.filter(is_actual=True)
+        suppliers_info = []
+        for supplier in suppliers:
+            if supplier.is_actual:
+                try:
+                    purchase_prices = supplier.purchaseprice_set.all()
+                    purchase_price = purchase_prices.get(good_id=good_id).purchase_price
+                except PurchasePrice.DoesNotExist:
+                    context['messages'].append('Нет инофрмации о закупочных ценах на товар, '
+                                               'чтобы сделать заказ внесите информацию о закупочных ценах')
+                    supplier_info = {'name': supplier.name}
+                    suppliers_info.append(supplier_info)
+                else:
+                    supplier_info = {
+                        'name': supplier.name,
+                        'purchase_price': purchase_price
+                    }
+                    suppliers_info.append(supplier_info)
+
+        context['good'] = good
+        context['suppliers'] = suppliers_info
+
+    def post_response():
+        """формирует ответ в случае поступления POST-запроса"""
+        form = StaffCartAddGood(request.POST)
+        if form.is_valid():
+            quantity = int(form.cleaned_data.get("quantity"))
+            supplier_id = int(form.cleaned_data.get("supplier"))
+            order_id = form.cleaned_data.get("order")
+            suppliers_ids = (list(map(lambda x: x.id, suppliers)))
+            if int(supplier_id) not in suppliers_ids:
+                context['messages'].append('Данного поставщика нет в списке поставщиков товара')
+            else:
+                supplier = Supplier.objects.get(pk=supplier_id)
+                try:
+                    purchase_prices = supplier.purchaseprice_set.all()
+                    purchase_prices.get(good_id=good_id).purchase_price
+                except PurchasePrice.DoesNotExist:
+                    context['messages'].append('Необходимо внести в БД закупочную '
+                                               'цену для данного поставщика')
+                else:
+                    cart = StaffCart(request)
+                    order_id = form.cleaned_data.get("order")
+                    if order_id:
+                        try:
+                            order = Order.objects.get(pk=int(order_id))
+                        except Order.DoesNotExist:
+                            context['messages'].append('Данный заказ не существует')
+                        else:
+                            if order.status == 'исполнен' or order.status == 'отменен':
+                                context['messages'].append('Данный заказ не актуальный, '
+                                                           'введите номер актуального заказа')
+                            else:
+                                cart.add(good=good, supplier=supplier, quantity=quantity, order=order)
+                                context['messages'].append('позиция добавлена в Поставку')
+
+                    else:
+                        cart.add(good=good, supplier=supplier, quantity=quantity, order=None)
+                        context['messages'].append('позиция добавлена в Поставку')
+
+                    context['form'] = StaffCartAddGood()
+
+    def get_response():
+        """формирует ответ в случае поступления GET-запроса"""
+        form = StaffCartAddGood()
+        context['form'] = form
+
+    responses = {
+        'POST': post_response,
+        'GET': get_response
+    }
+    responses[request.method]()
+
+    return render(request, 'shop/nomenclature_good_detail.html', context)
 
 
 
