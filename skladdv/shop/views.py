@@ -213,7 +213,8 @@ def order_detail(request, order_id):
 
     context = {
         'order_id': order_id,
-        'user_is_staff': request.user.groups.filter(name='Персонал').exists()
+        'user_is_staff': request.user.groups.filter(name='Персонал').exists(),
+        'user_is_customer': request.user.groups.filter(name='Покупатели').exists()
     }
 
     def post_response():
