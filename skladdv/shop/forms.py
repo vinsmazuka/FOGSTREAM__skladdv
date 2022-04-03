@@ -34,7 +34,7 @@ class StaffCartAddGood(Form):
     quantity.widget.attrs.update(size='15')
     quantity.widget.attrs.update(placeholder='кол-во(целое число)')
     supplier = ChoiceField()
-    order = IntegerField(min_value=1)
+    order = IntegerField(min_value=1, required=False)
     order.widget.attrs.update(size='15')
     order.widget.attrs.update(placeholder='№ заказа')
 
