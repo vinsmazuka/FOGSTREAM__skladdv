@@ -307,6 +307,17 @@ def close_order(request, order_id):
     return redirect('/cabinet/')
 
 
+@user_is_authenticated
+@staff_only
+def nomenclature(request):
+    """показывает номенклаиуру товаров для персонала"""
+    return render(request,
+                  'shop/nomenclature.html',
+                  {'categories': Category.objects.all()}
+                  )
+
+
+
 
 
 
