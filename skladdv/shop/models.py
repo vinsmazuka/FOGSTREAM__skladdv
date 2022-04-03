@@ -167,7 +167,10 @@ class Good(models.Model):
         max_length=100,
         verbose_name='артикул'
     )
-    suppliers = models.ManyToManyField(Supplier)
+    suppliers = models.ManyToManyField(
+        Supplier,
+        verbose_name='поставщики'
+    )
     photo = models.ImageField(
         null=True,
         verbose_name='фото'
