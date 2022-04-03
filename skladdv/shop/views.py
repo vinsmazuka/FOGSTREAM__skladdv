@@ -359,8 +359,7 @@ def nomenclature_good_detail(request, good_id):
                     purchase_prices = supplier.purchaseprice_set.all()
                     purchase_price = purchase_prices.get(good_id=good_id).purchase_price
                 except PurchasePrice.DoesNotExist:
-                    context['messages'].append('Нет инофрмации о закупочных ценах на товар, '
-                                               'чтобы сделать заказ внесите информацию о закупочных ценах')
+                    context['messages'].append('Нет инофрмации о всех закупочных ценах на товар')
                     supplier_info = {'name': supplier.name}
                     suppliers_info.append(supplier_info)
                 else:
@@ -383,6 +382,7 @@ def nomenclature_good_detail(request, good_id):
             suppliers_ids = (list(map(lambda x: x.id, suppliers)))
             if int(supplier_id) not in suppliers_ids:
                 context['messages'].append('Данного поставщика нет в списке поставщиков товара')
+                context['form'] = StaffCartAddGood()
             else:
                 supplier = Supplier.objects.get(pk=supplier_id)
                 try:
@@ -391,6 +391,7 @@ def nomenclature_good_detail(request, good_id):
                 except PurchasePrice.DoesNotExist:
                     context['messages'].append('Необходимо внести в БД закупочную '
                                                'цену для данного поставщика')
+                    context['form'] = StaffCartAddGood()
                 else:
                     cart = StaffCart(request)
                     order_id = form.cleaned_data.get("order")
