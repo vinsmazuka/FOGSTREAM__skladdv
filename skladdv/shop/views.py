@@ -41,7 +41,7 @@ def category_detail(request, cat_id):
 
 def good_detail(request, good_id):
     """
-    показывает страницу товара с формой для заказа
+    показывает страницу товара
     :param good_id: id товара(тип - int)
     """
     try:
@@ -315,6 +315,24 @@ def nomenclature(request):
                   'shop/nomenclature.html',
                   {'categories': Category.objects.all()}
                   )
+
+
+@user_is_authenticated
+@staff_only
+def nomenclature_category_detail(request, cat_id):
+    """
+    показывает все товары из категории(для персонала)
+    :param cat_id: id категории(тип - int)
+    """
+    cat = Category.objects.get(pk=cat_id)
+    if cat.is_leaf_node():
+        goods = Good.objects.filter(category_id=cat_id)
+    else:
+        sub_cats = list(Category.objects.filter(parent=cat_id))
+        goods = Good.objects.filter(category__in=sub_cats)
+
+    context = {'goods': goods}
+    return render(request, 'shop/nomenclature_cat_detail.html', context)
 
 
 
