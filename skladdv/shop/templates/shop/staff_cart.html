@@ -1,0 +1,58 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+{% if cart %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Закупочная цена</th>
+            <th>Кол-во по позиции</th>
+            <th>Артикул</th>
+            <th>Цена по позиции</th>
+            <th>Поставщик</th>
+            <th>Номер заказа</th>
+            <th>Удалить</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for good in cart %}
+        <tr>
+            <td>{{ good.title }}</td>
+            <td>{{ good.purchase_price }}</td>
+            <td>{{ good.quantity }}</td>
+            <td>{{ good.artikul }}</td>
+            <td>{{ good.total_price }}</td>
+            <td>{{ good.supplier_name }}</td>
+            <td>{{ good.order_id }}</td>
+            <td><form method="LINK" action="/staffcart/delete/{{ good.id }}"> <input type="submit" value="удалить"> </form></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+<div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
+<div> Общая сумма заказа: {{ total_cost }} руб.</div>
+
+{% if cart %}
+
+<form method="LINK" action="/staffcart/delete"> <input type="submit" value="очистить корзину"> </form><br>
+<form method="LINK" action="/makeorder/"> <input type="submit" value="сделать заказ"> </form><br>
+
+{% endif %}
+
+{% else %}
+
+<i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
+
+{% endif %}
+
+{% endblock %}
