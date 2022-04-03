@@ -11,6 +11,7 @@ urlpatterns = [
     path('order/<int:order_id>/', views.order_detail, name='order'),
     path('catalog/categorydetail/<int:cat_id>/', views.category_detail, name='cat_detail'),
     path('nomenclature/categorydetail/<int:cat_id>/', views.nomenclature_category_detail, name='nom_cat_detail'),
+    path('nomenclature/<int:good_id>/', views.nomenclature_good_detail, name='nom_good_detail'),
     path('nomenclature/', views.nomenclature, name='nomenclature'),
     path('orders/', views.orders, name='orders'),
     path('catalog/', views.catalog, name='catalog'),
