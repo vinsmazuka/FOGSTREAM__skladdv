@@ -110,7 +110,7 @@ def remove_good_from_cart(request, good_id):
 @customer_only
 def clean_cart(request):
     """
-    Удаляет все товары из корзины
+    Удаляет все товары из корзины покупателя
     """
     cart = CustomerCart(request)
     cart.clear()
@@ -425,6 +425,47 @@ def nomenclature_good_detail(request, good_id):
     responses[request.method]()
 
     return render(request, 'shop/nomenclature_good_detail.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def show_staff_cart(request):
+    """показывает персоналу содержание его корзины"""
+    cart = StaffCart(request)
+    total_quantity = len(cart)
+    total_cost = cart.get_total_coast()
+    context = {
+        'cart': cart,
+        'total_quantity': total_quantity,
+        'total_cost': total_cost
+    }
+    return render(request, 'shop/staff_cart.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def clean_staff_cart(request):
+    """
+    Удаляет все товары из корзины персонала
+    """
+    cart = StaffCart(request)
+    cart.clear()
+    return redirect('/nomenclature/staffcart/')
+
+
+@user_is_authenticated
+@staff_only
+def delete_good_staff_cart(request, good_id):
+    """
+    Удаляет товар из корзины персонала
+    :param good_id: id товара(тип - int)
+    """
+    cart = StaffCart(request)
+    cart.remove(good_id)
+    return redirect('/nomenclature/staffcart/')
+
+
+
 
 
 
