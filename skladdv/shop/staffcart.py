@@ -22,10 +22,11 @@ class StaffCart:
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
 
-    def add(self, good, supplier, quantity=1, update_quantity=False):
+    def add(self, good, supplier, order=None, quantity=1, update_quantity=False):
         """
         Добавляет товар в корзину или обновляет его количество
         :param good: товар(экземпляр класса Good)
+        :param order: заказ(экземпляр класса Order)
         :param supplier: поставщик(экземпляр класса Supplier)
         :param quantity: кол-во товара(тип - int)
         :param update_quantity: указывает,
@@ -34,17 +35,30 @@ class StaffCart:
         :return: none
         """
         good_id = str(good.id)
-        purchase_price = good.purchaseprice_set.filter(pk=supplier.id).purchase_price
+        if order:
+            order_id = order.id
+        else:
+            order_id = None
+        supplier_id = str(supplier.id)
+        purchase_price = good.purchaseprice_set.get(supplier_id=supplier.id).purchase_price
         if good_id not in self.cart:
-            self.cart[good_id] = {'quantity': 0,
-                                  'purchase_price': str(purchase_price),
-                                  'supplier_id': supplier.id}
-        else:
-            self.cart[good_id]['purchase_price'] = str(purchase_price)
+            self.cart[good_id] = {supplier_id: {'quantity': 0,
+                                                'purchase_price': str(purchase_price),
+                                                'supplier_name': supplier.name,
+                                                'order_id': order_id
+                                                }
+                                  }
+        elif supplier_id not in self.cart[good_id]:
+            self.cart[good_id][supplier_id] = {'quantity': 0,
+                                               'purchase_price': str(purchase_price),
+                                               'supplier_name': supplier.name,
+                                               'order_id': order_id
+                                               }
+        self.cart[good_id][supplier_id]['purchase_price'] = str(purchase_price)
         if update_quantity:
-            self.cart[good_id]['quantity'] = quantity
+            self.cart[good_id][supplier_id]['quantity'] = quantity
         else:
-            self.cart[good_id]['quantity'] += quantity
+            self.cart[good_id][supplier_id]['quantity'] += quantity
         self.save()
 
     def save(self):
@@ -68,32 +82,49 @@ class StaffCart:
         good_ids = self.cart.keys()
         goods = Good.objects.filter(id__in=good_ids)
         for good in goods:
-            self.cart[str(good.id)]['title'] = good.title
-            self.cart[str(good.id)]['artikul'] = good.artikul
-            self.cart[str(good.id)]['id'] = good.id
-            supplier_id = self.cart[str(good.id)]['supplier_id']
-            purchase_price = good.purchaseprice_set.filter(pk=supplier_id).purchase_price
-            self.cart[str(good.id)]['purchase_price'] = str(purchase_price)
+            good_id = str(good.id)
+            suppliers = self.cart[good_id]
+            for supplier in suppliers:
+                supplier_id = supplier
+                purchase_price = good.purchaseprice_set.get(supplier_id=supplier_id).purchase_price
+                self.cart[good_id][supplier_id]['title'] = good.title
+                self.cart[good_id][supplier_id]['artikul'] = good.artikul
+                self.cart[good_id][supplier_id]['id'] = good.id
+                self.cart[good_id][supplier_id]['purchase_price'] = str(purchase_price)
 
         for item in self.cart.values():
-            item['total_price'] = str(Decimal(item['purchase_price']) * item['quantity'])
-            yield item
+            for supplier in item.values():
+                supplier['total_price'] = str(Decimal(supplier['purchase_price']) * supplier['quantity'])
+                yield supplier
         self.save()
+        print(self.cart)
 
     def __len__(self):
         """Подсчитывает общее количество товаров в корзине"""
-        return sum(item['quantity'] for item in self.cart.values())
+        count = 0
+        for item in self.cart.values():
+            for supplier in item.values():
+                count += supplier['quantity']
+        return count
 
     def get_total_coast(self):
         """Подсчитывает общую стоимость товаров в корзине"""
         good_ids = self.cart.keys()
         goods = Good.objects.filter(id__in=good_ids)
+        total_coast = 0
         for good in goods:
-            supplier_id = self.cart[str(good.id)]['supplier_id']
-            purchase_price = good.purchaseprice_set.filter(pk=supplier_id).purchase_price
-            self.cart[str(good.id)]['purchase_price'] = purchase_price
-        return sum(Decimal(item['purchase_price']) * item['quantity'] for item in
-                   self.cart.values())
+            good_id = str(good.id)
+            suppliers = self.cart[good_id]
+            for supplier in suppliers:
+                print(good, supplier)
+                supplier_id = supplier
+                purchase_price = good.purchaseprice_set.get(supplier_id=int(supplier_id)).purchase_price
+                self.cart[good_id][supplier_id]['purchase_price'] = purchase_price
+                total_coast += (Decimal(
+                    self.cart[good_id][supplier_id]['purchase_price'])
+                                * self.cart[good_id][supplier_id]['quantity'])
+                print(total_coast)
+        return total_coast
 
     def clear(self):
         """удаляет корзину из сессии"""
@@ -102,4 +133,4 @@ class StaffCart:
 
     def count_positions(self):
         """подсчитывает количество позиций в корзине"""
-        return len(self.cart)
+        return len(len(self.cart.values()))
