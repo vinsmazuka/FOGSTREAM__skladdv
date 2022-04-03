@@ -1,0 +1,50 @@
+{% extends "shop/base.html" %}
+{% load mptt_tags %}
+
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+
+{% if categories %}
+
+    <ul>
+        {% recursetree categories %}
+            <li>
+                <a href="/catalog/categorydetail/{{ node.id }}/"> {{ node.name }} </a>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% else %}
+                    <ul>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Количество на складе</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for good in node.get_goods %}
+                                    {% if good.available_for_order %}
+                                        <tr>
+                                            <td><a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></td>
+                                            <td>{{ good.storage_quantity }} {{ good.unit }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+
+{% else %}
+
+<p>Нет товаров для отображения</p>
+
+{% endif %}
+
+{% endblock %}
