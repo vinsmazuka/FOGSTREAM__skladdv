@@ -662,6 +662,7 @@ header nav:hover {
 	border: none;
 	outline: none;
 }
+
 .search-catalog input {
 	width: calc(100% - 42px);
 	height: 42px;
@@ -777,7 +778,18 @@ header nav:hover {
 	color: black;
 }
 
+.menu__category div {
+	display: flex !important;
+	width: 100%;
+	height: 100%;
+}
+
 .menu__category:hover {
+	color: white;
+	background: #ff5b35;
+}
+
+.menu__category:hover div {
 	color: white;
 	background: #ff5b35;
 }
@@ -819,6 +831,12 @@ header nav:hover {
 
 .closebtn span:last-child {
 	transform: rotate(-45deg);
+}
+
+.subcategory {
+	color: black;
+	font-weight: 500;
+	transition: none;
 }
 
 /* logged_out */
@@ -1075,6 +1093,63 @@ header nav:hover {
 	gap: 20px;
 }
 
+/* password_reset_confirm */
+
+.password_reset_confirm {
+	min-height: calc(100vh - 58px);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	box-sizing: border-box;
+}
+
+.password_reset_confirm form {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 20px;
+}
+
+.password_reset_confirm table {
+	border-collapse: collapse;
+	padding: 10px;
+	color: white;
+}
+
+.password_reset_confirm tbody, tr, th, td {
+	border: none;
+}
+
+.password_reset_confirm input {
+	border-radius: 5px;
+	padding: 10px;
+	border: none;
+	outline: none;
+}
+
+.password_reset_confirm input[type="submit"] {
+	padding: 15px;
+	font-weight: 700;
+	background: #ff5b35;
+	color: white;
+	border-radius: 5px;
+	border: none;
+	width: 100%;
+}
+
+.password_reset_confirm input[type="submit"]:hover {
+	background: #07123c;
+}
+
+.password_reset_confirm__form {
+	padding: 10px;
+	background: #ff5b35;
+	border-radius: 5px;
+}
+
 /* FOOTER */
 
 footer {
@@ -1087,4 +1162,14 @@ footer {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+/* GLOBAL */
+
+.none {
+	display: none;
+}
+
+.flex_important div {
+	display: flex !important;
 }
