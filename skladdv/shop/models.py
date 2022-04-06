@@ -92,18 +92,73 @@ class Supply(models.Model):
     def __str__(self):
         return str(self.id)
 
-    # @staticmethod
-    # def get_purchase_price(good, supplier):
-    #     """
-    #     возвращает из БД закупочную цену товара
-    #     :param good: экземпляр класса Good
-    #     :param supplier: экземпляр класса Supplier
-    #     :return: закупочную цену товара(типа - Decimal)
-    #     """
-    #     purchase_prices = good.purchaseprice_set.all()
-    #     purchase_price_object = purchase_prices.get(supplier=supplier.id)
-    #     purchase_price = purchase_price_object.purchase_price
-    #     return purchase_price
+
+class SupplyItems(models.Model):
+    """Представляет позиции поставки"""
+    STATUS_list = (
+        ('заказана', 'заказана'),
+        ('поступила', 'поступила на склад')
+    )
+    supply = models.ForeignKey(
+        'Supply',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='номер поставки'
+    )
+    quantity = models.PositiveIntegerField(
+        verbose_name='кол-во',
+        null=False
+    )
+    good = models.ForeignKey(
+        'Good',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='товар'
+    )
+    supplier = models.ForeignKey(
+        'Supplier',
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='поставщик'
+    )
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='номер заказа'
+    )
+    purchase_price = models.DecimalField(
+        null=False,
+        max_digits=7,
+        decimal_places=2,
+        verbose_name='цена закупа'
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_list,
+        null=False,
+        verbose_name='статус'
+    )
+
+    class Meta:
+        verbose_name = 'Позицию поставки'
+        verbose_name_plural = 'Позиции поставок'
+
+    def __str__(self):
+        return str(self.id)
+
+    @staticmethod
+    def get_purchase_price(good, supplier):
+        """
+        возвращает из БД закупочную цену товара
+        :param good: экземпляр класса Good
+        :param supplier: экземпляр класса Supplier
+        :return: закупочную цену товара(типа - Decimal)
+        """
+        purchase_prices = good.purchaseprice_set.all()
+        pp_object = purchase_prices.get(supplier=supplier.id)
+        purchase_price = pp_object.purchase_price
+        return purchase_price
 
 
 class Good(models.Model):
