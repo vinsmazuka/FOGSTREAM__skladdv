@@ -66,16 +66,15 @@ class StaffCart:
         self.session[settings.CART_SESSION_ID] = self.cart
         self.session.modified = True
 
-    def remove(self, good_id):
+    def remove(self, good_id, supplier_id):
         """
-        Удаляет товар из корзины.
-        :param good: id товара(тип - int)
+        Удаляет позицию из корзины.
+        :param good_id: id товара(тип - int)
+        :param supplier_id: id поставщика(тип - int)
         :return: none
         """
-        id = str(good_id)
-        if id in self.cart.keys():
-            del self.cart[id]
-            self.save()
+        del self.cart[str(good_id)][str(supplier_id)]
+        self.save()
 
     def __iter__(self):
         """Перебирает элементы в корзине и получает продукты из базы данных"""
@@ -91,6 +90,7 @@ class StaffCart:
                 self.cart[good_id][supplier_id]['artikul'] = good.artikul
                 self.cart[good_id][supplier_id]['id'] = good.id
                 self.cart[good_id][supplier_id]['purchase_price'] = str(purchase_price)
+                self.cart[good_id][supplier_id]['supplier_id'] = supplier_id
 
         for item in self.cart.values():
             for supplier in item.values():
