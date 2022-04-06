@@ -74,33 +74,15 @@ class Supply(models.Model):
         null=False,
         verbose_name='статус'
     )
-    quantity = models.PositiveIntegerField(
-        verbose_name='кол-во',
+    total_quantity = models.PositiveIntegerField(
+        verbose_name='кол-во позиций',
         null=False
     )
-    good = models.ForeignKey(
-        'Good',
-        null=False,
-        on_delete=models.PROTECT,
-        verbose_name='товар'
-    )
-    supplier = models.ForeignKey(
-        'Supplier',
-        null=False,
-        on_delete=models.PROTECT,
-        verbose_name='поставщик'
-    )
-    order = models.ForeignKey(
-        'Order',
-        null=True,
-        on_delete=models.PROTECT,
-        verbose_name='номер заказа'
-    )
-    purchase_price = models.DecimalField(
+    total_purchase_price = models.DecimalField(
         null=False,
         max_digits=7,
         decimal_places=2,
-        verbose_name='цена закупа'
+        verbose_name='сумма поставки'
     )
 
     class Meta:
@@ -110,18 +92,18 @@ class Supply(models.Model):
     def __str__(self):
         return str(self.id)
 
-    @staticmethod
-    def get_purchase_price(good, supplier):
-        """
-        возвращает из БД закупочную цену товара
-        :param good: экземпляр класса Good
-        :param supplier: экземпляр класса Supplier
-        :return: закупочную цену товара(типа - Decimal)
-        """
-        purchase_prices = good.purchaseprice_set.all()
-        purchase_price_object = purchase_prices.get(supplier=supplier.id)
-        purchase_price = purchase_price_object.purchase_price
-        return purchase_price
+    # @staticmethod
+    # def get_purchase_price(good, supplier):
+    #     """
+    #     возвращает из БД закупочную цену товара
+    #     :param good: экземпляр класса Good
+    #     :param supplier: экземпляр класса Supplier
+    #     :return: закупочную цену товара(типа - Decimal)
+    #     """
+    #     purchase_prices = good.purchaseprice_set.all()
+    #     purchase_price_object = purchase_prices.get(supplier=supplier.id)
+    #     purchase_price = purchase_price_object.purchase_price
+    #     return purchase_price
 
 
 class Good(models.Model):
