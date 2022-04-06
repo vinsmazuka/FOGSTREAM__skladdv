@@ -31,7 +31,7 @@
             <td>{{ good.total_price }}</td>
             <td>{{ good.supplier_name }}</td>
             <td>{{ good.order_id }}</td>
-            <td><form method="LINK" action="/staffcart/delete/{{ good.id }}"> <input type="submit" value="удалить"> </form></td>
+            <td><form method="LINK" action="/staffcart/delete/{{ good.id }}/{{ good.supplier_id }}"> <input type="submit" value="удалить"> </form></td>
         </tr>
         {% endfor %}
     </tbody>
