@@ -69,6 +69,7 @@ class CustomerCart:
             self.cart[str(good.id)]['artikul'] = good.artikul
             self.cart[str(good.id)]['id'] = good.id
             self.cart[str(good.id)]['price'] = str(good.price)
+            self.cart[str(good.id)]['photo'] = str(good.photo)
 
         for item in self.cart.values():
             item['total_price'] = str(Decimal(item['price']) * item['quantity'])
