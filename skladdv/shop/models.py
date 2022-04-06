@@ -72,9 +72,10 @@ class Supply(models.Model):
         max_length=20,
         choices=STATUS_list,
         null=False,
-        verbose_name='статус'
+        verbose_name='статус',
+        default='заказана'
     )
-    total_quantity = models.PositiveIntegerField(
+    total_positions = models.PositiveIntegerField(
         verbose_name='кол-во позиций',
         null=False
     )
