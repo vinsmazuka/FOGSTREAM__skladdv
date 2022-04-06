@@ -455,13 +455,14 @@ def clean_staff_cart(request):
 
 @user_is_authenticated
 @staff_only
-def delete_good_staff_cart(request, good_id):
+def delete_good_staff_cart(request, good_id, supplier_id):
     """
-    Удаляет товар из корзины персонала
+    Удаляет позицию из корзины персонала
     :param good_id: id товара(тип - int)
+    :param supplier_id: id поставщика(тип - int)
     """
     cart = StaffCart(request)
-    cart.remove(good_id)
+    cart.remove(good_id, supplier_id)
     return redirect('/nomenclature/staffcart/')
 
 
