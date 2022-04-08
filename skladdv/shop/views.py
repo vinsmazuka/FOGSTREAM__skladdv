@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
-from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply
+from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
@@ -491,12 +491,28 @@ def сreate_supply(request):
             del staff_cart.cart[good_id][supplier_id]
             staff_cart.save()
         else:
-            message = 'Поставка создана'
             supply = Supply(
                 total_positions=staff_cart.count_positions(),
                 total_purchase_price=total_purchase_price
             )
             supply.save()
+            message = f'Поставка № {supply.id} создана'
+            for good_id, suppliers in goods.items():
+                for value in suppliers.values():
+                    good = Good.objects.get(pk=value['good_id'])
+                    supplier = Supplier.objects.get(pk=value['supplier_id'])
+                    order_id = 0 if not value['order_id'] else value['order_id']
+                    order = Order.objects.get(pk=order_id)
+                    supply_item = SupplyItems(
+                        supply=supply,
+                        quantity=value['quantity'],
+                        good=good,
+                        supplier=supplier,
+                        order=order,
+                        purchase_price=value['purchase_price']
+                    )
+                    supply_item.save()
+            staff_cart.clear()
     else:
         message = 'В корзине нет товаров'
     context = {
