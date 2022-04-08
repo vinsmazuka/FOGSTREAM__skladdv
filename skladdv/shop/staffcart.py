@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 
-from .models import Good
+from .models import Good, PurchasePrice
 
 
 class StaffCart:
@@ -38,7 +38,7 @@ class StaffCart:
         if order:
             order_id = order.id
         else:
-            order_id = None
+            order_id = ''
         supplier_id = str(supplier.id)
         purchase_price = good.purchaseprice_set.get(supplier_id=supplier.id).purchase_price
         if good_id not in self.cart:
@@ -85,12 +85,17 @@ class StaffCart:
             suppliers = self.cart[good_id]
             for supplier in suppliers:
                 supplier_id = supplier
-                purchase_price = good.purchaseprice_set.get(supplier_id=supplier_id).purchase_price
-                self.cart[good_id][supplier_id]['title'] = good.title
-                self.cart[good_id][supplier_id]['artikul'] = good.artikul
-                self.cart[good_id][supplier_id]['id'] = good.id
-                self.cart[good_id][supplier_id]['purchase_price'] = str(purchase_price)
-                self.cart[good_id][supplier_id]['supplier_id'] = supplier_id
+                try:
+                    purchase_price = good.purchaseprice_set.get(
+                        supplier_id=supplier_id).purchase_price
+                except PurchasePrice.DoesNotExist:
+                    self.cart[good_id][supplier_id]['purchase_price'] = 0
+                else:
+                    self.cart[good_id][supplier_id]['title'] = good.title
+                    self.cart[good_id][supplier_id]['artikul'] = good.artikul
+                    self.cart[good_id][supplier_id]['good_id'] = good.id
+                    self.cart[good_id][supplier_id]['purchase_price'] = str(purchase_price)
+                    self.cart[good_id][supplier_id]['supplier_id'] = supplier_id
 
         for item in self.cart.values():
             for supplier in item.values():
@@ -116,11 +121,16 @@ class StaffCart:
             suppliers = self.cart[good_id]
             for supplier in suppliers:
                 supplier_id = supplier
-                purchase_price = good.purchaseprice_set.get(supplier_id=int(supplier_id)).purchase_price
-                self.cart[good_id][supplier_id]['purchase_price'] = purchase_price
-                total_coast += (Decimal(
-                    self.cart[good_id][supplier_id]['purchase_price'])
-                                * self.cart[good_id][supplier_id]['quantity'])
+                try:
+                    purchase_price = good.purchaseprice_set.get(
+                        supplier_id=int(supplier_id)).purchase_price
+                except PurchasePrice.DoesNotExist:
+                    self.cart[good_id][supplier_id]['purchase_price'] = 0
+                else:
+                    self.cart[good_id][supplier_id]['purchase_price'] = purchase_price
+                    total_coast += (Decimal(
+                        self.cart[good_id][supplier_id]['purchase_price'])
+                                    * self.cart[good_id][supplier_id]['quantity'])
         return total_coast
 
     def clear(self):
