@@ -1,10 +1,10 @@
 from decimal import Decimal
 
-from django.shortcuts import redirect, render, HttpResponse
+from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
-from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier
+from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply
 
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
@@ -133,7 +133,6 @@ def сreate_order(request):
                        f"товар был удален из корзины")
             del user_cart.cart[str(item['id'])]
             user_cart.save()
-            return message
         else:
             order = Order(
                 user=user,
@@ -150,7 +149,8 @@ def сreate_order(request):
                     position_quantity=item['quantity']
                 )
                 order_item.save()
-                reserve_quantity = good.storage_quantity if item['quantity'] >= good.storage_quantity else item['quantity']
+                reserve_quantity = (good.storage_quantity if item['quantity'] >=
+                                    good.storage_quantity else item['quantity'])
                 good.storage_quantity = good.storage_quantity - reserve_quantity
                 good.save()
                 reserve = Reserve(order=order, good=good, quantity=reserve_quantity, order_item=order_item)
@@ -377,7 +377,6 @@ def nomenclature_good_detail(request, good_id):
         if form.is_valid():
             quantity = int(form.cleaned_data.get("quantity"))
             supplier_id = int(form.cleaned_data.get("supplier"))
-            order_id = form.cleaned_data.get("order")
             suppliers_ids = (list(map(lambda x: x.id, suppliers)))
             if int(supplier_id) not in suppliers_ids:
                 context['messages'].append('Данного поставщика нет в списке поставщиков товара')
@@ -388,7 +387,7 @@ def nomenclature_good_detail(request, good_id):
                     purchase_prices = supplier.purchaseprice_set.all()
                     purchase_prices.get(good_id=good_id).purchase_price
                 except PurchasePrice.DoesNotExist:
-                    context['messages'].append(f'Необходимо внести поставщика в БД закупочную '
+                    context['messages'].append(f'Необходимо внести в БД закупочную '
                                                f'цену для поставщика {supplier.name}')
                     context['form'] = StaffCartAddGood()
                 else:
@@ -408,7 +407,7 @@ def nomenclature_good_detail(request, good_id):
                                 context['messages'].append('позиция добавлена в Поставку')
 
                     else:
-                        cart.add(good=good, supplier=supplier, quantity=quantity, order=None)
+                        cart.add(good=good, supplier=supplier, quantity=quantity, order='')
                         context['messages'].append('позиция добавлена в Поставку')
 
                     context['form'] = StaffCartAddGood()
@@ -464,6 +463,49 @@ def delete_good_staff_cart(request, good_id, supplier_id):
     cart = StaffCart(request)
     cart.remove(good_id, supplier_id)
     return redirect('/nomenclature/staffcart/')
+
+
+@user_is_authenticated
+@staff_only
+def сreate_supply(request):
+    """сохраняет поставку в БД"""
+    staff_cart = StaffCart(request)
+    total_purchase_price = Decimal(0)
+    if staff_cart:
+        user = User.objects.get(pk=request.user.id)
+        goods = staff_cart.cart
+        try:
+            for good_id, suppliers in goods.items():
+                Good.objects.get(pk=int(good_id))
+                for supplier_id, value in suppliers.items():
+                    Supplier.objects.get(pk=int(supplier_id))
+                    total_purchase_price += Decimal(value['total_price'])
+        except Good.DoesNotExist:
+            message = (f"товар {goods[good_id]['title']}, "
+                       f"артикул: {goods[good_id]['artikul']} не существует, "
+                       f"товар был удален из корзины")
+            del staff_cart.cart[good_id]
+        except Supplier.DoesNotExist:
+            message = (f"поставщик {goods[good_id][supplier_id]['supplier_name']} не существует, "
+                       f"позиция с данным поставщиком была удалена из корзины поставок")
+            del staff_cart.cart[good_id][supplier_id]
+            staff_cart.save()
+        else:
+            message = 'Поставка создана'
+            supply = Supply(
+                total_positions=staff_cart.count_positions(),
+                total_purchase_price=total_purchase_price
+            )
+            supply.save()
+    else:
+        message = 'В корзине нет товаров'
+    context = {
+        'message': message
+    }
+
+    return render(request, 'shop/create_supply_result.html', context)
+
+
 
 
 
