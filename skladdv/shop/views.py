@@ -478,16 +478,20 @@ def сreate_supply(request):
             for good_id, suppliers in goods.items():
                 Good.objects.get(pk=int(good_id))
                 for supplier_id, value in suppliers.items():
-                    Supplier.objects.get(pk=int(supplier_id))
-                    total_purchase_price += Decimal(value['total_price'])
+                    supplier = Supplier.objects.get(pk=int(supplier_id))
+                    if not supplier.is_actual:
+                        raise Supplier.DoesNotExist
+                    else:
+                        total_purchase_price += Decimal(value['total_price'])
         except Good.DoesNotExist:
             message = (f"товар {goods[good_id]['title']}, "
                        f"артикул: {goods[good_id]['artikul']} не существует, "
                        f"товар был удален из корзины")
             del staff_cart.cart[good_id]
         except Supplier.DoesNotExist:
-            message = (f"поставщик {goods[good_id][supplier_id]['supplier_name']} не существует, "
-                       f"позиция с данным поставщиком была удалена из корзины поставок")
+            message = (f"поставщик {goods[good_id][supplier_id]['supplier_name']} не существует или "
+                       f"не актуальный, позиция с данным поставщиком "
+                       f"была удалена из корзины поставок")
             del staff_cart.cart[good_id][supplier_id]
             staff_cart.save()
         else:
