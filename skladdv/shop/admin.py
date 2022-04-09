@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_mptt_admin.admin import DjangoMpttAdmin
 
-from .models import Category, Good, Order, PurchasePrice, Reserve, Supplier, Supply
+from .models import Category, Good, Order, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
 
 class CategoryAdmin(DjangoMpttAdmin):
@@ -34,6 +34,19 @@ class SupplyAdmin(admin.ModelAdmin):
     search_fields = ['id']
 
 
+class SupplyItemsAdmin(admin.ModelAdmin):
+    list_display = [''
+                    'good',
+                    'quantity',
+                    'supply',
+                    'supplier',
+                    'order',
+                    'purchase_price',
+                    'status'
+                    ]
+    search_fields = ['order', 'good']
+
+
 class PurchasePriceAdmin(admin.ModelAdmin):
     list_display = ['id', 'supplier', 'good', 'purchase_price']
     search_fields = ['good', 'supplier']
@@ -49,6 +62,7 @@ admin.site.register(Good, GoodAdmin)
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Supply, SupplyAdmin)
+admin.site.register(SupplyItems, SupplyItemsAdmin)
 admin.site.register(PurchasePrice, PurchasePriceAdmin)
 admin.site.register(Reserve, ReserveAdmin)
 
