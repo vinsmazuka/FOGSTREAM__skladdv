@@ -472,13 +472,15 @@ def сreate_supply(request):
     staff_cart = StaffCart(request)
     total_purchase_price = Decimal(0)
     if staff_cart:
-        user = User.objects.get(pk=request.user.id)
         goods = staff_cart.cart
+        order_ids = []
         try:
             for good_id, suppliers in goods.items():
                 Good.objects.get(pk=int(good_id))
                 for supplier_id, value in suppliers.items():
                     supplier = Supplier.objects.get(pk=int(supplier_id))
+                    order_id = 0 if not value['order_id'] else value['order_id']
+                    order_ids.append(order_id)
                     if not supplier.is_actual:
                         raise Supplier.DoesNotExist
                     else:
@@ -487,36 +489,39 @@ def сreate_supply(request):
             message = (f"товар {goods[good_id]['title']}, "
                        f"артикул: {goods[good_id]['artikul']} не существует, "
                        f"товар был удален из корзины")
-            del staff_cart.cart[good_id]
+            staff_cart.remove_good(int(good_id))
         except Supplier.DoesNotExist:
             message = (f"поставщик {goods[good_id][supplier_id]['supplier_name']} не существует или "
                        f"не актуальный, позиция с данным поставщиком "
                        f"была удалена из корзины поставок")
-            del staff_cart.cart[good_id][supplier_id]
-            staff_cart.save()
+            staff_cart.remove(int(good_id), int(supplier_id))
         else:
-            supply = Supply(
-                total_positions=staff_cart.count_positions(),
-                total_purchase_price=total_purchase_price
-            )
-            supply.save()
-            message = f'Поставка № {supply.id} создана'
-            for good_id, suppliers in goods.items():
-                for value in suppliers.values():
-                    good = Good.objects.get(pk=value['good_id'])
-                    supplier = Supplier.objects.get(pk=value['supplier_id'])
-                    order_id = 0 if not value['order_id'] else value['order_id']
-                    order = Order.objects.get(pk=order_id)
-                    supply_item = SupplyItems(
-                        supply=supply,
-                        quantity=value['quantity'],
-                        good=good,
-                        supplier=supplier,
-                        order=order,
-                        purchase_price=value['purchase_price']
-                    )
-                    supply_item.save()
-            staff_cart.clear()
+            if len(set(order_ids)) > 1:
+                message = 'все позиции в корзине должны относиться к 1 заказу, ' \
+                          'исправьте номера заказов'
+            else:
+                order_id = list(set(order_ids))[0]
+                order = Order.objects.get(pk=order_id)
+                supply = Supply(
+                    total_positions=staff_cart.count_positions(),
+                    total_purchase_price=total_purchase_price,
+                    order=order
+                )
+                supply.save()
+                message = f'Поставка № {supply.id} создана'
+                for good_id, suppliers in goods.items():
+                    for value in suppliers.values():
+                        good = Good.objects.get(pk=value['good_id'])
+                        supplier = Supplier.objects.get(pk=value['supplier_id'])
+                        supply_item = SupplyItems(
+                            supply=supply,
+                            quantity=value['quantity'],
+                            good=good,
+                            supplier=supplier,
+                            purchase_price=value['purchase_price']
+                        )
+                        supply_item.save()
+                staff_cart.clear()
     else:
         message = 'В корзине нет товаров'
     context = {
