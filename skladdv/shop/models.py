@@ -85,6 +85,12 @@ class Supply(models.Model):
         decimal_places=2,
         verbose_name='сумма поставки'
     )
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='номер заказа'
+    )
 
     class Meta:
         verbose_name = 'Поставку'
@@ -121,12 +127,6 @@ class SupplyItems(models.Model):
         null=False,
         on_delete=models.PROTECT,
         verbose_name='поставщик'
-    )
-    order = models.ForeignKey(
-        'Order',
-        null=True,
-        on_delete=models.PROTECT,
-        verbose_name='номер заказа'
     )
     purchase_price = models.DecimalField(
         null=False,
