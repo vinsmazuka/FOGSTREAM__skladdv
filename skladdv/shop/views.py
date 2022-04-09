@@ -195,6 +195,8 @@ def order_detail(request, order_id):
             else:
                 reserve_quantity = reserve.quantity if reserve.is_actual else 0
             good = Good.objects.get(pk=item.good_id)
+            supplies = good.supplyitems_set.filter(order_id=order_id)
+            ordered_quantity = sum(supply.quantity for supply in supplies)
             storage_quantity = good.storage_quantity
             for_order = item.position_quantity - reserve_quantity - storage_quantity
             for_order_quantity = for_order if for_order > 0 else 0
@@ -208,7 +210,8 @@ def order_detail(request, order_id):
                 'reserve': reserve_quantity,
                 'for_order': for_order_quantity,
                 'reserve_id': reserve.id if reserve_quantity else 0,
-                'storage_quantity': storage_quantity
+                'storage_quantity': storage_quantity,
+                'ordered_quantity': ordered_quantity
             }
             order_details.append(order_detail)
         return order_details
@@ -518,7 +521,8 @@ def сreate_supply(request):
                             quantity=value['quantity'],
                             good=good,
                             supplier=supplier,
-                            purchase_price=value['purchase_price']
+                            purchase_price=value['purchase_price'],
+                            order=order
                         )
                         supply_item.save()
                 staff_cart.clear()
