@@ -76,6 +76,15 @@ class StaffCart:
         del self.cart[str(good_id)][str(supplier_id)]
         self.save()
 
+    def remove_good(self, good_id):
+        """
+        Удаляет товар из корзины.
+        :param good_id: id товара(тип - int)
+        :return: none
+        """
+        del self.cart[str(good_id)]
+        self.save()
+
     def __iter__(self):
         """Перебирает элементы в корзине и получает продукты из базы данных"""
         good_ids = self.cart.keys()
