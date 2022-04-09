@@ -141,6 +141,12 @@ class SupplyItems(models.Model):
         verbose_name='статус',
         default='заказана'
     )
+    order = models.ForeignKey(
+        'Order',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='номер заказа'
+    )
 
     class Meta:
         verbose_name = 'Позицию поставки'
