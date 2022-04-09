@@ -17,6 +17,7 @@
                 <th>Зарезервировано {{ good.unit }}</th>
                 <th>Дозаказать</th>
                 <th>Свободный остаток на складе</th>
+                <th>Заказано</th>
             {% endif %}
         </tr>
     </thead>
@@ -31,6 +32,7 @@
                 <th>{{ good.reserve }}</th>
                 <th>{{ good.for_order }}</th>
                 <th>{{ good.storage_quantity }}</th>
+                <th>{{ good.ordered_quantity }}</th>
             {% endif %}
         </tr>
         {% endfor %}
