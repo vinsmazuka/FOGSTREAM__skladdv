@@ -500,7 +500,7 @@ def сreate_supply(request):
             staff_cart.remove(int(good_id), int(supplier_id))
         else:
             if len(set(order_ids)) > 1:
-                message = 'все позиции в корзине должны относиться к 1 заказу, ' \
+                message = 'все позиции в корзине должны относиться к одному заказу, ' \
                           'исправьте номера заказов'
             else:
                 order_id = list(set(order_ids))[0]
