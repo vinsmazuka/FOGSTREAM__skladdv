@@ -29,6 +29,7 @@ class SupplyAdmin(admin.ModelAdmin):
                     'total_positions',
                     'total_purchase_price',
                     'time_create',
+                    'order',
                     'status'
                     ]
     search_fields = ['id']
@@ -40,7 +41,6 @@ class SupplyItemsAdmin(admin.ModelAdmin):
                     'quantity',
                     'supply',
                     'supplier',
-                    'order',
                     'purchase_price',
                     'status'
                     ]
