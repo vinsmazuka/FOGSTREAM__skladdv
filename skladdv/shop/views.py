@@ -523,7 +523,8 @@ def сreate_supply(request):
                             good=good,
                             supplier=supplier,
                             purchase_price=value['purchase_price'],
-                            order=order
+                            order=order,
+                            total_purchase_price=value['total_price']
                         )
                         supply_item.save()
                 staff_cart.clear()
