@@ -1,0 +1,40 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Поставка{% endblock %}
+
+{% block content %}
+
+<h1> Поставка № {{ supply_id }}: </h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Закупочная цена</th>
+            <th>Поставщик</th>
+            <th>№ заказа</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for supply in supply_items %}
+            <tr>
+                <td>{{ supply.good }}</td>
+                <td>{{ supply.quantity }}</td>
+                <td>{{ supply.purchase_price }}</td>
+                <td>{{ supply.supplier }} </td>
+                <td>{{ supply.order }} </td>
+                <td>{{ supply.status }} </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.status }}
+    <button type="submit" > Изменить статус поставки </button>
+</form>
+
+{% endblock %}
