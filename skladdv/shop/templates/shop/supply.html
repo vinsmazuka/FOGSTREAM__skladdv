@@ -16,6 +16,7 @@
             <th>Поставщик</th>
             <th>№ заказа</th>
             <th>Статус</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -28,15 +29,11 @@
                 <td>{{ supply.supplier }} </td>
                 <td>{{ supply.order }} </td>
                 <td>{{ supply.status }} </td>
+                <td><form method="LINK" action="/supplies/closesupplyitem/{{ supply.id }}/"> <input type="submit" value="Поступила на склад"> </form></td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form.status }}
-    <button type="submit" > Изменить статус поставки </button>
-</form>
 
 {% endblock %}
