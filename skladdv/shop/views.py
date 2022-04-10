@@ -195,7 +195,8 @@ def order_detail(request, order_id):
             else:
                 reserve_quantity = reserve.quantity if reserve.is_actual else 0
             good = Good.objects.get(pk=item.good_id)
-            supplies = good.supplyitems_set.filter(order_id=order_id)
+            supplies = good.supplyitems_set.filter(
+                order_id=order_id).exclude(status='поступила на склад')
             ordered_quantity = sum(supply.quantity for supply in supplies)
             storage_quantity = good.storage_quantity
             for_order = item.position_quantity - reserve_quantity - storage_quantity
@@ -533,6 +534,20 @@ def сreate_supply(request):
     }
 
     return render(request, 'shop/create_supply_result.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def show_supplies(request):
+    """показывает все поставки"""
+    supplies = Supply.objects.all()
+
+    context = {
+        'supplies': supplies
+    }
+
+    return render(request, 'shop/supplies.html', context)
+
 
 
 
