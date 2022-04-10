@@ -103,7 +103,8 @@ class Supply(models.Model):
 class SupplyItems(models.Model):
     """Представляет позиции поставки"""
     STATUS_list = (
-        ('заказана', 'заказана'),
+        ('создана', 'создана'),
+        ('отменена', 'отменена'),
         ('поступила', 'поступила на склад')
     )
     supply = models.ForeignKey(
