@@ -409,9 +409,25 @@ def nomenclature_good_detail(request, good_id):
                                 context['messages'].append('Данный заказ не актуальный, '
                                                            'введите номер актуального заказа')
                             else:
-                                cart.add(good=good, supplier=supplier, quantity=quantity, order=order)
-                                context['messages'].append('позиция добавлена в Поставку')
-
+                                reserve_quantity = 0
+                                reserves = order.reserve_set.filter(good_id=good)
+                                for reserve in reserves:
+                                    if reserve.is_actual:
+                                        reserve_quantity += reserve.quantity
+                                order_item = order.orderitems_set.get(good_id=good.id)
+                                supply_items = order.supplyitems_set.filter(good_id=good.id)
+                                ordered_quantity = 0
+                                for supply_item in supply_items:
+                                    if supply_item.status == 'заказана':
+                                        ordered_quantity += supply_item.quantity
+                                limit_for_order = order_item.position_quantity\
+                                                     - reserve_quantity - ordered_quantity
+                                if quantity > limit_for_order:
+                                    context['messages'].append('Вы пытаетесь заказать больше, '
+                                                               'чем нужно для данного заказа')
+                                else:
+                                    cart.add(good=good, supplier=supplier, quantity=quantity, order=order)
+                                    context['messages'].append('позиция добавлена в Поставку')
                     else:
                         cart.add(good=good, supplier=supplier, quantity=quantity, order='')
                         context['messages'].append('позиция добавлена в Поставку')
