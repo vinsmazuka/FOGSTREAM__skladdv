@@ -1,7 +1,7 @@
 from mptt.models import MPTTModel, TreeForeignKey
 
 from django.contrib.auth.models import User
-
+from django.db.models import Sum
 from django.db import models
 
 
@@ -191,7 +191,7 @@ class Good(models.Model):
         decimal_places=2,
         verbose_name='цена')
     storage_quantity = models.PositiveIntegerField(
-        verbose_name='кол-во на складе',
+        verbose_name='свободное кол-во на складе',
         null=True
     )
     unit = models.CharField(
@@ -228,6 +228,22 @@ class Good(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_reserve_quantity(self):
+        """возвращает кол-во данного товара, находящегося в резерве"""
+        reserves = self.reserve_set.all()
+        reserve_quantity = self.reserve_set.filter(is_actual=True).aggregate(
+            Sum('quantity'))['quantity__sum']
+        return 0 if not reserve_quantity else reserve_quantity
+
+    def get_total_quantity(self):
+        """возвращает общее кол-во данного товара
+        на склада(свободный остаток+резерв)"""
+        reserves = self.reserve_set.all()
+        reserve_quantity = reserves.filter(is_actual=True).aggregate(
+            Sum('quantity'))['quantity__sum']
+        return self.storage_quantity if not reserve_quantity else\
+            reserve_quantity + self.storage_quantity
 
 
 class PurchasePrice(models.Model):
