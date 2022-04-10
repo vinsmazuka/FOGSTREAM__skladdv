@@ -561,6 +561,13 @@ def show_supply_detail(request, supply_id):
     """
     supply = Supply.objects.get(pk=supply_id)
     supply_items = supply.supplyitems_set.all()
+    undelivered_positions = 0
+    for supply_item in supply_items:
+        if supply_item.status == 'заказана':
+            undelivered_positions += 1
+    if not undelivered_positions:
+        supply.status = 'поступила на склад'
+        supply.save()
 
     context = {
         'supply_items': supply_items,
