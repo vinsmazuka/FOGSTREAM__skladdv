@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.db.models import Sum
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
@@ -189,11 +190,13 @@ def order_detail(request, order_id):
         order_details = []
         for item in order_items:
             try:
-                reserve = Reserve.objects.get(order_item_id=item.id)
+                reserves = Reserve.objects.filter(
+                    order_item_id=item.id).filter(is_actual=True)
             except Reserve.DoesNotExist:
                 reserve_quantity = 0
             else:
-                reserve_quantity = reserve.quantity if reserve.is_actual else 0
+                reserve_quantity = reserves.aggregate(Sum('quantity'))['quantity__sum']
+                reserve_quantity = reserve_quantity if reserve_quantity else 0
             good = Good.objects.get(pk=item.good_id)
             supplies = good.supplyitems_set.filter(
                 order_id=order_id).exclude(status='поступила на склад')
@@ -210,7 +213,6 @@ def order_detail(request, order_id):
                 'unit': Good.objects.get(pk=item.good_id).unit,
                 'reserve': reserve_quantity,
                 'for_order': for_order_quantity,
-                'reserve_id': reserve.id if reserve_quantity else 0,
                 'storage_quantity': storage_quantity,
                 'ordered_quantity': ordered_quantity
             }
@@ -553,7 +555,10 @@ def show_supplies(request):
 @user_is_authenticated
 @staff_only
 def show_supply_detail(request, supply_id):
-    """показывает позиции поставки"""
+    """
+    показывает позиции поставки
+    :param supply_id: id поставки(тип - int)
+    """
     supply = Supply.objects.get(pk=supply_id)
     supply_items = supply.supplyitems_set.all()
 
@@ -563,6 +568,51 @@ def show_supply_detail(request, supply_id):
     }
 
     return render(request, 'shop/supply.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def close_supply_item(request, supply_item_id):
+    """
+    :param supply_item_id: id позиции в поставке товара(тип - int)
+    """
+    supply_item = SupplyItems.objects.get(pk=supply_item_id)
+
+    def change_status():
+        """изменяет статус позиции в поставке на 'поступила на склад',
+         добавляет поступивший товар в резерв под заказ, если поставка
+         создавалась под определенный заказ"""
+        supply_item.status = 'поступила на склад'
+        supply_item.save()
+        good = Good.objects.get(pk=supply_item.good_id)
+        if supply_item.order_id:
+            order = Order.objects.get(pk=supply_item.order_id)
+            order_item = order.orderitems_set.get(good_id=supply_item.good_id)
+            reserve = Reserve(
+                order=order,
+                good=good,
+                quantity=supply_item.quantity,
+                order_item=order_item
+            )
+            reserve.save()
+        else:
+            good.storage_quantity += supply_item.quantity
+            good.save()
+
+    def do_nothing():
+        """не изменяет статус позиции"""
+        pass
+
+    supply_item_statuses = {
+        'поступила на склад': do_nothing,
+        'заказана': change_status
+    }
+
+    supply_item_statuses[supply_item.status]()
+
+    return redirect(f'/supplies/{supply_item.supply_id}/')
+
+
 
 
 
