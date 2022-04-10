@@ -559,7 +559,7 @@ def сreate_supply(request):
 @staff_only
 def show_supplies(request):
     """показывает все поставки"""
-    supplies = Supply.objects.all()
+    supplies = Supply.objects.all().order_by('id')
 
     context = {
         'supplies': supplies
@@ -578,10 +578,16 @@ def show_supply_detail(request, supply_id):
     supply = Supply.objects.get(pk=supply_id)
     supply_items = supply.supplyitems_set.all()
     undelivered_positions = 0
+    delivered_positions = 0
     for supply_item in supply_items:
         if supply_item.status == 'заказана':
             undelivered_positions += 1
-    if not undelivered_positions:
+        if supply_item.status == 'поступила на склад':
+            delivered_positions += 1
+    if not undelivered_positions and not delivered_positions:
+        supply.status = 'отменена'
+        supply.save()
+    elif not undelivered_positions:
         supply.status = 'поступила на склад'
         supply.save()
 
@@ -628,12 +634,40 @@ def close_supply_item(request, supply_item_id):
 
     supply_item_statuses = {
         'поступила на склад': do_nothing,
-        'заказана': change_status
+        'заказана': change_status,
+        'отменена': do_nothing
     }
 
     supply_item_statuses[supply_item.status]()
 
     return redirect(f'/supplies/{supply_item.supply_id}/')
+
+
+@user_is_authenticated
+@staff_only
+def cancel_supply_item(request, supply_item_id):
+
+    supply_item = SupplyItems.objects.get(pk=supply_item_id)
+
+    def change_status():
+        """изменяет статус позиции в поставке на 'отменена'"""
+        supply_item.status = 'отменена'
+        supply_item.save()
+
+    def do_nothing():
+        """не изменяет статус позиции"""
+        pass
+
+    supply_item_statuses = {
+        'поступила на склад': do_nothing,
+        'заказана': change_status,
+        'отменена': do_nothing
+    }
+
+    supply_item_statuses[supply_item.status]()
+
+    return redirect(f'/supplies/{supply_item.supply_id}/')
+
 
 
 
