@@ -17,6 +17,7 @@
             <th>№ заказа</th>
             <th>Статус</th>
             <th>Изменить статус</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -29,7 +30,8 @@
                 <td>{{ supply.supplier }} </td>
                 <td>{{ supply.order }} </td>
                 <td>{{ supply.status }} </td>
-                <td><form method="LINK" action="/supplies/closesupplyitem/{{ supply.id }}/"> <input type="submit" value="Поступила на склад"> </form></td>
+                <td><form method="LINK" action="/supplies/closesupplyitem/{{ supply.id }}/"> <input type="submit" value="поступила на склад"> </form></td>
+                <td><form method="LINK" action="/supplies/cancelsupplyitem/{{ supply.id }}/"> <input type="submit" value="отменить"> </form></td>
             </tr>
         {% endfor %}
     </tbody>
