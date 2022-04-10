@@ -81,7 +81,7 @@ class Supply(models.Model):
     )
     total_purchase_price = models.DecimalField(
         null=False,
-        max_digits=7,
+        max_digits=15,
         decimal_places=2,
         verbose_name='сумма поставки'
     )
@@ -133,6 +133,12 @@ class SupplyItems(models.Model):
         max_digits=7,
         decimal_places=2,
         verbose_name='цена закупа'
+    )
+    total_purchase_price = models.DecimalField(
+        null=False,
+        max_digits=15,
+        decimal_places=2,
+        verbose_name='сумма поставки'
     )
     status = models.CharField(
         max_length=20,
@@ -331,7 +337,7 @@ class Order(models.Model):
     )
     total_coast = models.DecimalField(
         null=False,
-        max_digits=7,
+        max_digits=15,
         decimal_places=2,
         verbose_name='Сумма заказа'
     )
@@ -370,7 +376,7 @@ class OrderItems(models.Model):
     )
     position_price = models.DecimalField(
         null=False,
-        max_digits=7,
+        max_digits=15,
         decimal_places=2,
         verbose_name='Сумма по позиции'
     )
