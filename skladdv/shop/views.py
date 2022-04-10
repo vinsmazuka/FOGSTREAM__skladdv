@@ -549,6 +549,21 @@ def show_supplies(request):
     return render(request, 'shop/supplies.html', context)
 
 
+@user_is_authenticated
+@staff_only
+def show_supply_detail(request, supply_id):
+    """показывает позиции поставки"""
+    supply = Supply.objects.get(pk=supply_id)
+    supply_items = supply.supplyitems_set.all()
+
+    context = {
+        'supply_items': supply_items,
+        'supply_id': supply_id
+    }
+
+    return render(request, 'shop/supply.html', context)
+
+
 
 
 
