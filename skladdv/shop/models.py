@@ -155,6 +155,11 @@ class SupplyItems(models.Model):
         verbose_name='номер заказа'
     )
 
+    def is_actual(self):
+        """Возвращает True если позиция поставки
+        актуальная и False - если нет"""
+        return True if self.status == 'заказана' else False
+
     class Meta:
         verbose_name = 'Позицию поставки'
         verbose_name_plural = 'Позиции поставок'
