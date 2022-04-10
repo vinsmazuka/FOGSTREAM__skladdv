@@ -423,7 +423,7 @@ class Reserve(models.Model):
         verbose_name='время создания'
     )
 
-    order_item = models.OneToOneField(
+    order_item = models.ForeignKey(
         'OrderItems',
         null=False,
         on_delete=models.PROTECT,
