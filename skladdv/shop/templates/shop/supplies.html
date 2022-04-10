@@ -1,0 +1,36 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Поставки{% endblock %}
+
+{% block content %}
+
+<h1> Поставки: </h1>
+
+{% if supplies %}
+    <table>
+    <thead>
+        <tr>
+            <th>номер поставки</th>
+            <th>кол-во позиций</th>
+            <th>общая стоимость</th>
+            <th>дата создания</th>
+            <th>номер заказа</th>
+            <th>статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for supply in supplies %}
+            <tr>
+                <td><a href="/supplies/{{ supply.id }}/"> {{ supply.id }}</a></td>
+                <td>{{ supply.total_positions }}</td>
+                <td>{{ supply.total_purchase_price }}</td>
+                <td>{{ supply.time_create }}</td>
+                <td>{{ supply.order }}</td>
+                <td>{{ supply.status }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+
+{% endif %}
+{% endblock %}
