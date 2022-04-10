@@ -5,11 +5,30 @@
 {% block content %}
 
 {% if goods %}
-    {% for good in goods %}
-        {% if good.available_for_order %}
-            <li> <a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></li>
-        {% endif %}
-    {% endfor %}
+    <ul>
+        <table>
+            <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Количество на складе</th>
+                <th>Количество в резерве</th>
+                <th>Итого</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for good in goods %}
+                    {% if good.available_for_order %}
+                        <tr>
+                            <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
+                            <td>{{ good.storage_quantity }} {{ good.unit }}</td>
+                            <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
+                            <td> {{ good.get_total_quantity }} {{ good.unit }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </ul>
 {% endif %}
 
 {% endblock %}
