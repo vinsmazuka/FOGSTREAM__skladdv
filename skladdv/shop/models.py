@@ -99,6 +99,10 @@ class Supply(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_order_id(self):
+        """возвращает номер заказа"""
+        return self.order_id if self.order_id else ''
+
 
 class SupplyItems(models.Model):
     """Представляет позиции поставки"""
@@ -179,6 +183,10 @@ class SupplyItems(models.Model):
         pp_object = purchase_prices.get(supplier=supplier.id)
         purchase_price = pp_object.purchase_price
         return purchase_price
+
+    def get_order_id(self):
+        """возвращает номер заказа"""
+        return self.order_id if self.order_id else ''
 
 
 class Good(models.Model):
