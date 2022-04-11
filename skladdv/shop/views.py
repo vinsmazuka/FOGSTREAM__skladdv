@@ -267,7 +267,7 @@ def order_detail(request, order_id):
                     email_address = customer.email
                     data = f'http://127.0.0.1:8000/orders/{order_id}/'
                     img = qrcode.make(data)
-                    file = f'qrcode_order{order_id}.png'
+                    file = f'qrcodes/qrcode_order{order_id}.png'
                     img.save(file)
                     with open(file, 'rb') as f:
                         data = MIMEImage(f.read(), "png")
