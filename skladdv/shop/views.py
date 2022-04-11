@@ -1,5 +1,9 @@
+import qrcode
 from decimal import Decimal
+from email.mime.image import MIMEImage
+from smtplib import SMTPDataError
 
+from django.core.mail import EmailMessage
 from django.db.models import Sum
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
@@ -258,6 +262,25 @@ def order_detail(request, order_id):
                                             + reserve.quantity
                                     )
                             good.save()
+                if status == 'собран':
+                    customer = User.objects.get(pk=order.user_id)
+                    email_address = customer.email
+                    data = f'http://127.0.0.1:8000/orders/{order_id}/'
+                    img = qrcode.make(data)
+                    file = f'qrcode_order{order_id}.png'
+                    img.save(file)
+                    with open(file, 'rb') as f:
+                        data = MIMEImage(f.read(), "png")
+                    email = EmailMessage(
+                        subject=f'qr-код к заказу № {order_id}',
+                        body='Ваш заказ собран, во вложении qr-код для получения заказа',
+                        to=[email_address]
+                    )
+                    email.attach(data)
+                    try:
+                        email.send()
+                    except SMTPDataError:
+                        pass
             context['message'] = f'статус заказа изменен на "{status}"'
             context['form'] = OrderChangeStatus()
             context['order_is_ready'] = True if order.status == 'собран' else False
