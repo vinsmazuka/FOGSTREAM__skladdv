@@ -28,7 +28,7 @@
                 <td>{{ supply.purchase_price }}</td>
                 <td>{{ supply.total_purchase_price }}</td>
                 <td>{{ supply.supplier }} </td>
-                <td>{{ supply.order }} </td>
+                <td>{{ supply.get_order_id }} </td>
                 <td>{{ supply.status }} </td>
                 {% if supply.is_actual %}
                 <td><form method="LINK" action="/supplies/closesupplyitem/{{ supply.id }}/"> <input type="submit" value="поступила на склад"> </form></td>
