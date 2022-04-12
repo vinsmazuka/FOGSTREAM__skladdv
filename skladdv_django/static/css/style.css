@@ -1252,7 +1252,7 @@ header nav:hover {
 	border-left: none;
 }
 
-.nomenclature td, th {
+.nomenclature td, .nomenclature th {
 	border: 1px solid black;
 	width: 25%;
 }
