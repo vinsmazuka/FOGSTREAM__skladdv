@@ -1,0 +1,75 @@
+{% extends "shop/base.html" %}
+{% load mptt_tags %}
+{% load static %}
+
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+
+{% if categories %}
+    <div class="container">
+        <div class="row search-catalog">
+            <div class="catalog__menubtn" onclick="openMenuCategories();">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <form>
+                <input type="text" placeholder="Введите название товара..." name="name">
+                <button type="submit">&gt;</button>
+            </form>
+        </div>
+
+        <div class="menu__categories">
+            <div class="menu__el">
+                {% recursetree categories %}
+                <div class="menu__category" onclick="openSubcategory('{{ node.id }}');">{{ node.name }}</div>
+                {% endrecursetree %}
+            </div>
+
+            <div class="subcategories">
+                {% recursetree categories %}
+                <div id="{{ node.id }}" class="subcategory">
+                    {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                    {% else %}
+                        {% for good in node.get_goods %}
+                            {% if good.available_for_order %}
+                                <a href="/catalog/{{ good.id }}/"><div class="menu__category">{{ good.title }}</div></a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% endrecursetree %}
+            </div>
+
+            <div class="closebtn" onclick="closeMenuCategories();">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="row catalog">
+            {% for good in goods %}
+            <div class="catalog__card">
+                <img src="{{ good.photo.url }}">
+                <h1>{{ good.price }} Руб.</h1>
+                <h2>{{ good.title }}</h2>
+                <a href="">Смотреть</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% else %}
+
+<p>Нет товаров для отображения</p>
+
+{% endif %}
+
+
+
+{% endblock %}

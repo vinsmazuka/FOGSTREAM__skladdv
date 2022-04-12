@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{% static 'img/logo.png' %}" alt="NotFound">
+        </div>
+        <div>
+            <nav><a href="/">Главная</a></nav>
+            <nav><a href="/catalog/">Каталог</a></nav>
+            <nav><a href="/catalog/cart/">Корзина</a></nav>
+            <nav><a href="/cabinet/">Личный кабинет</a></nav>
+        </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        ©2022 Пиголицын Максим и Ивлев Артем
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

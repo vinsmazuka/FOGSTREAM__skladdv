@@ -1,0 +1,34 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Товары из категории{% endblock %}
+
+{% block content %}
+
+{% if goods %}
+    <ul>
+        <table>
+            <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Количество на складе</th>
+                <th>Количество в резерве</th>
+                <th>Итого</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for good in goods %}
+                    {% if good.available_for_order %}
+                        <tr>
+                            <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
+                            <td>{{ good.storage_quantity }} {{ good.unit }}</td>
+                            <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
+                            <td> {{ good.get_total_quantity }} {{ good.unit }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </ul>
+{% endif %}
+
+{% endblock %}

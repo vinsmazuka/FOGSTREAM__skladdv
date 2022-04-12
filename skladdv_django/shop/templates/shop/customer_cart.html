@@ -1,0 +1,40 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row cart">
+
+        {% if user.is_authenticated %}
+
+        {% if cart %}
+
+        {% for good in cart %}
+            <div> {{ good.title }} {{ good.price }} {{ good.quantity }} {{ good.artikul }} {{ good.total_price }}
+                <form method="LINK" action="/delete/{{ good.id }}"> <input type="submit" value="удалить"> </form>
+            </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+        <div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
+        <div> Общая сумма заказа: {{ total_cost }} руб.</div>
+
+        {% if cart %}
+
+        <form method="LINK" action="/delete"> <input type="submit" value="очистить корзину"> </form>
+        <form method="LINK" action="/makeorder/"> <input type="submit" value="сделать заказ"> </form>
+
+        {% endif %}
+
+        {% else %}
+
+        <i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

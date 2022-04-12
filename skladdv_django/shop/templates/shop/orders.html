@@ -1,0 +1,41 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Заказы пользователей{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row orders">
+
+<h1> Заказы пользователей </h1>
+
+{% if orders %}
+
+<table>
+    <thead>
+        <tr>
+            <th>номер заказа</th>
+            <th>кол-во позиций</th>
+            <th>общая стоимость</th>
+            <th>дата создания</th>
+            <th>статус</th>
+            <th>заказчик</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td><a href="/order/{{ order.id }}/"> {{ order.id }}</a></td>
+            <td>{{ order.positions }}</td>
+            <td>{{ order.total_coast }}</td>
+            <td>{{ order.time_create }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.user }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+    </div>
+</div>
+{% endblock %}

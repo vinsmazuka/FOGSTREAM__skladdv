@@ -1,0 +1,33 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Карточка товара{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+
+<h1> {{ good }} </h1>
+<div> Артикул: {{ good.artikul }} </div>
+<div> Цена: {{ good.price }} руб. за 1 {{ good.unit }} </div>
+<img src="{{ good.photo.url }}" style="width: 200px; height: auto;">
+
+{% if user.is_authenticated %}
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.quantity }}
+    <button type="submit" > Добавить в заказ </button>
+</form>
+
+{% else %}
+
+<i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
+
+{% endif %}
+
+<i>{{ message }}</i><br>
+    </div>
+</div>
+
+
+{% endblock %}
