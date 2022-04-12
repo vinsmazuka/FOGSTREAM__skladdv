@@ -289,7 +289,7 @@ def order_detail(request, order_id):
             order.status = new_status
             order.save()
             try:
-                reserves = order.reserve_set.all()
+                order.reserve_set.all()
             except Reserve.DoesNotExist:
                 pass
             else:
@@ -457,20 +457,24 @@ def nomenclature_good_detail(request, good_id):
                                 for reserve in reserves:
                                     if reserve.is_actual:
                                         reserve_quantity += reserve.quantity
-                                order_item = order.orderitems_set.get(good_id=good.id)
-                                supply_items = order.supplyitems_set.filter(good_id=good.id)
-                                ordered_quantity = 0
-                                for supply_item in supply_items:
-                                    if supply_item.status == 'заказана':
-                                        ordered_quantity += supply_item.quantity
-                                limit_for_order = order_item.position_quantity\
-                                                     - reserve_quantity - ordered_quantity
-                                if quantity > limit_for_order:
-                                    context['messages'].append('Вы пытаетесь заказать больше, '
-                                                               'чем нужно для данного заказа')
+                                try:
+                                    order_item = order.orderitems_set.get(good_id=good.id)
+                                except OrderItems.DoesNotExist:
+                                    context['messages'].append('Данного товара нет в заказе')
                                 else:
-                                    cart.add(good=good, supplier=supplier, quantity=quantity, order=order)
-                                    context['messages'].append('позиция добавлена в Поставку')
+                                    supply_items = order.supplyitems_set.filter(good_id=good.id)
+                                    ordered_quantity = 0
+                                    for supply_item in supply_items:
+                                        if supply_item.status == 'заказана':
+                                            ordered_quantity += supply_item.quantity
+                                    limit_for_order = order_item.position_quantity\
+                                                         - reserve_quantity - ordered_quantity
+                                    if quantity > limit_for_order:
+                                        context['messages'].append('Вы пытаетесь заказать больше, '
+                                                                   'чем нужно для данного заказа')
+                                    else:
+                                        cart.add(good=good, supplier=supplier, quantity=quantity, order=order)
+                                        context['messages'].append('позиция добавлена в Поставку')
                     else:
                         cart.add(good=good, supplier=supplier, quantity=quantity, order='')
                         context['messages'].append('позиция добавлена в Поставку')
@@ -655,18 +659,19 @@ def close_supply_item(request, supply_item_id):
          добавляет поступивший товар в резерв под заказ, если поставка
          создавалась под определенный заказ"""
         supply_item.status = 'поступила на склад'
-        supply_item.save()
         good = Good.objects.get(pk=supply_item.good_id)
         if supply_item.order_id:
             order = Order.objects.get(pk=supply_item.order_id)
-            order_item = order.orderitems_set.get(good_id=supply_item.good_id)
-            reserve = Reserve(
-                order=order,
-                good=good,
-                quantity=supply_item.quantity,
-                order_item=order_item
-            )
-            reserve.save()
+            if order.status != 'отменен' and order.status != 'исполнен':
+                supply_item.save()
+                order_item = order.orderitems_set.get(good_id=supply_item.good_id)
+                reserve = Reserve(
+                    order=order,
+                    good=good,
+                    quantity=supply_item.quantity,
+                    order_item=order_item
+                )
+                reserve.save()
         else:
             good.storage_quantity += supply_item.quantity
             good.save()
@@ -675,13 +680,13 @@ def close_supply_item(request, supply_item_id):
         """не изменяет статус позиции"""
         pass
 
-    supply_item_statuses = {
+    supply_item_current_status = {
         'поступила на склад': do_nothing,
         'заказана': change_status,
         'отменена': do_nothing
     }
 
-    supply_item_statuses[supply_item.status]()
+    supply_item_current_status[supply_item.status]()
 
     return redirect(f'/supplies/{supply_item.supply_id}/')
 
