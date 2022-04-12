@@ -1186,6 +1186,13 @@ header nav:hover {
 	outline: none;
 }
 
+.good_detail select {
+	border-radius: 5px;
+	padding: 9px;
+	border: 1px solid black;
+	outline: none;
+}
+
 .good_detail button {
 	padding: 11px 15px;
 	font-weight: 700;
@@ -1271,6 +1278,40 @@ header nav:hover {
 
 .nomenclature table th:last-child {
 	border-right: none;
+}
+
+/* nomenclature_cat_detail */
+
+.nomenclature_cat_detail th,
+.nomenclature_cat_detail tr,
+.nomenclature_cat_detail td {
+	border: 1px solid black;
+}
+
+/* nomenclature_good_detail */
+
+.nomenclature_good_detail {
+	border-collapse: collapse;
+}
+
+.nomenclature_good_detail tr,
+.nomenclature_good_detail th,
+.nomenclature_good_detail td {
+	border: 1px solid black;
+}
+
+.nomenclature_good_detail__form form {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.nomenclature_good_detail__form input,
+.nomenclature_good_detail__form select,
+.nomenclature_good_detail__form button {
+	width: 30%;
+	box-sizing: border-box;
 }
 
 /* FOOTER */
