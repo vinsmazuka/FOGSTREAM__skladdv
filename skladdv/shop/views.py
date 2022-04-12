@@ -186,6 +186,10 @@ def cabinet(request):
 @user_is_authenticated
 def order_detail(request, order_id):
     """показывает страницу заказа"""
+
+    order = Order.objects.get(pk=order_id)
+    order_current_status = order.status
+
     def load_info():
         """
         подгружает актуальную информацию о заказе
@@ -203,10 +207,13 @@ def order_detail(request, order_id):
                 reserve_quantity = reserve_quantity if reserve_quantity else 0
             good = Good.objects.get(pk=item.good_id)
             supplies = good.supplyitems_set.filter(
-                order_id=order_id).exclude(status='поступила на склад')
+                order_id=order_id).exclude(
+                status='поступила на склад').exclude(
+                status='отменена')
             ordered_quantity = sum(supply.quantity for supply in supplies)
             storage_quantity = good.storage_quantity
-            for_order = item.position_quantity - reserve_quantity - storage_quantity
+            for_order = (item.position_quantity - reserve_quantity
+                         - storage_quantity - ordered_quantity)
             for_order_quantity = for_order if for_order > 0 else 0
             order_detail = {
                 'id': item.good_id,
@@ -223,75 +230,87 @@ def order_detail(request, order_id):
             order_details.append(order_detail)
         return order_details
 
-    context = {
-        'order_id': order_id,
-        'user_is_staff': request.user.groups.filter(name='Персонал').exists(),
-        'user_is_customer': request.user.groups.filter(name='Покупатели').exists()
-    }
-
     def post_response():
         """формирует ответ в случае поступления POST-запроса"""
+        def send_mail():
+            """отправляет письмо о готовности заказа на электронную
+            почту покупателя"""
+            customer = User.objects.get(pk=order.user_id)
+            email_address = customer.email
+            data = f'http://127.0.0.1:8000/orders/{order_id}/'
+            img = qrcode.make(data)
+            file = f'qrcodes/qrcode_order{order_id}.png'
+            img.save(file)
+            with open(file, 'rb') as f:
+                data = MIMEImage(f.read(), "png")
+            email = EmailMessage(
+                subject=f'qr-код к заказу № {order_id}',
+                body='Ваш заказ собран, во вложении qr-код для получения заказа',
+                to=[email_address]
+            )
+            email.attach(data)
+            try:
+                email.send()
+            except SMTPDataError:
+                pass
+
+        def close_order():
+            """закрывает заказ"""
+            reserves = order.reserve_set.all()
+            for reserve in reserves:
+                good = Good.objects.get(pk=reserve.good_id)
+                order_item = OrderItems.objects.get(pk=reserve.order_item_id)
+                if reserve.is_actual:
+                    reserve.is_actual = False
+                    reserve.save()
+                    if new_status == 'исполнен':
+                        new_storage_quantity = (
+                                good.storage_quantity
+                                + reserve.quantity
+                                - order_item.position_quantity
+                        )
+                        good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
+                    else:
+                        good.storage_quantity = (
+                                good.storage_quantity
+                                + reserve.quantity
+                        )
+                good.save()
+
+        def do_nothing():
+            """
+            оставляет заказ без изменения
+            """
+            pass
+
         form = OrderChangeStatus(request.POST)
         if form.is_valid():
-            status = form.cleaned_data.get("status")
-            order = Order.objects.get(pk=order_id)
-            order.status = status
+            new_status = form.cleaned_data.get("status")
+            order.status = new_status
             order.save()
             try:
                 reserves = order.reserve_set.all()
             except Reserve.DoesNotExist:
                 pass
             else:
-                if status == 'исполнен' or status == 'отменен':
-                    for reserve in reserves:
-                            good = Good.objects.get(pk=reserve.good_id)
-                            order_item = OrderItems.objects.get(pk=reserve.order_item_id)
-                            if reserve.is_actual:
-                                reserve.is_actual = False
-                                reserve.save()
-                                if status == 'исполнен':
-                                    new_storage_quantity = (
-                                            good.storage_quantity
-                                            + reserve.quantity
-                                            - order_item.position_quantity
-                                    )
-                                    good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
-                                else:
-                                    good.storage_quantity = (
-                                            good.storage_quantity
-                                            + reserve.quantity
-                                    )
-                            good.save()
-                if status == 'собран':
-                    customer = User.objects.get(pk=order.user_id)
-                    email_address = customer.email
-                    data = f'http://127.0.0.1:8000/orders/{order_id}/'
-                    img = qrcode.make(data)
-                    file = f'qrcodes/qrcode_order{order_id}.png'
-                    img.save(file)
-                    with open(file, 'rb') as f:
-                        data = MIMEImage(f.read(), "png")
-                    email = EmailMessage(
-                        subject=f'qr-код к заказу № {order_id}',
-                        body='Ваш заказ собран, во вложении qr-код для получения заказа',
-                        to=[email_address]
-                    )
-                    email.attach(data)
-                    try:
-                        email.send()
-                    except SMTPDataError:
-                        pass
-            context['message'] = f'статус заказа изменен на "{status}"'
-            context['form'] = OrderChangeStatus()
-            context['order_is_ready'] = True if order.status == 'собран' else False
-            context['order_details'] = load_info()
+                if new_status == 'исполнен' or new_status == 'отменен':
+                    close_order()
+                if new_status == 'собран':
+                    send_mail()
+            context['message'] = f'статус заказа изменен на "{new_status}"'
 
     def get_response():
         """формирует ответ в случае поступления GET-запроса"""
-        context['form'] = OrderChangeStatus()
-        order = Order.objects.get(pk=order_id)
-        context['order_details'] = load_info()
-        context['order_is_ready'] = True if order.status == 'собран' else False
+        pass
+
+    context = {
+        'order_id': order_id,
+        'user_is_staff': request.user.groups.filter(name='Персонал').exists(),
+        'user_is_customer': request.user.groups.filter(name='Покупатели').exists(),
+        'order_details': load_info(),
+        'order_is_ready': True if order.status == 'собран' else False,
+        'form': OrderChangeStatus()
+    }
 
     responses = {
         'POST': post_response,
@@ -299,6 +318,7 @@ def order_detail(request, order_id):
     }
 
     responses[request.method]()
+
     return render(request, 'shop/order.html', context)
 
 
