@@ -1151,6 +1151,54 @@ header nav:hover {
 	border-radius: 5px;
 }
 
+/* good_detail */
+
+.good_detail {
+	width: 100%;
+	min-height: 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	box-sizing: border-box;
+	padding: 20px 0;
+}
+
+.good_detail__photo {
+	width: 30%;
+}
+
+.good_detail__desc {
+	width: 65%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.good_detail__photo img {
+	width: 100%;
+	height: auto;
+}
+
+.good_detail input {
+	border-radius: 5px;
+	padding: 10px;
+	border: 1px solid black;
+	outline: none;
+}
+
+.good_detail button {
+	padding: 11px 15px;
+	font-weight: 700;
+	background: #ff5b35;
+	color: white;
+	border-radius: 5px;
+	border: none;
+}
+
+.good_detail button:hover {
+	background: #07123c;
+}
+
 /* FOOTER */
 
 footer {

@@ -5,27 +5,26 @@
 {% block content %}
 <div class="container">
     <div class="row">
-
-<h1> {{ good }} </h1>
-<div> Артикул: {{ good.artikul }} </div>
-<div> Цена: {{ good.price }} руб. за 1 {{ good.unit }} </div>
-<img src="{{ good.photo.url }}" style="width: 200px; height: auto;">
-
-{% if user.is_authenticated %}
-
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form.quantity }}
-    <button type="submit" > Добавить в заказ </button>
-</form>
-
-{% else %}
-
-<i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
-
-{% endif %}
-
-<i>{{ message }}</i><br>
+        <div class="good_detail">
+            <div class="good_detail__photo">
+                <img src="{{ good.photo.url }}">
+            </div>
+            <div class="good_detail__desc">
+                <h1>{{ good }}</h1>
+                <div>Артикул: {{ good.artikul }}</div>
+                <div>Цена: {{ good.price }} руб. за 1 {{ good.unit }}</div>
+                {% if user.is_authenticated %}
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        {{ form.quantity }}
+                        <button type="submit" >Добавить в заказ</button>
+                    </form>
+                {% else %}
+                    <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</div>
+                {% endif %}
+                <div>{{ message }}</div>
+            </div>
+        </div>
     </div>
 </div>
 
