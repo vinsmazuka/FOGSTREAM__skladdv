@@ -235,6 +235,9 @@ def order_detail(request, order_id):
         def send_mail():
             """отправляет письмо о готовности заказа на электронную
             почту покупателя"""
+            order.status = new_status
+            order.save()
+            context['message'] = f'статус заказа изменен на "{new_status}"'
             customer = User.objects.get(pk=order.user_id)
             email_address = customer.email
             data = f'http://127.0.0.1:8000/orders/{order_id}/'
@@ -257,6 +260,8 @@ def order_detail(request, order_id):
         def close_order():
             """закрывает заказ"""
             reserves = order.reserve_set.all()
+            order.status = new_status
+            order.save()
             for reserve in reserves:
                 good = Good.objects.get(pk=reserve.good_id)
                 order_item = OrderItems.objects.get(pk=reserve.order_item_id)
@@ -276,28 +281,70 @@ def order_detail(request, order_id):
                                 + reserve.quantity
                         )
                 good.save()
+                context['message'] = f'статус заказа изменен на "{new_status}"'
 
         def do_nothing():
             """
             оставляет заказ без изменения
             """
+            context['message'] = 'статус заказа не был изменен'
             pass
+
+        def only_change_status():
+            """
+            только сохраняет новый статуc заказа
+            """
+            order.status = new_status
+            order.save()
+            context['message'] = f'статус заказа изменен на "{new_status}"'
+
+        what_to_do = {
+            'создан': {
+                'создан': do_nothing,
+                'заказан': only_change_status,
+                'собран': send_mail,
+                'исполнен': do_nothing,
+                'отменен': close_order
+            },
+            'заказан': {
+                'создан': do_nothing,
+                'заказан': do_nothing,
+                'собран': send_mail,
+                'исполнен': do_nothing,
+                'отменен': close_order
+            },
+            'собран': {
+                'создан': do_nothing,
+                'заказан': do_nothing,
+                'собран': do_nothing,
+                'исполнен': close_order,
+                'отменен': close_order
+            },
+            'исполнен': {
+                'создан': do_nothing,
+                'заказан': do_nothing,
+                'собран': do_nothing,
+                'исполнен': do_nothing,
+                'отменен': do_nothing
+            },
+            'отменен': {
+                'создан': do_nothing,
+                'заказан': do_nothing,
+                'собран': do_nothing,
+                'исполнен': do_nothing,
+                'отменен': do_nothing
+            }
+        }
 
         form = OrderChangeStatus(request.POST)
         if form.is_valid():
             new_status = form.cleaned_data.get("status")
-            order.status = new_status
-            order.save()
             try:
                 order.reserve_set.all()
             except Reserve.DoesNotExist:
                 pass
             else:
-                if new_status == 'исполнен' or new_status == 'отменен':
-                    close_order()
-                if new_status == 'собран':
-                    send_mail()
-            context['message'] = f'статус заказа изменен на "{new_status}"'
+                what_to_do[order_current_status][new_status]()
 
     def get_response():
         """формирует ответ в случае поступления GET-запроса"""
