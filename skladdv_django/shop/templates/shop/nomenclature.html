@@ -11,16 +11,15 @@
 
 {% if categories %}
 
-    <ul>
+    <div class="nomenclature">
         {% recursetree categories %}
-            <li>
-                <a href="/nomenclature/categorydetail/{{ node.id }}/"> {{ node.name }} </a>
+            <div class="parent">
+                <a href="/nomenclature/categorydetail/{{ node.id }}/">{{ node.name }}</a>
                 {% if not node.is_leaf_node %}
-                    <ul class="children">
+                    <div class="children">
                         {{ children }}
-                    </ul>
+                    </div>
                 {% else %}
-                    <ul>
                         <table>
                             <thead>
                                 <tr>
@@ -31,6 +30,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            {% if node.get_goods %}
                                 {% for good in node.get_goods %}
                                     {% if good.available_for_order %}
                                         <tr>
@@ -41,13 +41,20 @@
                                         </tr>
                                     {% endif %}
                                 {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td>---</td>
+                                    <td>---</td>
+                                    <td>---</td>
+                                    <td>---</td>
+                                </tr>
+                            {% endif %}
                             </tbody>
                         </table>
-                    </ul>
                 {% endif %}
-            </li>
+            </div>
         {% endrecursetree %}
-    </ul>
+    </div>
 
 {% else %}
 

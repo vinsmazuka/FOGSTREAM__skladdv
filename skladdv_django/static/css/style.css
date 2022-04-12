@@ -1199,6 +1199,80 @@ header nav:hover {
 	background: #07123c;
 }
 
+/* nomenclature */
+
+.nomenclature {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 20px 0;
+	text-align: center;
+	border-top: none;
+}
+
+.nomenclature a {
+	color: black;
+}
+
+.nomenclature a:hover {
+	text-decoration: underline;
+}
+
+.parent {
+	box-sizing: border-box;
+	padding: 10px 0 0 0;
+	width: 100%;
+	border: 1px solid black;
+	border-bottom: none;
+	border-top: none;
+}
+
+.parent:first-child {
+	border-top: 1px solid black;
+}
+
+.children {
+	background-color: #eaeaea;
+}
+
+.nomenclature .children .parent {
+	margin-top: 5px;
+	border-right: none;
+	border-left: none;
+	border-bottom: none;
+	box-sizing: border-box;
+}
+
+.nomenclature table {
+	margin-top: 5px;
+	width: 100%;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	border-collapse: collapse;
+	border-right: none;
+	border-left: none;
+}
+
+.nomenclature td, th {
+	border: 1px solid black;
+	width: 25%;
+}
+
+.nomenclature table td:first-child {
+	border-left: none;
+}
+
+.nomenclature table th:first-child {
+	border-left: none;
+}
+
+.nomenclature table td:last-child {
+	border-right: none;
+}
+
+.nomenclature table th:last-child {
+	border-right: none;
+}
+
 /* FOOTER */
 
 footer {
