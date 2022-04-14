@@ -14,6 +14,7 @@ urlpatterns = [
     path('catalog/cart/', views.show_customer_cart, name='cart'),
     path('catalog/<int:good_id>/', views.good_detail, name='good'),
     path('closeorder/<int:order_id>/', views.close_order, name='close_order'),
+    path('qrcode/<int:order_id>/', views.show_qrcode, name='qrcode'),
     path('orders/<int:order_id>/', views.order_detail, name='order'),
     path('supplies/<int:supply_id>/', views.show_supply_detail, name='supply_detail'),
     path('delete/<int:good_id>/', views.remove_good_from_cart, name='delete'),
