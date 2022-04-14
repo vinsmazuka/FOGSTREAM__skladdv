@@ -402,6 +402,19 @@ def close_order(request, order_id):
                 )
                 good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
             good.save()
+    users = User.objects.all()
+    for user in users:
+        if user.groups.filter(name='Персонал').exists():
+            email_address = user.email
+            email = EmailMessage(
+                subject=f'заказ № {order_id} исполнен',
+                body='покупатель подтвердил получение товара',
+                to=[email_address]
+            )
+            try:
+                email.send()
+            except SMTPDataError:
+                pass
     return redirect('/cabinet/')
 
 
