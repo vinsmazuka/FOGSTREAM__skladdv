@@ -5,6 +5,7 @@ from smtplib import SMTPDataError
 
 from django.core.mail import EmailMessage
 from django.db.models import Sum
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
@@ -775,6 +776,17 @@ def cancel_supply_item(request, supply_item_id):
     supply_item_statuses[supply_item.status]()
 
     return redirect(f'/supplies/{supply_item.supply_id}/')
+
+
+def show_qrcode(request, order_id):
+    """выводит qr-код заказа на новой вкладке браузера"""
+    file = f'qrcodes/qrcode_order{order_id}.png'
+    try:
+        return FileResponse(open(file, 'rb'), content_type='image/png')
+    except FileNotFoundError:
+        return HttpResponse('Файл не найден')
+
+
 
 
 
