@@ -29,19 +29,16 @@
 
             <div class="subcategories">
                 {% recursetree categories %}
-                <div id="{{ node.id }}" class="subcategory">
-                    {% if not node.is_leaf_node %}
-                    <ul class="children">
-                        {{ children }}
-                    </ul>
-                    {% else %}
-                        {% for good in node.get_goods %}
-                            {% if good.available_for_order %}
-                                <a href="/catalog/{{ good.id }}/"><div class="menu__category">{{ good.title }}</div></a>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </div>
+                    <div id="{{ node.id }}" class="subcategory">
+                        <a href="/catalog/categorydetail/{{ node.id }}/">
+                            <div class="menu__category none">
+                                {{ node.name }}
+                            </div>
+                        </a>
+                        {% if not node.is_leaf_node %}
+                                    <div class="flex_important">{{ children }}</div>
+                        {% endif %}
+                    </div>
                 {% endrecursetree %}
             </div>
 
