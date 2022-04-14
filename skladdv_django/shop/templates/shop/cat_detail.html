@@ -4,19 +4,19 @@
 
 {% block content %}
     <div class="container">
-        <div class="row">
-
-{% if goods %}
-    {% for good in goods %}
-        {% if good.available_for_order %}
-            <li> <a href="/catalog/{{ good.id }}/"> {{ good.title }}</a></li>
-        {% endif %}
-    {% endfor %}
-{% endif %}
+        <div class="row catalog padding-top-100">
+            {% if goods %}
+                {% for good in goods %}
+                    <div class="catalog__card">
+                        <img src="{{ good.photo.url }}">
+                        <h1>{{ good.price }} Руб.</h1>
+                        <h2>{{ good.title }}</h2>
+                        <a href="/catalog/{{ good.id }}/">Смотреть</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div>Товаров нет</div>
+            {% endif %}
         </div>
     </div>
-
 {% endblock %}
-
-
-
