@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1> Заказ № {{ order_id }} </h1>
+<h1> Заказ № {{ order_id }}  </h1>
 
 <table>
     <thead>
@@ -52,6 +52,8 @@
         <form method="LINK" action="/closeorder/{{ order_id }}/"> <input type="submit" value="Подтвердить получение"> </form><br>
     {% endif %}
 {% endif %}
+
+<form method="LINK" action="/qrcode/{{ order_id }}/"> <input type="submit" value="Показать qr-код"> </form><br>
 
 {% if message %}
     {{ message }}
