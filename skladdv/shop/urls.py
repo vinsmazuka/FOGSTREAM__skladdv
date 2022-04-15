@@ -18,6 +18,7 @@ urlpatterns = [
     path('orders/<int:order_id>/', views.order_detail, name='order'),
     path('supplies/<int:supply_id>/', views.show_supply_detail, name='supply_detail'),
     path('delete/<int:good_id>/', views.remove_good_from_cart, name='delete'),
+    path('reserve/<int:order_item_id>/', views.create_reserve, name='reserve'),
     path('makeorder/', views.сreate_order, name='makeorder'),
     path('createsupply/', views.сreate_supply, name='create_supply'),
     path('nomenclature/', views.nomenclature, name='nomenclature'),
