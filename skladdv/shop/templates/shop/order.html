@@ -15,9 +15,10 @@
             <th>Сумма заказа по товару</th>
             {% if user_is_staff %}
                 <th>Зарезервировано {{ good.unit }}</th>
+                <th>Заказано</th>
+                <th>Зарезервировать</th>
                 <th>Дозаказать</th>
                 <th>Свободный остаток на складе</th>
-                <th>Заказано</th>
             {% endif %}
         </tr>
     </thead>
@@ -30,9 +31,10 @@
             <td>{{ good.position_price }} руб.</td>
             {% if user_is_staff %}
                 <th>{{ good.get_reserve }}</th>
+                <th>{{ good.get_ordered_quantity }}</th>
+                <th><a href="/reserve/{{ good.id }}/"> {{ good.get_for_reserve_quantity }} </a></th>
                 <th>{{ good.get_for_order_quantity }}</th>
                 <th>{{ good.get_storage_quantity }}</th>
-                <th>{{ good.get_ordered_quantity }}</th>
             {% endif %}
         </tr>
         {% endfor %}
