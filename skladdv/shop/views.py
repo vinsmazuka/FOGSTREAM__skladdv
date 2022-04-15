@@ -756,6 +756,27 @@ def show_qrcode(request, order_id):
         return HttpResponse('Файл не найден')
 
 
+def create_reserve(request, order_item_id):
+    """резервирует свободный остаток на складе под позицию заказа"""
+    item = OrderItems.objects.get(pk=order_item_id)
+    order = Order.objects.get(pk=item.order_id)
+    good = Good.objects.get(pk=item.good_id)
+    for_reserve = item.get_for_reserve_quantity()
+    if for_reserve:
+        reserve = Reserve(
+            order=order,
+            good=good,
+            quantity=for_reserve,
+            order_item=item
+        )
+        reserve.save()
+        good.storage_quantity -= for_reserve
+        good.save()
+    return redirect(f'/orders/{order.id}/')
+
+
+
+
 
 
 
