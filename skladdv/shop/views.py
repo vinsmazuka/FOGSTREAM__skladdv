@@ -346,7 +346,14 @@ def orders(request):
     """показывает все заказы покупателей"""
     orders = Order.objects.all().order_by('id')
     filter = OrderFilter(request.GET, queryset=orders)
-    context = {'orders': filter}
+    total_count = filter.qs.aggregate(Sum('positions'))['positions__sum']
+    total_price = filter.qs.aggregate(Sum('total_coast'))['total_coast__sum']
+    context = {
+        'orders': filter,
+        'total_count': total_count,
+        'total_price': total_price,
+        'orders_count': len(filter.qs)
+    }
     return render(request, 'shop/orders.html', context)
 
 
