@@ -1,11 +1,17 @@
 import django_filters
 
-from .models import Order
+from .models import Order, Supply
 
 
 class OrderFilter(django_filters.FilterSet):
-    time_create = django_filters.DateFilter(input_formats=['%d-%m-%Y'], lookup_expr='icontains')
-    id = django_filters.NumberFilter(label='номер')
+    """предназначен для создания фильтров
+    объекта qs класса Order
+    на страницах сайта"""
+    time_create = django_filters.DateFilter(
+        input_formats=['%d-%m-%Y'],
+        lookup_expr='icontains'
+    )
+    id = django_filters.NumberFilter(label='№ заказа')
 
     class Meta:
         model = Order
@@ -15,3 +21,25 @@ class OrderFilter(django_filters.FilterSet):
             'user',
             'time_create'
         ]
+
+
+class SupplyFilter(django_filters.FilterSet):
+    """предназначен для создания фильтров
+     объекта qs класса Supply
+     на страницах сайта"""
+    time_create = django_filters.DateFilter(
+        input_formats=['%d-%m-%Y'],
+        lookup_expr='icontains'
+    )
+    id = django_filters.NumberFilter(label='№ поставки')
+    order_id = django_filters.NumberFilter()
+
+    class Meta:
+        model = Supply
+        fields = [
+            'id',
+            'status',
+            'time_create',
+            'order_id'
+        ]
+
