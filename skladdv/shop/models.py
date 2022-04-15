@@ -451,6 +451,15 @@ class OrderItems(models.Model):
         """возвращает цену, по которой покупатель заказал товар"""
         return self.position_price / self.position_quantity
 
+    def get_for_reserve_quantity(self):
+        """возвращает свободный остаток товара на складе,
+        который можно зарезервировать под позицию заказа"""
+        position_quantity = self.position_quantity
+        storage_quantity = self.get_storage_quantity()
+        for_reserve = position_quantity - self.get_reserve()
+        return for_reserve if for_reserve <= storage_quantity \
+            else storage_quantity
+
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Детализация заказов'
