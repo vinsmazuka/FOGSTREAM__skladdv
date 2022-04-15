@@ -196,40 +196,7 @@ def order_detail(request, order_id):
         подгружает актуальную информацию о заказе
         """
         order_items = OrderItems.objects.filter(order_id=order_id)
-        order_details = []
-        for item in order_items:
-            try:
-                reserves = Reserve.objects.filter(
-                    order_item_id=item.id).filter(is_actual=True)
-            except Reserve.DoesNotExist:
-                reserve_quantity = 0
-            else:
-                reserve_quantity = reserves.aggregate(Sum('quantity'))['quantity__sum']
-                reserve_quantity = reserve_quantity if reserve_quantity else 0
-            good = Good.objects.get(pk=item.good_id)
-            supplies = good.supplyitems_set.filter(
-                order_id=order_id).exclude(
-                status='поступила на склад').exclude(
-                status='отменена')
-            ordered_quantity = sum(supply.quantity for supply in supplies)
-            storage_quantity = good.storage_quantity
-            for_order = (item.position_quantity - reserve_quantity
-                         - storage_quantity - ordered_quantity)
-            for_order_quantity = for_order if for_order > 0 else 0
-            order_detail = {
-                'id': item.good_id,
-                'title': good.title,
-                'quantity': item.position_quantity,
-                'price': item.position_price / item.position_quantity,
-                'total_price': item.position_price,
-                'unit': Good.objects.get(pk=item.good_id).unit,
-                'reserve': reserve_quantity,
-                'for_order': for_order_quantity,
-                'storage_quantity': storage_quantity,
-                'ordered_quantity': ordered_quantity
-            }
-            order_details.append(order_detail)
-        return order_details
+        return order_items
 
     def post_response():
         """формирует ответ в случае поступления POST-запроса"""
@@ -352,7 +319,7 @@ def order_detail(request, order_id):
         pass
 
     context = {
-        'order_id': order_id,
+        'order_id': order.id,
         'user_is_staff': request.user.groups.filter(name='Персонал').exists(),
         'user_is_customer': request.user.groups.filter(name='Покупатели').exists(),
         'order_details': load_info(),
@@ -366,6 +333,8 @@ def order_detail(request, order_id):
     }
 
     responses[request.method]()
+
+    context['order_status'] = order.status
 
     return render(request, 'shop/order.html', context)
 
