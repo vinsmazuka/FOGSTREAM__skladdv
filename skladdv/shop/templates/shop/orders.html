@@ -8,6 +8,10 @@
 
 {% if orders %}
 
+<form method="get">
+    {{ orders.form }}
+    <input type="submit" />
+</form><br>
 <table>
     <thead>
         <tr>
@@ -21,7 +25,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for order in orders %}
+        {% for order in orders.qs %}
         <tr>
             <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
             <td>{{ order.positions }}</td>
