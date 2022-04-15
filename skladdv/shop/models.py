@@ -402,8 +402,8 @@ class OrderItems(models.Model):
     def __str__(self):
         return str(self.id)
 
-    def get_reserves(self):
-        """подгружает кол-во резервов по позиции"""
+    def get_reserve(self):
+        """подгружает кол-во зарезервированного товара для позиции"""
         try:
             reserves = Reserve.objects.filter(
                 order_item_id=self.id).filter(is_actual=True)
