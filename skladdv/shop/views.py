@@ -763,6 +763,7 @@ def cancel_supply_item(request, supply_item_id):
     return redirect(f'/supplies/{supply_item.supply_id}/')
 
 
+@user_is_authenticated
 def show_qrcode(request, order_id):
     """выводит qr-код заказа на новой вкладке браузера"""
     file = f'qrcodes/qrcode_order{order_id}.png'
@@ -772,6 +773,8 @@ def show_qrcode(request, order_id):
         return HttpResponse('Файл не найден')
 
 
+@user_is_authenticated
+@staff_only
 def create_reserve(request, order_item_id):
     """резервирует свободный остаток на складе под позицию заказа"""
     item = OrderItems.objects.get(pk=order_item_id)
