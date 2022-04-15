@@ -424,7 +424,32 @@ class OrderItems(models.Model):
         ordered_quantity = sum(supply.quantity for supply in supplies)
         return ordered_quantity
 
+    def get_for_order_quantity(self):
+        """возвращает кол-во товара, которое
+        необходимо дозаказать для позиции"""
+        for_order = (self.position_quantity - self.get_reserve()
+                     - self.get_storage_quantity() - self.get_ordered_quantity())
+        return for_order if for_order > 0 else 0
 
+    def get_storage_quantity(self):
+        """возвращает кол-во доступного на складе(не зарезервированного)
+        товара из позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        return good.storage_quantity
+
+    def get_good_title(self):
+        """возвращает название товара из позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        return good.title
+
+    def get_unit(self):
+        """возвращает ед измерения товара из позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        return good.unit
+
+    def get_price(self):
+        """возвращает цену, по которой покупатель заказал товар"""
+        return self.position_price / self.position_quantity
 
     class Meta:
         verbose_name = 'Заказ'
