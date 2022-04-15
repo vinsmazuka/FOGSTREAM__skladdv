@@ -36,7 +36,11 @@
             <td><form method="LINK" action="/qrcode/{{ order.id }}/"> <input type="submit" value="Показать qr-код"> </form></td>
         {% endfor %}
     </tbody>
-</table>
+</table><br>
+
+<b> Общее кол-во позиций: {{ total_count }} </b><br>
+<b> Общая сумма заказов: {{ total_price }} руб. </b><br>
+<b> Общее кол-во заказов: {{ orders_count }} шт. </b>
 
 {% endif %}
 {% endblock %}
