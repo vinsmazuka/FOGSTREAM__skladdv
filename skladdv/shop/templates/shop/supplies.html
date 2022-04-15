@@ -7,6 +7,12 @@
 <h1> Поставки: </h1>
 
 {% if supplies %}
+
+<form method="get">
+    {{ supplies.form }}
+    <input type="submit" />
+</form><br>
+
     <table>
     <thead>
         <tr>
@@ -19,7 +25,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for supply in supplies %}
+        {% for supply in supplies.qs %}
             <tr>
                 <td><a href="/supplies/{{ supply.id }}/"> {{ supply.id }}</a></td>
                 <td>{{ supply.total_positions }}</td>
