@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1> Заказ № {{ order_id }}  </h1>
+<h1> Заказ № {{ order_id }}({{ order_status }})  </h1>
 
 <table>
     <thead>
@@ -24,15 +24,15 @@
     <tbody>
         {% for good in order_details %}
         <tr>
-            <td>{{ good.title }}</td>
-            <td>{{ good.quantity }} {{ good.unit }}</td>
-            <td>{{ good.price }} руб.</td>
-            <td>{{ good.total_price }} руб.</td>
+            <td>{{ good.get_good_title }}</td>
+            <td>{{ good.position_quantity }} {{ good.get_unit }}</td>
+            <td>{{ good.get_price }} руб.</td>
+            <td>{{ good.position_price }} руб.</td>
             {% if user_is_staff %}
-                <th>{{ good.reserve }}</th>
-                <th>{{ good.for_order }}</th>
-                <th>{{ good.storage_quantity }}</th>
-                <th>{{ good.ordered_quantity }}</th>
+                <th>{{ good.get_reserve }}</th>
+                <th>{{ good.get_for_order_quantity }}</th>
+                <th>{{ good.get_storage_quantity }}</th>
+                <th>{{ good.get_ordered_quantity }}</th>
             {% endif %}
         </tr>
         {% endfor %}
