@@ -17,6 +17,7 @@
             <th>дата создания</th>
             <th>статус</th>
             <th>заказчик</th>
+            <th>qr-код</th>
         </tr>
     </thead>
     <tbody>
@@ -28,7 +29,8 @@
             <td>{{ order.time_create }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.user }}</td>
-        </tr>
+            <td>{{ order.user }}</td>
+            <td><form method="LINK" action="/qrcode/{{ order.id }}/"> <input type="submit" value="Показать qr-код"> </form></td>
         {% endfor %}
     </tbody>
 </table>
