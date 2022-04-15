@@ -13,7 +13,7 @@
     <input type="submit" />
 </form><br>
 
-    <table>
+<table>
     <thead>
         <tr>
             <th>номер поставки</th>
@@ -36,7 +36,11 @@
             </tr>
         {% endfor %}
     </tbody>
-    </table>
+</table><br>
+
+<b> Общее кол-во позиций: {{ total_positions }} </b><br>
+<b> Общая сумма заказов: {{ total_purchase_price }} руб. </b><br>
+<b> Общее кол-во заказов: {{ supplies_count }} шт. </b>
 
 {% endif %}
 {% endblock %}
