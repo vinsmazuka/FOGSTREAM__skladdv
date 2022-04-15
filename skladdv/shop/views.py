@@ -350,8 +350,8 @@ def orders(request):
     total_price = filter.qs.aggregate(Sum('total_coast'))['total_coast__sum']
     context = {
         'orders': filter,
-        'total_count': total_count,
-        'total_price': total_price,
+        'total_count': total_count if total_count else 0,
+        'total_price': total_price if total_price else 0,
         'orders_count': len(filter.qs)
     }
     return render(request, 'shop/orders.html', context)
