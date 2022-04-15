@@ -9,7 +9,7 @@ from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
-from .filters import OrderFilter
+from .filters import OrderFilter, SupplyFilter
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
 from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
@@ -646,9 +646,9 @@ def сreate_supply(request):
 def show_supplies(request):
     """показывает все поставки"""
     supplies = Supply.objects.all().order_by('id')
-
+    filter = SupplyFilter(request.GET, queryset=supplies)
     context = {
-        'supplies': supplies
+        'supplies': filter
     }
 
     return render(request, 'shop/supplies.html', context)
@@ -699,10 +699,10 @@ def close_supply_item(request, supply_item_id):
          создавалась под определенный заказ"""
         supply_item.status = 'поступила на склад'
         good = Good.objects.get(pk=supply_item.good_id)
+        supply_item.save()
         if supply_item.order_id:
             order = Order.objects.get(pk=supply_item.order_id)
             if order.status != 'отменен' and order.status != 'исполнен':
-                supply_item.save()
                 order_item = order.orderitems_set.get(good_id=supply_item.good_id)
                 reserve = Reserve(
                     order=order,
