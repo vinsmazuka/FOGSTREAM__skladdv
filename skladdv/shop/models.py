@@ -403,7 +403,7 @@ class OrderItems(models.Model):
         return str(self.id)
 
     def get_reserve(self):
-        """подгружает кол-во зарезервированного товара для позиции"""
+        """возвращает кол-во зарезервированного товара для позиции"""
         try:
             reserves = Reserve.objects.filter(
                 order_item_id=self.id).filter(is_actual=True)
@@ -413,6 +413,17 @@ class OrderItems(models.Model):
             reserve_quantity = reserves.aggregate(Sum('quantity'))['quantity__sum']
             reserve_quantity = reserve_quantity if reserve_quantity else 0
         return reserve_quantity
+
+    def get_ordered_quantity(self):
+        """возвращает кол-во заказанного товара для позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        supplies = good.supplyitems_set.filter(
+            order_id=self.order_id).exclude(
+            status='поступила на склад').exclude(
+            status='отменена')
+        ordered_quantity = sum(supply.quantity for supply in supplies)
+        return ordered_quantity
+
 
 
     class Meta:
