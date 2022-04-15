@@ -402,6 +402,19 @@ class OrderItems(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_reserves(self):
+        """подгружает кол-во резервов по позиции"""
+        try:
+            reserves = Reserve.objects.filter(
+                order_item_id=self.id).filter(is_actual=True)
+        except Reserve.DoesNotExist:
+            reserve_quantity = 0
+        else:
+            reserve_quantity = reserves.aggregate(Sum('quantity'))['quantity__sum']
+            reserve_quantity = reserve_quantity if reserve_quantity else 0
+        return reserve_quantity
+
+
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Детализация заказов'
