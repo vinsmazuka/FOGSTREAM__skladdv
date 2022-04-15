@@ -9,6 +9,7 @@ from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
+from .filters import OrderFilter
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
 from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
@@ -344,7 +345,8 @@ def order_detail(request, order_id):
 def orders(request):
     """показывает все заказы покупателей"""
     orders = Order.objects.all().order_by('id')
-    context = {'orders': orders}
+    filter = OrderFilter(request.GET, queryset=orders)
+    context = {'orders': filter}
     return render(request, 'shop/orders.html', context)
 
 
@@ -762,7 +764,8 @@ def create_reserve(request, order_item_id):
     order = Order.objects.get(pk=item.order_id)
     good = Good.objects.get(pk=item.good_id)
     for_reserve = item.get_for_reserve_quantity()
-    if for_reserve:
+    if for_reserve and order.status != 'исполнен' \
+            and order.status != 'отменен':
         reserve = Reserve(
             order=order,
             good=good,
