@@ -9,7 +9,7 @@ from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
-from .filters import GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
+from .filters import CustomerOrderFilter, GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
 from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
@@ -887,6 +887,29 @@ def customers(request):
     }
 
     return render(request, 'shop/customers.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def customer_orders(request, user_id):
+    """
+    показывает заказы покупателя
+    :param user_id: id пользователя(тип - int)
+    """
+    customer = User.objects.get(pk=user_id)
+    orders = customer.order_set.all()
+    filtrator = CustomerOrderFilter(request.GET, queryset=orders)
+    total_count = filtrator.qs.aggregate(Sum('positions'))['positions__sum']
+    total_price = filtrator.qs.aggregate(Sum('total_coast'))['total_coast__sum']
+    context = {
+        'orders': filtrator,
+        'total_count': total_count if total_count else 0,
+        'total_price': total_price if total_price else 0,
+        'orders_count': len(filtrator.qs),
+        'customer': customer
+    }
+
+    return render(request, 'shop/customer_orders.html', context)
 
 
 
