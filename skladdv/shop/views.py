@@ -839,6 +839,38 @@ def create_reserve(request, order_item_id):
     return redirect(f'/orders/{order.id}/')
 
 
+@user_is_authenticated
+@staff_only
+def suppliers(request):
+    """показывает страницу с поставщиками"""
+    suppliers = Supplier.objects.all()
+    context = {'suppliers': suppliers}
+    return render(request, 'shop/suppliers.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def supplier_supplyitems(request, supplier_id):
+    """
+    показывает страницу c поставками поставщика
+    :param supplier_id: id поставщика(тип - int)
+    """
+    supplier = Supplier.objects.get(pk=supplier_id)
+    supply_items = supplier.get_supply_items()
+    total_quantity = 0
+    total_purchase_price = 0
+    for item in supply_items:
+        total_quantity += item.quantity
+        total_purchase_price += item.quantity * item.purchase_price
+    context = {
+        'supply_items': supply_items,
+        'total_quantity': total_quantity,
+        'total_purchase_price': total_purchase_price,
+        'supply_items_count': supply_items.count()
+    }
+    return render(request, 'shop/supplier_supplyitems.html', context)
+
+
 
 
 
