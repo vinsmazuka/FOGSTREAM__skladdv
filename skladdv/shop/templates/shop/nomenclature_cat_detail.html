@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<center>
+    <h1> {{ cat_name }} </h1>
+</center>
+
 {% if goods %}
 
 <div>
@@ -11,7 +15,7 @@
     <b> Свободно: {{ free_quantity }} ед.</b><br>
     <b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
     <b> Общее кол-во товаров: {{ total_quantity }} ед.</b><br>
-    <b> Кол-во товаров в категории: {{ goods.qs.count }} </b><br>
+    <b> Кол-во наименований товаров: {{ goods.qs.count }} </b><br>
 </div><br>
 
 <div>
