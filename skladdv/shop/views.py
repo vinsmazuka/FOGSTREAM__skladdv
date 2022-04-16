@@ -450,13 +450,13 @@ def nomenclature_category_detail(request, cat_id):
         sub_cats = list(Category.objects.filter(parent=cat_id))
         goods = Good.objects.filter(category__in=sub_cats)
 
-    for good in goods:
+    filtrator = GoodFilter(request.GET, queryset=goods)
+
+    for good in filtrator.qs:
         free_quantity += good.storage_quantity
         reserve_quantity += good.get_reserve_quantity()
         total_quantity = free_quantity + reserve_quantity
         total_price += good.get_total_price()
-
-    filtrator = GoodFilter(request.GET, queryset=goods)
 
     context = {
         'goods': filtrator,
@@ -464,6 +464,7 @@ def nomenclature_category_detail(request, cat_id):
         'reserve_quantity': reserve_quantity,
         'total_quantity': total_quantity,
         'total_price': total_price,
+        'cat_name': Category.objects.get(pk=cat_id).name
     }
     return render(request, 'shop/nomenclature_cat_detail.html', context)
 
