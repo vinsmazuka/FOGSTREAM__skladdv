@@ -266,6 +266,12 @@ class Good(models.Model):
         return self.storage_quantity if not reserve_quantity else\
             reserve_quantity + self.storage_quantity
 
+    def get_total_price(self):
+        """возвращает общую стоимость всех единиц
+        данного товара на складе в ценах продажи
+        (учитывается свободный остаток+резерв)"""
+        return self.get_total_quantity() * self.price
+
 
 class PurchasePrice(models.Model):
     """представляет закупочную цену товара"""
