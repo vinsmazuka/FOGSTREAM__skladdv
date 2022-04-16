@@ -76,3 +76,12 @@ class SupplyItemsFilter(django_filters.FilterSet):
             'status'
         ]
 
+
+class CustomerOrderFilter(OrderFilter):
+    class Meta:
+        model = Order
+        fields = [
+            'id',
+            'status',
+            'time_create'
+        ]
