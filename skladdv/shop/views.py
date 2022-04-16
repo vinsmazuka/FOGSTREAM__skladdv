@@ -690,16 +690,16 @@ def сreate_supply(request):
 def show_supplies(request):
     """показывает все поставки"""
     supplies = Supply.objects.all().order_by('id')
-    filter = SupplyFilter(request.GET, queryset=supplies)
-    total_positions = filter.qs.aggregate(
+    filtrator = SupplyFilter(request.GET, queryset=supplies)
+    total_positions = filtrator.qs.aggregate(
         Sum('total_positions'))['total_positions__sum']
-    total_purchase_price = filter.qs.aggregate(
+    total_purchase_price = filtrator.qs.aggregate(
         Sum('total_purchase_price'))['total_purchase_price__sum']
     context = {
-        'supplies': filter,
+        'supplies': filtrator,
         'total_positions': total_positions if total_positions else 0,
         'total_purchase_price': total_purchase_price if total_purchase_price else 0,
-        'supplies_count': len(filter.qs)
+        'supplies_count': len(filtrator.qs)
     }
 
     return render(request, 'shop/supplies.html', context)
