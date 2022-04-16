@@ -6,6 +6,12 @@
 
 <h1> Поставки: </h1>
 
+<div>
+    <b> Общее кол-во позиций: {{ total_positions }} </b><br>
+    <b> Общая сумма заказов: {{ total_purchase_price }} руб. </b><br>
+    <b> Общее кол-во заказов: {{ supplies_count }} шт. </b>
+</div><br>
+
 {% if supplies %}
 
 <form method="get">
@@ -37,10 +43,6 @@
         {% endfor %}
     </tbody>
 </table><br>
-
-<b> Общее кол-во позиций: {{ total_positions }} </b><br>
-<b> Общая сумма заказов: {{ total_purchase_price }} руб. </b><br>
-<b> Общее кол-во заказов: {{ supplies_count }} шт. </b>
 
 {% endif %}
 {% endblock %}
