@@ -439,13 +439,32 @@ def nomenclature_category_detail(request, cat_id):
     :param cat_id: id категории(тип - int)
     """
     cat = Category.objects.get(pk=cat_id)
+    free_quantity = 0
+    total_price = 0
+    reserve_quantity = 0
+    total_quantity = 0
+
     if cat.is_leaf_node():
         goods = Good.objects.filter(category_id=cat_id)
     else:
         sub_cats = list(Category.objects.filter(parent=cat_id))
         goods = Good.objects.filter(category__in=sub_cats)
 
-    context = {'goods': goods}
+    for good in goods:
+        free_quantity += good.storage_quantity
+        reserve_quantity += good.get_reserve_quantity()
+        total_quantity = free_quantity + reserve_quantity
+        total_price += good.get_total_price()
+
+    filtrator = GoodFilter(request.GET, queryset=goods)
+
+    context = {
+        'goods': filtrator,
+        'free_quantity': free_quantity,
+        'reserve_quantity': reserve_quantity,
+        'total_quantity': total_quantity,
+        'total_price': total_price,
+    }
     return render(request, 'shop/nomenclature_cat_detail.html', context)
 
 
