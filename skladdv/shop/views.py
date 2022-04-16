@@ -9,7 +9,7 @@ from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
-from .filters import GoodFilter, OrderFilter, SupplyFilter
+from .filters import GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
 from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
@@ -857,16 +857,18 @@ def supplier_supplyitems(request, supplier_id):
     """
     supplier = Supplier.objects.get(pk=supplier_id)
     supply_items = supplier.get_supply_items()
+    filtrator = SupplyItemsFilter(request.GET, queryset=supply_items)
     total_quantity = 0
     total_purchase_price = 0
-    for item in supply_items:
+    for item in filtrator.qs:
         total_quantity += item.quantity
         total_purchase_price += item.quantity * item.purchase_price
     context = {
-        'supply_items': supply_items,
+        'supply_items': filtrator,
         'total_quantity': total_quantity,
         'total_purchase_price': total_purchase_price,
-        'supply_items_count': supply_items.count()
+        'supply_items_count': filtrator.qs.count(),
+        'supplier_name': supplier.name
     }
     return render(request, 'shop/supplier_supplyitems.html', context)
 
