@@ -345,14 +345,14 @@ def order_detail(request, order_id):
 def orders(request):
     """показывает все заказы покупателей"""
     orders = Order.objects.all().order_by('id')
-    filter = OrderFilter(request.GET, queryset=orders)
-    total_count = filter.qs.aggregate(Sum('positions'))['positions__sum']
-    total_price = filter.qs.aggregate(Sum('total_coast'))['total_coast__sum']
+    filtrator = OrderFilter(request.GET, queryset=orders)
+    total_count = filtrator.qs.aggregate(Sum('positions'))['positions__sum']
+    total_price = filtrator.qs.aggregate(Sum('total_coast'))['total_coast__sum']
     context = {
-        'orders': filter,
+        'orders': filtrator,
         'total_count': total_count if total_count else 0,
         'total_price': total_price if total_price else 0,
-        'orders_count': len(filter.qs)
+        'orders_count': len(filtrator.qs)
     }
     return render(request, 'shop/orders.html', context)
 
