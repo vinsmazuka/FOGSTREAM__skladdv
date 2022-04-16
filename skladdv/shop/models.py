@@ -56,6 +56,22 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
+    def get_is_actual(self):
+        """Возвращает "ДА", если поставщик действующий
+        и "НЕТ", если поставщик не действующий"""
+        return "Да" if self.is_actual else "Нет"
+
+    def get_categories(self):
+        """Возвращает подкатегории товаров,
+        которые привозит поставщик"""
+        goods = list(self.good_set.all())
+        return set(good.get_category() for good in goods)
+
+    def get_supply_items(self):
+        """возвращает поставки поставщика"""
+        supply_items = self.supplyitems_set.all()
+        return supply_items
+
 
 class Supply(models.Model):
     """представляет заказ на поставку товара"""
@@ -189,6 +205,11 @@ class SupplyItems(models.Model):
         """возвращает номер заказа"""
         return self.order_id if self.order_id else ''
 
+    def get_date_create(self):
+        """возвращает дату создания поставки"""
+        supply = Supply.objects.get(pk=self.supply_id)
+        return supply.time_create
+
 
 class Good(models.Model):
     """представляет товар"""
@@ -271,6 +292,10 @@ class Good(models.Model):
         данного товара на складе в ценах продажи
         (учитывается свободный остаток+резерв)"""
         return self.get_total_quantity() * self.price
+
+    def get_category(self):
+        """возвращает подкатегорию товара"""
+        return self.category.name
 
 
 class PurchasePrice(models.Model):
