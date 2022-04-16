@@ -329,6 +329,18 @@ class Category(MPTTModel):
         goods = Good.objects.filter(category=self.id)
         return goods
 
+    def count_goods(self):
+        """
+        возвращает кол-во наименований товаров в категории
+        :return: int
+        """
+        if self.is_leaf_node():
+            goods = Good.objects.filter(category_id=self.id)
+        else:
+            sub_cats = list(Category.objects.filter(parent=self.id))
+            goods = Good.objects.filter(category__in=sub_cats)
+        return goods.count()
+
 
 class Order(models.Model):
     """представляет заказ товара покупателем"""
