@@ -873,6 +873,24 @@ def supplier_supplyitems(request, supplier_id):
     return render(request, 'shop/supplier_supplyitems.html', context)
 
 
+@user_is_authenticated
+@staff_only
+def customers(request):
+    """
+    показывает страницу cо списком покупателей
+    """
+    users = User.objects.all()
+    customers = [user for user in users
+                 if user.groups.filter(name='Покупатели').exists()]
+    context = {
+        'customers': customers,
+    }
+
+    return render(request, 'shop/customers.html', context)
+
+
+
+
 
 
 
