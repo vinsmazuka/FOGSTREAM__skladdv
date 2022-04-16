@@ -23,9 +23,11 @@
                             <thead>
                                 <tr>
                                     <th>Товар</th>
-                                    <th>Количество на складе</th>
-                                    <th>Количество в резерве</th>
-                                    <th>Итого</th>
+                                    <th>Цена продажи</th>
+                                    <th>Свободно</th>
+                                    <th>Зарезервировано</th>
+                                    <th>Итого кол-во</th>
+                                    <th>Общая стоимость</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -33,9 +35,11 @@
                                     {% if good.available_for_order %}
                                         <tr>
                                             <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
+                                            <td>{{ good.price }} {{ good.unit }}</td>
                                             <td>{{ good.storage_quantity }} {{ good.unit }}</td>
                                             <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
                                             <td> {{ good.get_total_quantity }} {{ good.unit }}</td>
+                                            <td> {{ good.get_total_price }} руб.</td>
                                         </tr>
                                     {% endif %}
                                 {% endfor %}
@@ -46,6 +50,11 @@
             </li>
         {% endrecursetree %}
     </ul>
+
+<b> Общая стоимость товаров(продажная): {{ total_price }} руб. </b><br>
+<b> Свободно: {{ free_quantity }} ед.</b><br>
+<b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
+<b> Общее кол-во товаров: {{ total_quantity }} ед.</b>
 
 {% else %}
 
