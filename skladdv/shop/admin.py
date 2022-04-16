@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_mptt_admin.admin import DjangoMpttAdmin
 
-from .models import Category, Good, Order, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, TelephoneNumber
+from .models import Category, Good, Order, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, Contacts
 
 
 class CategoryAdmin(DjangoMpttAdmin):
@@ -57,7 +57,7 @@ class ReserveAdmin(admin.ModelAdmin):
     search_fields = ['good', 'order']
 
 
-class TelephoneNumberAdmin(admin.ModelAdmin):
+class ContactsAdmin(admin.ModelAdmin):
     list_display = ['telephone', 'user']
     search_fields = ['telephone', 'user']
 
@@ -70,4 +70,4 @@ admin.site.register(Supply, SupplyAdmin)
 admin.site.register(SupplyItems, SupplyItemsAdmin)
 admin.site.register(PurchasePrice, PurchasePriceAdmin)
 admin.site.register(Reserve, ReserveAdmin)
-admin.site.register(TelephoneNumber, TelephoneNumberAdmin)
+admin.site.register(Contacts, ContactsAdmin)
