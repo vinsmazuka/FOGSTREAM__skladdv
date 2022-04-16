@@ -560,7 +560,7 @@ class Contacts(models.Model):
         null=True,
         verbose_name='телефон'
     )
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
         null=False,
         on_delete=models.PROTECT,
