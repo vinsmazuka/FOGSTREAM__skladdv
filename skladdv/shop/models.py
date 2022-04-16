@@ -568,8 +568,8 @@ class Contacts(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Телефон'
-        verbose_name_plural = 'Телефоны пользователей'
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Контакты пользователей'
 
     def __str__(self):
         return f'{self.user}, {self.telephone}'
