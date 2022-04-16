@@ -9,13 +9,16 @@
 
 {% if categories %}
 
+<div>
     <b> Общая стоимость товаров(продажная): {{ total_price }} руб. </b><br>
     <b> Свободно: {{ free_quantity }} ед.</b><br>
     <b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
     <b> Общее кол-во товаров: {{ total_quantity }} ед.</b><br>
     <b> Кол-во категорий: {{ count_categories }} </b><br>
     <b> Кол-во подкатегорий: {{ count_subcategories }} </b>
+</div><br>
 
+<div>
     <ul>
         {% recursetree categories %}
             <li>
@@ -59,6 +62,7 @@
             </li>
         {% endrecursetree %}
     </ul>
+</div>
 
 {% else %}
 
