@@ -8,6 +8,7 @@ urlpatterns = [
     path('catalog/categorydetail/<int:cat_id>/', views.category_detail, name='cat_detail'),
     path('supplies/closesupplyitem/<int:supply_item_id>/', views.close_supply_item, name='close_supply_item'),
     path('supplies/cancelsupplyitem/<int:supply_item_id>/', views.cancel_supply_item, name='cancel_supply_item'),
+    path('suppliers/supplyitems/<int:supplier_id>/', views.supplier_supplyitems, name='supplier_supplyitems'),
     path('nomenclature/<int:good_id>/', views.nomenclature_good_detail, name='nom_good_detail'),
     path('nomenclature/staffcart/', views.show_staff_cart, name='staff_cart'),
     path('staffcart/delete/', views.clean_staff_cart, name='clean_staff_cart'),
@@ -26,6 +27,7 @@ urlpatterns = [
     path('catalog/', views.catalog, name='catalog'),
     path('cabinet/', views.cabinet, name='cabinet'),
     path('delete/', views.clean_cart, name='clean'),
+    path('suppliers/', views.suppliers, name='suppliers'),
     path('supplies/', views.show_supplies, name='supplies'),
     path('', views.index, name='index')
 ]
