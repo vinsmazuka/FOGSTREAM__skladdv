@@ -9,6 +9,7 @@ urlpatterns = [
     path('supplies/closesupplyitem/<int:supply_item_id>/', views.close_supply_item, name='close_supply_item'),
     path('supplies/cancelsupplyitem/<int:supply_item_id>/', views.cancel_supply_item, name='cancel_supply_item'),
     path('suppliers/supplyitems/<int:supplier_id>/', views.supplier_supplyitems, name='supplier_supplyitems'),
+    path('customers/orders/<int:user_id>/', views.customer_orders, name='customer_orders'),
     path('nomenclature/<int:good_id>/', views.nomenclature_good_detail, name='nom_good_detail'),
     path('nomenclature/staffcart/', views.show_staff_cart, name='staff_cart'),
     path('staffcart/delete/', views.clean_staff_cart, name='clean_staff_cart'),
