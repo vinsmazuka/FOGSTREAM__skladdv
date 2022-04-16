@@ -1,6 +1,6 @@
 import django_filters
 
-from .models import Good, Order, Supplier, Supply
+from .models import Good, Order, Supplier, Supply, SupplyItems
 
 
 class OrderFilter(django_filters.FilterSet):
@@ -57,5 +57,22 @@ class GoodFilter(django_filters.FilterSet):
             'title',
             'artikul',
             'suppliers'
+        ]
+
+
+class SupplyItemsFilter(django_filters.FilterSet):
+    """предназначен для создания фильтров
+    объекта qs класса SupplyItems
+    на страницах сайта"""
+    good_id = django_filters.ModelChoiceFilter(
+        queryset=Good.objects.all())
+    order_id = django_filters.NumberFilter()
+
+    class Meta:
+        model = SupplyItems
+        fields = [
+            'good_id',
+            'order_id',
+            'status'
         ]
 
