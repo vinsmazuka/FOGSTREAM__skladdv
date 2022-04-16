@@ -5,30 +5,55 @@
 {% block content %}
 
 {% if goods %}
+
+<div>
+    <b> Общая стоимость товаров(продажная): {{ total_price }} руб. </b><br>
+    <b> Свободно: {{ free_quantity }} ед.</b><br>
+    <b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
+    <b> Общее кол-во товаров: {{ total_quantity }} ед.</b><br>
+    <b> Кол-во товаров в категории: {{ goods.qs.count }} </b><br>
+</div><br>
+
+<div>
+    <form method="get">
+        {{ goods.form }}
+        <input type="submit" />
+    </form><br>
+</div>
+
+<div>
     <ul>
         <table>
             <thead>
             <tr>
                 <th>Товар</th>
-                <th>Количество на складе</th>
-                <th>Количество в резерве</th>
-                <th>Итого</th>
+                <th>Артикул</th>
+                <th>Цена продажи</th>
+                <th>Свободно</th>
+                <th>Зарезервировано</th>
+                <th>Итого кол-во</th>
+                <th>Общая стоимость</th>
             </tr>
             </thead>
             <tbody>
-                {% for good in goods %}
+                {% for good in goods.qs %}
                     {% if good.available_for_order %}
                         <tr>
                             <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
+                            <td>{{ good.artikul }} </td>
+                            <td>{{ good.price }} {{ good.unit }}</td>
                             <td>{{ good.storage_quantity }} {{ good.unit }}</td>
                             <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
                             <td> {{ good.get_total_quantity }} {{ good.unit }}</td>
+                            <td> {{ good.get_total_price }} руб.</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
             </tbody>
         </table>
     </ul>
+</div>
+
 {% endif %}
 
 {% endblock %}
