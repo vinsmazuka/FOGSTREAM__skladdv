@@ -9,7 +9,7 @@ from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
-from .filters import OrderFilter, SupplyFilter
+from .filters import GoodFilter, OrderFilter, SupplyFilter
 from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
 from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
@@ -401,10 +401,34 @@ def close_order(request, order_id):
 @staff_only
 def nomenclature(request):
     """показывает номенклатуру товаров для персонала"""
-    return render(request,
-                  'shop/nomenclature.html',
-                  {'categories': Category.objects.all()}
-                  )
+    free_quantity = 0
+    total_price = 0
+    reserve_quantity = 0
+    total_quantity = 0
+    count_categories = 0
+    count_subcategories = 0
+    for category in Category.objects.all():
+        if category.is_leaf_node():
+            count_subcategories += 1
+            for good in category.get_goods():
+                free_quantity += good.storage_quantity
+                reserve_quantity += good.get_reserve_quantity()
+                total_quantity = free_quantity + reserve_quantity
+                total_price += good.get_total_price()
+        else:
+            count_categories += 1
+
+    context = {
+            'categories': Category.objects.all(),
+            'free_quantity': free_quantity,
+            'reserve_quantity': reserve_quantity,
+            'total_quantity': total_quantity,
+            'total_price': total_price,
+            'count_categories': count_categories,
+            'count_subcategories': count_subcategories
+        }
+
+    return render(request, 'shop/nomenclature.html', context)
 
 
 @user_is_authenticated
