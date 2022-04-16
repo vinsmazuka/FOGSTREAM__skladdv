@@ -553,8 +553,8 @@ class Reserve(models.Model):
         verbose_name_plural = 'Резерв'
 
 
-class TelephoneNumber(models.Model):
-    """Представляет телефонный номер пользователя"""
+class Contacts(models.Model):
+    """Представляет контактные данные пользователя"""
     telephone = models.CharField(
         max_length=50,
         null=True,
