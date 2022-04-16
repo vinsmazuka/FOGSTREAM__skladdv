@@ -553,6 +553,27 @@ class Reserve(models.Model):
         verbose_name_plural = 'Резерв'
 
 
+class TelephoneNumber(models.Model):
+    """Представляет телефонный номер пользователя"""
+    telephone = models.CharField(
+        max_length=50,
+        null=True,
+        verbose_name='телефон'
+    )
+    user = models.ForeignKey(
+        User,
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='пользователь'
+    )
+
+    class Meta:
+        verbose_name = 'Телефон'
+        verbose_name_plural = 'Телефоны пользователей'
+
+    def __str__(self):
+        return f'{self.user}, {self.telephone}'
+
 
 
 
