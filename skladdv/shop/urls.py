@@ -29,6 +29,7 @@ urlpatterns = [
     path('delete/', views.clean_cart, name='clean'),
     path('suppliers/', views.suppliers, name='suppliers'),
     path('supplies/', views.show_supplies, name='supplies'),
+    path('customers/', views.customers, name='customers'),
     path('', views.index, name='index')
 ]
 
