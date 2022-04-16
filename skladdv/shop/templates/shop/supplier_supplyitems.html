@@ -1,0 +1,45 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Поставки поставщика{% endblock %}
+
+{% block content %}
+
+<div>
+    <b> Общее кол-во единиц товаров: {{ total_quantity }} ед.</b><br>
+    <b> Общая сумма заказов(по закупочной цене): {{ total_purchase_price }} руб. </b><br>
+    <b> Общее кол-во заказов: {{ supply_items_count }} шт.</b>
+</div><br>
+
+<table>
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Закупочная цена</th>
+            <th>Сумма поставки</th>
+            <th>Поставщик</th>
+            <th>№ заказа</th>
+            <th>Дата создания</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in supply_items %}
+            <tr>
+                <td>{{ item.good }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.purchase_price }}</td>
+                <td>{{ item.total_purchase_price }}</td>
+                <td>{{ item.supplier }} </td>
+                <td>{{ item.get_order_id }} </td>
+                <td>{{ item.get_date_create }} </td>
+                <td>{{ item.status }} </td>
+            </tr>
+        {% empty %}
+            <li>У данного поставщика не было зарегистрированных поставок</li>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
