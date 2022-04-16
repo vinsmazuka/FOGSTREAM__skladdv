@@ -9,6 +9,13 @@
 
 {% if categories %}
 
+    <b> Общая стоимость товаров(продажная): {{ total_price }} руб. </b><br>
+    <b> Свободно: {{ free_quantity }} ед.</b><br>
+    <b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
+    <b> Общее кол-во товаров: {{ total_quantity }} ед.</b><br>
+    <b> Кол-во категорий: {{ count_categories }} </b><br>
+    <b> Кол-во подкатегорий: {{ count_subcategories }} </b>
+
     <ul>
         {% recursetree categories %}
             <li>
@@ -23,6 +30,7 @@
                             <thead>
                                 <tr>
                                     <th>Товар</th>
+                                    <th>Артикул</th>
                                     <th>Цена продажи</th>
                                     <th>Свободно</th>
                                     <th>Зарезервировано</th>
@@ -35,6 +43,7 @@
                                     {% if good.available_for_order %}
                                         <tr>
                                             <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
+                                            <td>{{ good.artikul }} </td>
                                             <td>{{ good.price }} {{ good.unit }}</td>
                                             <td>{{ good.storage_quantity }} {{ good.unit }}</td>
                                             <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
@@ -50,13 +59,6 @@
             </li>
         {% endrecursetree %}
     </ul>
-
-<b> Общая стоимость товаров(продажная): {{ total_price }} руб. </b><br>
-<b> Свободно: {{ free_quantity }} ед.</b><br>
-<b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
-<b> Общее кол-во товаров: {{ total_quantity }} ед.</b><br>
-<b> Кол-во категорий: {{ count_categories }} </b><br>
-<b> Кол-во подкатегорий: {{ count_subcategories }} </b>
 
 {% else %}
 
