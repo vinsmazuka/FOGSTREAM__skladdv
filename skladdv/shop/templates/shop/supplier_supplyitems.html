@@ -5,11 +5,24 @@
 {% block content %}
 
 <div>
+    <center>
+        <h1> Поставки {{ supplier_name }} </h1>
+    </center>
+</div><br>
+
+<div>
     <b> Общее кол-во единиц товаров: {{ total_quantity }} ед.</b><br>
     <b> Общая сумма заказов(по закупочной цене): {{ total_purchase_price }} руб. </b><br>
     <b> Общее кол-во заказов: {{ supply_items_count }} шт.</b>
 </div><br>
 
+<form method="get">
+    {{ supply_items.form }}
+    <input type="submit" />
+</form><br>
+
+
+{% if supply_items.qs %}
 <table>
     <thead>
         <tr>
@@ -23,8 +36,9 @@
             <th>Статус</th>
         </tr>
     </thead>
+{% endif %}
     <tbody>
-        {% for item in supply_items %}
+        {% for item in supply_items.qs %}
             <tr>
                 <td>{{ item.good }}</td>
                 <td>{{ item.quantity }}</td>
@@ -36,7 +50,7 @@
                 <td>{{ item.status }} </td>
             </tr>
         {% empty %}
-            <li>У данного поставщика не было зарегистрированных поставок</li>
+            <center> Список поставок пуст </center><br>
         {% endfor %}
     </tbody>
 </table>
