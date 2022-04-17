@@ -10,8 +10,9 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
 from .filters import CustomerOrderFilter, GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
-from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood, SupplierCreate
-from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
+from .forms import CartAddGood, CustomerCreate, OrderChangeStatus, StaffCartAddGood, SupplierCreate
+from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, \
+    Contacts
 
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
@@ -985,8 +986,51 @@ def operations(request):
 
 @user_is_authenticated
 @staff_only
-def good_create(request):
-    """показывает форму для создания нового поставщика"""
+def customer_create(request):
+    """показывает форму для создания покупателя"""
+    def post_response():
+        """формирует ответ в случае поступления POST-запроса"""
+        form = CustomerCreate(request.POST)
+        if form.is_valid():
+            new_customer = User(
+                username=form.cleaned_data.get("username"),
+                first_name=form.cleaned_data.get("first_name"),
+                last_name=form.cleaned_data.get("last_name"),
+                email=form.cleaned_data.get("email")
+            )
+            contacts = Contacts(
+                telephone=form.cleaned_data.get("telephone"),
+                user=new_customer
+            )
+            event = Event(
+                type='создание покупателя',
+                customer=new_customer,
+                created_by=request.user.id
+            )
+            new_customer.save()
+            new_customer.groups.add(2)
+            contacts.save()
+            event.save()
+            context['message'] = f'Пользователь "{new_customer.username}" успешно создан'
+            context['form'] = CustomerCreate()
+        else:
+            context['form'] = CustomerCreate(request.POST)
+
+    def get_response():
+        """формирует ответ в случае поступления GET-запроса"""
+        context['form'] = CustomerCreate()
+
+    context = dict()
+
+    responses = {
+        'POST': post_response,
+        'GET': get_response
+    }
+    responses[request.method]()
+
+    return render(request, 'shop/customer_create.html', context)
+
+
 
 
 
