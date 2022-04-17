@@ -42,13 +42,27 @@ a {
 	font-weight: 700;
 }
 
+header a {
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 header nav:hover {
 	box-sizing: border-box;
-	line-height: 80px;
+	height: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
 	transition: all .3s ease-in-out;
-	-webkit-box-shadow: 0px -5px 0px 0px #ff5b35 inset;
+	/*-webkit-box-shadow: 0px -5px 0px 0px #ff5b35 inset;
 	-moz-box-shadow: 0px -5px 0px 0px #ff5b35 inset;
-	box-shadow: 0px -5px 0px 0px #ff5b35 inset;
+	box-shadow: 0px -5px 0px 0px #ff5b35 inset;*/
+
+	background: #c1c1c1;
+	justify-content: flex-end;
 }
 
 .nav-active {
@@ -67,6 +81,75 @@ header nav:hover {
 .row {
 	padding: 80px calc((100% - 1170px) / 2);
 	box-sizing: border-box;
+}
+
+/* burger */
+
+.burger__all {
+	display: flex;
+	align-self: flex-start;
+	margin-top: 25px;
+}
+
+.burger {
+	width: 30px;
+	height: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	left: calc(100% - 30px);
+}
+
+.burger div {
+	width: 30px;
+	height: 30px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: column;
+	box-sizing: border-box;
+	gap: 0;
+}
+
+.burger span {
+	width: 30px;
+	min-height: 3px;
+	background: black;
+	color: white;
+}
+
+.burger__content {
+	display: flex;
+	flex-direction: column;
+	width: auto;
+	height: auto;
+	align-items: flex-end;
+	background: #eaeaea;
+}
+
+.burger__content nav {
+	height: 40px;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 10px 40px;
+	width: 100%;
+}
+
+.burger__content a {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.burger__content a:hover {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 }
 
 /* HOMEPAGE */
@@ -956,7 +1039,11 @@ header nav:hover {
 	border: none;
 }
 
-.login input[type="text"], input[type="password"] {
+.login input[type="text"],
+.login input[type="password"],
+.login input[type="email"],
+.login input[type="number"],
+.login select {
 	border-radius: 5px;
 	padding: 10px;
 	border: none;
@@ -1469,6 +1556,28 @@ header nav:hover {
 	border: 1px solid black;
 	box-sizing: border-box;
 	text-align: center;
+}
+
+/* create_users */
+
+.create_users button {
+	padding: 11px 15px;
+	font-weight: 700;
+	background: #ff5b35;
+	color: white;
+	border-radius: 5px;
+	border: none;
+	width: 100%;
+}
+
+.create_users button:hover {
+	background: #07123c;
+}
+
+.create_users select,
+.create_users input[type="number"] {
+	width: 100%;
+	box-sizing: border-box;
 }
 
 /* FOOTER */

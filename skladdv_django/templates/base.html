@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
@@ -10,17 +10,36 @@
 <body>
     <header>
         <div>
-            <img src="{% static 'img/logo.png' %}" alt="NotFound">
+            <img src="{% static 'img/logo.png' %}" alt="NotFound" onclick="window.open('/', '_self');">
         </div>
-        <div>
-            <nav><a href="/">Главная</a></nav>
-            <nav><a href="/catalog/">Каталог</a></nav>
-            <nav><a href="/catalog/cart/">Корзина</a></nav>
-            <nav><a href="/orders/">Заказы</a></nav>
-            <nav><a href="/cabinet/">Личный кабинет</a></nav>
-            <nav><a href="/nomenclature/">Номенклатура</a></nav>
-            <nav><a href="/nomenclature/staffcart/">Корзина поставок</a></nav>
-            <nav><a href="/supplies/">Список поставок</a></nav>
+        <div class="burger__all">
+            <details>
+                <summary class="burger">
+                    <div>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </summary>
+                <div class="burger__content">
+                    <nav><a href="/">Главная</a></nav>
+                    <nav><a href="/catalog/">Каталог</a></nav>
+                    <nav><a href="/catalog/cart/">Корзина</a></nav>
+                    <nav><a href="/orders/">Заказы</a></nav>
+                    <nav><a href="/cabinet/">Личный кабинет</a></nav>
+                    <nav><a href="/nomenclature/">Номенклатура</a></nav>
+                    <nav><a href="/nomenclature/staffcart/">Корзина поставок</a></nav>
+                    <nav><a href="/supplies/">Список поставок</a></nav>
+                    <nav><a href="/suppliers/">Поставщики</a></nav>
+                    <nav><a href="/customers/">Покупатели</a></nav>
+                    <nav><a href="/operations/">Операции склада</a></nav>
+                    {% if user.is_authenticated %}
+                        <nav><a href="/accounts/logout/">Разлогиниться</a></nav>
+                    {% else %}
+                        <nav><a href="/accounts/login/">Залогиниться</a></nav>
+                    {% endif %}
+                </div>
+            </details>
         </div>
     </header>
 

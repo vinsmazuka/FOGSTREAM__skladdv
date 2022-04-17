@@ -10,8 +10,9 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
 from .filters import CustomerOrderFilter, GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
-from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
-from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
+from .forms import CartAddGood, CustomerCreate, OrderChangeStatus, StaffCartAddGood, SupplierCreate
+from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, \
+    Contacts
 
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
@@ -27,10 +28,10 @@ def catalog(request):
     """показывает каталог товаров для покупателя"""
     goods = Good.objects.all()
     return render(request,
-                  'shop/catalog.html',
-                  {'categories': Category.objects.all(),
-                  'goods': goods}
-                  )
+                'shop/catalog.html',
+                {'categories': Category.objects.all(),
+                'goods': goods}
+                )
 
 
 def category_detail(request, cat_id):
@@ -912,6 +913,126 @@ def customer_orders(request, user_id):
     }
 
     return render(request, 'shop/customer_orders.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def supplier_create(request):
+    """показывает форму для создания нового поставщика"""
+    def post_response():
+        """формирует ответ в случае поступления POST-запроса"""
+        form = SupplierCreate(request.POST)
+        if form.is_valid():
+            new_supplier = Supplier(
+                name=form.cleaned_data.get("name"),
+                inn=form.cleaned_data.get("inn"),
+                ogrn=form.cleaned_data.get("ogrn"),
+                address=form.cleaned_data.get("address"),
+                contact_person=form.cleaned_data.get("contact_person"),
+                telephone=form.cleaned_data.get("telephone"),
+                email=form.cleaned_data.get("email"),
+            )
+            event = Event(
+                type='создание поставщика',
+                supplier=new_supplier,
+                created_by=request.user.id
+            )
+            good_id = int(form.cleaned_data.get("good"))
+            purchase_price = form.cleaned_data.get("purchase_price")
+            if good_id != 0:
+                if purchase_price:
+                    good = Good.objects.get(pk=good_id)
+                    new_purchase_price = PurchasePrice(
+                        purchase_price=purchase_price,
+                        supplier=new_supplier,
+                        good=good
+                    )
+                    new_supplier.save()
+                    event.save()
+                    good.suppliers.add(new_supplier)
+                    new_purchase_price.save()
+                    context['message'] = 'Поставщик успешно создан'
+                    context['form'] = SupplierCreate()
+                else:
+                    context['message'] = 'Укажите закупочную цену'
+                    context['form'] = SupplierCreate(request.POST)
+            else:
+                new_supplier.save()
+                event.save()
+                context['message'] = 'Поставщик успешно создан'
+                context['form'] = SupplierCreate()
+        else:
+            context['form'] = SupplierCreate(request.POST)
+
+    def get_response():
+        """формирует ответ в случае поступления GET-запроса"""
+        context['form'] = SupplierCreate()
+
+    context = dict()
+
+    responses = {
+        'POST': post_response,
+        'GET': get_response
+    }
+    responses[request.method]()
+
+    return render(request, 'shop/supplier_create.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def operations(request):
+    """показывает страницу с операциями склада"""
+    return render(request, 'shop/operations.html')
+
+
+@user_is_authenticated
+@staff_only
+def customer_create(request):
+    """показывает форму для создания покупателя"""
+    def post_response():
+        """формирует ответ в случае поступления POST-запроса"""
+        form = CustomerCreate(request.POST)
+        if form.is_valid():
+            new_customer = User(
+                username=form.cleaned_data.get("username"),
+                first_name=form.cleaned_data.get("first_name"),
+                last_name=form.cleaned_data.get("last_name"),
+                email=form.cleaned_data.get("email")
+            )
+            contacts = Contacts(
+                telephone=form.cleaned_data.get("telephone"),
+                user=new_customer
+            )
+            event = Event(
+                type='создание покупателя',
+                customer=new_customer,
+                created_by=request.user.id
+            )
+            new_customer.save()
+            new_customer.groups.add(2)
+            contacts.save()
+            event.save()
+            context['message'] = f'Пользователь "{new_customer.username}" успешно создан'
+            context['form'] = CustomerCreate()
+        else:
+            context['form'] = CustomerCreate(request.POST)
+
+    def get_response():
+        """формирует ответ в случае поступления GET-запроса"""
+        context['form'] = CustomerCreate()
+
+    context = dict()
+
+    responses = {
+        'POST': post_response,
+        'GET': get_response
+    }
+    responses[request.method]()
+
+    return render(request, 'shop/customer_create.html', context)
+
+
 
 
 
