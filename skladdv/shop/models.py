@@ -620,6 +620,14 @@ class Event(models.Model):
         """
         return True if self.type == 'создание поставщика' else False
 
+    def type_is_create_customer(self):
+        """
+        Возвращает True, если тип события -
+        создание покупателя, если нет - False
+        :return: boolean
+        """
+        return True if self.type == 'создание покупателя' else False
+
 
 
 
