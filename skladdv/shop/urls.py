@@ -21,6 +21,7 @@ urlpatterns = [
     path('supplies/<int:supply_id>/', views.show_supply_detail, name='supply_detail'),
     path('delete/<int:good_id>/', views.remove_good_from_cart, name='delete'),
     path('reserve/<int:order_item_id>/', views.create_reserve, name='reserve'),
+    path('suppliercreate/', views.supplier_create, name='supplier_create'),
     path('makeorder/', views.сreate_order, name='makeorder'),
     path('createsupply/', views.сreate_supply, name='create_supply'),
     path('nomenclature/', views.nomenclature, name='nomenclature'),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('suppliers/', views.suppliers, name='suppliers'),
     path('supplies/', views.show_supplies, name='supplies'),
     path('customers/', views.customers, name='customers'),
+    path('operations/', views.operations, name='operations'),
     path('', views.index, name='index')
 ]
 
