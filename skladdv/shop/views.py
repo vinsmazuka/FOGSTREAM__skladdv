@@ -1046,6 +1046,7 @@ def operations(request):
     context['total_positions'] = total_positions if total_positions else 0
     context['total_purchase_price'] = total_purchase_price if total_purchase_price else 0
     context['supplies_count'] = len(supplies)
+    context['events'] = Event.objects.all()
 
     return render(request, 'shop/operations.html', context)
 
