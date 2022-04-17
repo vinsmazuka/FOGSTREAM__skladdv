@@ -979,13 +979,6 @@ def supplier_create(request):
 
 @user_is_authenticated
 @staff_only
-def operations(request):
-    """показывает страницу с операциями склада"""
-    return render(request, 'shop/operations.html')
-
-
-@user_is_authenticated
-@staff_only
 def customer_create(request):
     """показывает форму для создания покупателя"""
     def post_response():
@@ -1029,6 +1022,32 @@ def customer_create(request):
     responses[request.method]()
 
     return render(request, 'shop/customer_create.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def operations(request):
+    """показывает страницу с операциями склада"""
+    orders = Order.objects.all().order_by('id')
+    total_count = orders.aggregate(Sum('positions'))['positions__sum']
+    total_price = orders.aggregate(Sum('total_coast'))['total_coast__sum']
+    context = {
+        'orders': orders,
+        'total_count': total_count if total_count else 0,
+        'total_price': total_price if total_price else 0,
+        'orders_count': len(orders)
+    }
+    supplies = Supply.objects.all().order_by('id')
+    total_positions = (supplies.aggregate(
+        Sum('total_positions'))['total_positions__sum'])
+    total_purchase_price = Decimal(supplies.aggregate(
+        Sum('total_purchase_price'))['total_purchase_price__sum'])
+    context['supplies'] = supplies
+    context['total_positions'] = total_positions if total_positions else 0
+    context['total_purchase_price'] = total_purchase_price if total_purchase_price else 0
+    context['supplies_count'] = len(supplies)
+
+    return render(request, 'shop/operations.html', context)
 
 
 
