@@ -8,19 +8,30 @@ from django.db import models
 
 class Supplier(models.Model):
     """представляет поставщика товара"""
-    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$")
+    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$",
+                                       message='Значение в поле "Телефон" должно '
+                                               'состоять из 11 цифр от 0 до 9,'
+                                               'где первая цифра - 7')
+    inn_validator = RegexValidator(regex=r"^\d{10}$",
+                                   message='Значение в поле "ИНН" должно '
+                                           'состоять из 10 цифр от 0 до 9')
+    ogrn_validator = RegexValidator(regex=r"^\d{13}$",
+                                    message='Значение в поле "ОГРН" должно '
+                                            'состоять из 13 цифр от 0 до 9')
     name = models.CharField(
         max_length=100,
         unique=False,
         verbose_name='юридическое название'
     )
     inn = models.CharField(
+        validators=[inn_validator],
         max_length=200,
         unique=False,
         null=True,
         verbose_name='ИНН'
     )
     ogrn = models.CharField(
+        validators=[ogrn_validator],
         max_length=200,
         unique=False,
         null=True,
@@ -558,7 +569,10 @@ class Reserve(models.Model):
 
 class Contacts(models.Model):
     """Представляет контактные данные пользователя"""
-    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$")
+    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$",
+                                       message='Значение в поле "Телефон" должно '
+                                               'состоять из 11 цифр от 0 до 9,'
+                                               'где первая цифра - 7')
     telephone = models.CharField(
         validators=[ph_numb_validator],
         max_length=50,
@@ -627,6 +641,14 @@ class Event(models.Model):
         :return: boolean
         """
         return True if self.type == 'создание покупателя' else False
+
+    def type_is_create_good(self):
+        """
+        Возвращает True, если тип события -
+        создание товара, если нет - False
+        :return: boolean
+        """
+        return True if self.type == 'создание товара' else False
 
 
 
