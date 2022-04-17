@@ -625,6 +625,10 @@ class Event(models.Model):
         on_delete=models.PROTECT,
         verbose_name='покупатель'
     )
+    created_by = models.PositiveIntegerField(
+        verbose_name='создано пользователем',
+        null=False
+    )
 
     def type_is_create_supplier(self):
         """
