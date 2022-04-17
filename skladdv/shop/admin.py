@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django_mptt_admin.admin import DjangoMpttAdmin
 
-from .models import Category, Good, Order, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, Contacts
+from .models import Category, Event, Good, Order, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, Contacts
 
 
 class CategoryAdmin(DjangoMpttAdmin):
@@ -62,6 +62,11 @@ class ContactsAdmin(admin.ModelAdmin):
     search_fields = ['telephone', 'user']
 
 
+class EventAdmin(admin.ModelAdmin):
+    list_display = ['type', 'supplier', 'good', 'customer', 'created_by']
+    search_fields = ['type', 'supplier', 'good', 'customer', 'created_by']
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Good, GoodAdmin)
 admin.site.register(Supplier, SupplierAdmin)
@@ -71,3 +76,4 @@ admin.site.register(SupplyItems, SupplyItemsAdmin)
 admin.site.register(PurchasePrice, PurchasePriceAdmin)
 admin.site.register(Reserve, ReserveAdmin)
 admin.site.register(Contacts, ContactsAdmin)
+admin.site.register(Event, EventAdmin)
