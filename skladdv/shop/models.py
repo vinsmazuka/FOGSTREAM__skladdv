@@ -626,9 +626,21 @@ class Event(models.Model):
         verbose_name='покупатель'
     )
     created_by = models.PositiveIntegerField(
-        verbose_name='создано пользователем',
+        verbose_name='создано пользователем(id)',
         null=False
     )
+
+    class Meta:
+        verbose_name = 'Событие'
+        verbose_name_plural = 'События'
+
+    def __str__(self):
+        return (
+            f'{self.type}, '
+            f'{self.supplier if self.supplier else ""}'
+            f'{self.good if self.good else ""}'
+            f'{self.customer if self.customer else ""}'
+        )
 
     def type_is_create_supplier(self):
         """
