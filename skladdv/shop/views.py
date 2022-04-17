@@ -10,8 +10,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
 from .filters import CustomerOrderFilter, GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
-from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood
-from .models import Category, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
+from .forms import CartAddGood, OrderChangeStatus, StaffCartAddGood, SupplierCreate
+from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems
 
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
@@ -910,6 +910,60 @@ def customer_orders(request, user_id):
     }
 
     return render(request, 'shop/customer_orders.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def supplier_create(request):
+    """
+    выводит форму для создания нового поставщика
+    """
+    form = SupplierCreate()
+
+    def post_response():
+        """формирует ответ в случае поступления POST-запроса"""
+        form = SupplierCreate(request.POST)
+        if form.is_valid():
+            new_supplier = Supplier(
+                name=form.cleaned_data.get("name"),
+                inn=form.cleaned_data.get("inn"),
+                ogrn=form.cleaned_data.get("ogrn"),
+                address=form.cleaned_data.get("address"),
+                contact_person=form.cleaned_data.get("contact_person"),
+                telephone=form.cleaned_data.get("telephone"),
+                email=form.cleaned_data.get("email"),
+            )
+            new_supplier.save()
+            event = Event(
+                type='создание поставщика',
+                supplier=new_supplier,
+                created_by=request.user.id
+            )
+            event.save()
+            context['form'] = SupplierCreate()
+        else:
+            context['form'] = SupplierCreate(request.POST)
+
+    def get_response():
+        """формирует ответ в случае поступления GET-запроса"""
+        context['form'] = SupplierCreate()
+
+    context = dict()
+
+    responses = {
+        'POST': post_response,
+        'GET': get_response
+    }
+    responses[request.method]()
+
+    return render(request, 'shop/supplier_create.html', context)
+
+
+@user_is_authenticated
+@staff_only
+def operations(request):
+    """показывает страницу с операциями склада"""
+    return render(request, 'shop/operations.html')
 
 
 
