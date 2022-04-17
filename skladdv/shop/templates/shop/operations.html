@@ -4,7 +4,84 @@
 
 {% block content %}
 
-<div><a href="/suppliercreate/"> Создание поставщика </a></div><br>
+<div><a href="/suppliercreate/"> Создание поставщика </a></div>
 <div><a href="/customercreate/"> Создание покупателя </a></div><br>
+
+<h1> Заказы покупателей </h1>
+
+<div>
+    <b> Общее кол-во позиций: {{ total_count }} </b><br>
+    <b> Общая сумма заказов: {{ total_price }} руб. </b><br>
+    <b> Общее кол-во заказов: {{ orders_count }} шт. </b>
+</div><br>
+
+{% if orders %}
+
+<table>
+    <thead>
+        <tr>
+            <th>номер заказа</th>
+            <th>кол-во позиций</th>
+            <th>общая стоимость</th>
+            <th>дата создания</th>
+            <th>статус</th>
+            <th>заказчик</th>
+            <th>qr-код</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
+            <td>{{ order.positions }}</td>
+            <td>{{ order.total_coast }}</td>
+            <td>{{ order.time_create }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.user }}</td>
+            <td><form method="LINK" action="/qrcode/{{ order.id }}/"> <input type="submit" value="Показать qr-код"> </form></td>
+        {% endfor %}
+    </tbody>
+</table><br>
+
+{% endif %}
+
+<h1> Поставки: </h1>
+
+<div>
+    <b> Общее кол-во позиций: {{ total_positions }} </b><br>
+    <b> Общая сумма заказов: {{ total_purchase_price }} руб. </b><br>
+    <b> Общее кол-во заказов: {{ supplies_count }} шт. </b>
+</div><br>
+
+{% if supplies %}
+
+<table>
+    <thead>
+        <tr>
+            <th>номер поставки</th>
+            <th>кол-во позиций</th>
+            <th>общая стоимость</th>
+            <th>дата создания</th>
+            <th>номер заказа</th>
+            <th>статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for supply in supplies %}
+            <tr>
+                <td><a href="/supplies/{{ supply.id }}/"> {{ supply.id }}</a></td>
+                <td>{{ supply.total_positions }}</td>
+                <td>{{ supply.total_purchase_price }}</td>
+                <td>{{ supply.time_create }}</td>
+                <td>{{ supply.get_order_id }}</td>
+                <td>{{ supply.status }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table><br>
+
+{% endif %}
+
+
 
 {% endblock %}
