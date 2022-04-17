@@ -16,7 +16,6 @@
 </div><br>
 
 {% if orders %}
-
 <table>
     <thead>
         <tr>
@@ -29,6 +28,7 @@
             <th>qr-код</th>
         </tr>
     </thead>
+{% endif %}
     <tbody>
         {% for order in orders %}
         <tr>
@@ -39,11 +39,12 @@
             <td>{{ order.status }}</td>
             <td>{{ order.user }}</td>
             <td><form method="LINK" action="/qrcode/{{ order.id }}/"> <input type="submit" value="Показать qr-код"> </form></td>
+        </tr>
+        {% empty %}
+            <li>Список заказов пуст</li>
         {% endfor %}
     </tbody>
 </table><br>
-
-{% endif %}
 
 <h1> Поставки: </h1>
 
@@ -54,7 +55,6 @@
 </div><br>
 
 {% if supplies %}
-
 <table>
     <thead>
         <tr>
@@ -67,6 +67,7 @@
         </tr>
     </thead>
     <tbody>
+{% endif %}
         {% for supply in supplies %}
             <tr>
                 <td><a href="/supplies/{{ supply.id }}/"> {{ supply.id }}</a></td>
@@ -76,12 +77,46 @@
                 <td>{{ supply.get_order_id }}</td>
                 <td>{{ supply.status }}</td>
             </tr>
+        {% empty %}
+            <li>Список поставок пуст</li>
         {% endfor %}
     </tbody>
 </table><br>
 
+<h1> События </h1>
+
+{% if events %}
+<table>
+    <thead>
+        <tr>
+            <th>тип события</th>
+            <th>созданный объект</th>
+            <th>дата создания</th>
+            <th>создано пользователем</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.type }}</td>
+                <td>
+                    {% if event.type_is_create_supplier %}
+                    {{ event.supplier }}
+                    {% elif event.type_is_create_customer %}
+                    {{ event.customer.username }}
+                    {% elif event.type_is_create_good %}
+                    {{ event.good }}
+                    {% endif %}
+                </td>
+                <td>{{ event.time_create }}</td>
+                <td>{{ event.get_created_by }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table><br>
+
+{% else %}
+    <li>Список событий пуст</li><br>
 {% endif %}
-
-
 
 {% endblock %}
