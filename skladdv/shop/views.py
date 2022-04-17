@@ -915,11 +915,7 @@ def customer_orders(request, user_id):
 @user_is_authenticated
 @staff_only
 def supplier_create(request):
-    """
-    выводит форму для создания нового поставщика
-    """
-    form = SupplierCreate()
-
+    """показывает форму для создания нового поставщика"""
     def post_response():
         """формирует ответ в случае поступления POST-запроса"""
         form = SupplierCreate(request.POST)
@@ -933,14 +929,35 @@ def supplier_create(request):
                 telephone=form.cleaned_data.get("telephone"),
                 email=form.cleaned_data.get("email"),
             )
-            new_supplier.save()
             event = Event(
                 type='создание поставщика',
                 supplier=new_supplier,
                 created_by=request.user.id
             )
-            event.save()
-            context['form'] = SupplierCreate()
+            good_id = int(form.cleaned_data.get("good"))
+            purchase_price = form.cleaned_data.get("purchase_price")
+            if good_id != 0:
+                if purchase_price:
+                    good = Good.objects.get(pk=good_id)
+                    new_purchase_price = PurchasePrice(
+                        purchase_price=purchase_price,
+                        supplier=new_supplier,
+                        good=good
+                    )
+                    new_supplier.save()
+                    event.save()
+                    good.suppliers.add(new_supplier)
+                    new_purchase_price.save()
+                    context['message'] = 'Поставщик успешно создан'
+                    context['form'] = SupplierCreate()
+                else:
+                    context['message'] = 'Укажите закупочную цену'
+                    context['form'] = SupplierCreate(request.POST)
+            else:
+                new_supplier.save()
+                event.save()
+                context['message'] = 'Поставщик успешно создан'
+                context['form'] = SupplierCreate()
         else:
             context['form'] = SupplierCreate(request.POST)
 
@@ -964,6 +981,12 @@ def supplier_create(request):
 def operations(request):
     """показывает страницу с операциями склада"""
     return render(request, 'shop/operations.html')
+
+
+@user_is_authenticated
+@staff_only
+def good_create(request):
+    """показывает форму для создания нового поставщика"""
 
 
 
