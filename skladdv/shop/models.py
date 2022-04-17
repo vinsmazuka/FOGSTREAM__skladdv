@@ -1,12 +1,14 @@
 from mptt.models import MPTTModel, TreeForeignKey
 
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from django.db.models import Sum
 from django.db import models
 
 
 class Supplier(models.Model):
     """представляет поставщика товара"""
+    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$")
     name = models.CharField(
         max_length=100,
         unique=False,
@@ -35,6 +37,7 @@ class Supplier(models.Model):
         verbose_name='контактное лицо'
     )
     telephone = models.CharField(
+        validators=[ph_numb_validator],
         max_length=200,
         unique=False,
         verbose_name='телефон'
@@ -555,7 +558,9 @@ class Reserve(models.Model):
 
 class Contacts(models.Model):
     """Представляет контактные данные пользователя"""
+    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$")
     telephone = models.CharField(
+        validators=[ph_numb_validator],
         max_length=50,
         null=True,
         verbose_name='телефон'
