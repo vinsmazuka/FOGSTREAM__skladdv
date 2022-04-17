@@ -629,6 +629,11 @@ class Event(models.Model):
         verbose_name='создано пользователем(id)',
         null=False
     )
+    time_create = models.DateTimeField(
+        auto_now_add=True,
+        null=False,
+        verbose_name='время создания'
+    )
 
     class Meta:
         verbose_name = 'Событие'
@@ -665,6 +670,14 @@ class Event(models.Model):
         :return: boolean
         """
         return True if self.type == 'создание товара' else False
+
+    def get_created_by(self):
+        """
+        Возвращает имя пользователя, который создал
+        событие
+        :return: str
+        """
+        return User.objects.get(pk=self.created_by).username
 
 
 
