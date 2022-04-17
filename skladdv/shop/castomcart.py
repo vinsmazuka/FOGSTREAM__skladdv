@@ -17,9 +17,9 @@ class CustomerCart:
         class 'django.core.handlers.wsgi.WSGIRequest'
         """
         self.session = request.session
-        cart = self.session.get(settings.CART_SESSION_ID)
+        cart = self.session.get(settings.CUSTOM_CART_SESSION_ID)
         if not cart:
-            cart = self.session[settings.CART_SESSION_ID] = {}
+            cart = self.session[settings.CUSTOM_CART_SESSION_ID] = {}
         self.cart = cart
 
     def add(self, good, quantity=1, update_quantity=False):
@@ -46,7 +46,7 @@ class CustomerCart:
 
     def save(self):
         """Сохраняет корзину для текущей сессии"""
-        self.session[settings.CART_SESSION_ID] = self.cart
+        self.session[settings.CUSTOM_CART_SESSION_ID] = self.cart
         self.session.modified = True
 
     def remove(self, good_id):
@@ -91,7 +91,7 @@ class CustomerCart:
 
     def clear(self):
         """удаляет корзину из сессии"""
-        del self.session[settings.CART_SESSION_ID]
+        del self.session[settings.CUSTOM_CART_SESSION_ID]
         self.session.modified = True
 
     def count_positions(self):
