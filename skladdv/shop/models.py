@@ -580,6 +580,42 @@ class Contacts(models.Model):
         return f'{self.user}, {self.telephone}'
 
 
+class Event(models.Model):
+    """Представляет событие(создание поставшика/покупателя/товара)"""
+    TYPE_list = (
+        ('создание поставшика', 'создание поставшика'),
+        ('создание покупателя', 'создание покупателя'),
+        ('создание товара', 'создание товара')
+    )
+    type = models.CharField(
+        max_length=20,
+        choices=TYPE_list,
+        null=False,
+        verbose_name='тип',
+    )
+    supplier = models.ForeignKey(
+        'Supplier',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='поставщик'
+    )
+    good = models.ForeignKey(
+        'Good',
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='товар'
+    )
+    customer = models.ForeignKey(
+        User,
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name='покупатель'
+    )
+
+
+
+
+
 
 
 
