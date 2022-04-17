@@ -4,42 +4,48 @@
 
 {% block content %}
 <div class="container">
-    <div class="row">
-
-<h1> Поставка № {{ supply_id }}: </h1>
-
-<table>
-    <thead>
-        <tr>
-            <th>Товар</th>
-            <th>Количество</th>
-            <th>Закупочная цена</th>
-            <th>Сумма поставки</th>
-            <th>Поставщик</th>
-            <th>№ заказа</th>
-            <th>Статус</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for supply in supply_items %}
-            <tr>
-                <td>{{ supply.good }}</td>
-                <td>{{ supply.quantity }}</td>
-                <td>{{ supply.purchase_price }}</td>
-                <td>{{ supply.total_purchase_price }}</td>
-                <td>{{ supply.supplier }} </td>
-                <td>{{ supply.get_order_id }} </td>
-                <td>{{ supply.status }} </td>
-                {% if supply.is_actual %}
-                <td><form method="LINK" action="/supplies/closesupplyitem/{{ supply.id }}/"> <input type="submit" value="поступила на склад"> </form></td>
-                <td><form method="LINK" action="/supplies/cancelsupplyitem/{{ supply.id }}/"> <input type="submit" value="отменить"> </form></td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div class="row customer_cart">
+        <h1>Поставка № {{ supply_id }}:</h1>
+        <table class="customer_cart__width-100">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Закупочная цена</th>
+                    <th>Сумма поставки</th>
+                    <th>Поставщик</th>
+                    <th>№ заказа</th>
+                    <th>Статус</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supply in supply_items %}
+                    <tr>
+                        <td>{{ supply.good }}</td>
+                        <td>{{ supply.quantity }}</td>
+                        <td>{{ supply.purchase_price }}</td>
+                        <td>{{ supply.total_purchase_price }}</td>
+                        <td>{{ supply.supplier }} </td>
+                        <td>{{ supply.get_order_id }} </td>
+                        <td>{{ supply.status }} </td>
+                        {% if supply.is_actual %}
+                        <td>
+                            <form method="LINK" action="/supplies/closesupplyitem/{{ supply.id }}/">
+                                <input type="submit" value="поступила на склад">
+                            </form>
+                        </td>
+                        <td>
+                            <form method="LINK" action="/supplies/cancelsupplyitem/{{ supply.id }}/">
+                                <input type="submit" value="отменить">
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 

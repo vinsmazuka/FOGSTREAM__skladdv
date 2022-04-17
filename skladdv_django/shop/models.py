@@ -56,12 +56,29 @@ class Supplier(models.Model):
     def __str__(self):
         return self.name
 
+    def get_is_actual(self):
+        """Возвращает "ДА", если поставщик действующий
+        и "НЕТ", если поставщик не действующий"""
+        return "Да" if self.is_actual else "Нет"
+
+    def get_categories(self):
+        """Возвращает подкатегории товаров,
+        которые привозит поставщик"""
+        goods = list(self.good_set.all())
+        return set(good.get_category() for good in goods)
+
+    def get_supply_items(self):
+        """возвращает поставки поставщика"""
+        supply_items = self.supplyitems_set.all()
+        return supply_items
+
 
 class Supply(models.Model):
     """представляет заказ на поставку товара"""
     STATUS_list = (
         ('заказана', 'заказана'),
-        ('поступила', 'поступила на склад')
+        ('отменена', 'отменена'),
+        ('поступила на склад', 'поступила на склад')
     )
     time_create = models.DateTimeField(
         auto_now_add=True,
@@ -107,9 +124,9 @@ class Supply(models.Model):
 class SupplyItems(models.Model):
     """Представляет позиции поставки"""
     STATUS_list = (
-        ('создана', 'создана'),
+        ('заказана', 'заказана'),
         ('отменена', 'отменена'),
-        ('поступила', 'поступила на склад')
+        ('поступила на склад', 'поступила на склад')
     )
     supply = models.ForeignKey(
         'Supply',
@@ -188,6 +205,11 @@ class SupplyItems(models.Model):
         """возвращает номер заказа"""
         return self.order_id if self.order_id else ''
 
+    def get_date_create(self):
+        """возвращает дату создания поставки"""
+        supply = Supply.objects.get(pk=self.supply_id)
+        return supply.time_create
+
 
 class Good(models.Model):
     """представляет товар"""
@@ -265,6 +287,16 @@ class Good(models.Model):
         return self.storage_quantity if not reserve_quantity else\
             reserve_quantity + self.storage_quantity
 
+    def get_total_price(self):
+        """возвращает общую стоимость всех единиц
+        данного товара на складе в ценах продажи
+        (учитывается свободный остаток+резерв)"""
+        return self.get_total_quantity() * self.price
+
+    def get_category(self):
+        """возвращает подкатегорию товара"""
+        return self.category.name
+
 
 class PurchasePrice(models.Model):
     """представляет закупочную цену товара"""
@@ -322,6 +354,18 @@ class Category(MPTTModel):
         goods = Good.objects.filter(category=self.id)
         return goods
 
+    def count_goods(self):
+        """
+        возвращает кол-во наименований товаров в категории
+        :return: int
+        """
+        if self.is_leaf_node():
+            goods = Good.objects.filter(category_id=self.id)
+        else:
+            sub_cats = list(Category.objects.filter(parent=self.id))
+            goods = Good.objects.filter(category__in=sub_cats)
+        return goods.count()
+
 
 class Order(models.Model):
     """представляет заказ товара покупателем"""
@@ -329,7 +373,6 @@ class Order(models.Model):
         ('создан', 'создан'),
         ('заказан', 'заказан'),
         ('собран', 'собран'),
-        ('отгружен', 'отгружен'),
         ('исполнен', 'исполнен'),
         ('отменен', 'отменен')
     )
@@ -403,6 +446,64 @@ class OrderItems(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_reserve(self):
+        """возвращает кол-во зарезервированного товара для позиции"""
+        try:
+            reserves = Reserve.objects.filter(
+                order_item_id=self.id).filter(is_actual=True)
+        except Reserve.DoesNotExist:
+            reserve_quantity = 0
+        else:
+            reserve_quantity = reserves.aggregate(Sum('quantity'))['quantity__sum']
+            reserve_quantity = reserve_quantity if reserve_quantity else 0
+        return reserve_quantity
+
+    def get_ordered_quantity(self):
+        """возвращает кол-во заказанного товара для позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        supplies = good.supplyitems_set.filter(
+            order_id=self.order_id).exclude(
+            status='поступила на склад').exclude(
+            status='отменена')
+        ordered_quantity = sum(supply.quantity for supply in supplies)
+        return ordered_quantity
+
+    def get_for_order_quantity(self):
+        """возвращает кол-во товара, которое
+        необходимо дозаказать для позиции"""
+        for_order = (self.position_quantity - self.get_reserve()
+                     - self.get_storage_quantity() - self.get_ordered_quantity())
+        return for_order if for_order > 0 else 0
+
+    def get_storage_quantity(self):
+        """возвращает кол-во доступного на складе(не зарезервированного)
+        товара из позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        return good.storage_quantity
+
+    def get_good_title(self):
+        """возвращает название товара из позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        return good.title
+
+    def get_unit(self):
+        """возвращает ед измерения товара из позиции"""
+        good = Good.objects.get(pk=self.good_id)
+        return good.unit
+
+    def get_price(self):
+        """возвращает цену, по которой покупатель заказал товар"""
+        return self.position_price / self.position_quantity
+
+    def get_for_reserve_quantity(self):
+        """возвращает свободный остаток товара на складе,
+        который можно зарезервировать под позицию заказа"""
+        position_quantity = self.position_quantity
+        storage_quantity = self.get_storage_quantity()
+        for_reserve = position_quantity - self.get_reserve()
+        return for_reserve if for_reserve <= storage_quantity \
+            else storage_quantity
+
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Детализация заказов'
@@ -451,6 +552,27 @@ class Reserve(models.Model):
         verbose_name = 'Резерв'
         verbose_name_plural = 'Резерв'
 
+
+class Contacts(models.Model):
+    """Представляет контактные данные пользователя"""
+    telephone = models.CharField(
+        max_length=50,
+        null=True,
+        verbose_name='телефон'
+    )
+    user = models.OneToOneField(
+        User,
+        null=False,
+        on_delete=models.PROTECT,
+        verbose_name='пользователь'
+    )
+
+    class Meta:
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Контакты пользователей'
+
+    def __str__(self):
+        return f'{self.user}, {self.telephone}'
 
 
 

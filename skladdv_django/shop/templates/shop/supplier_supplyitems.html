@@ -1,0 +1,54 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Поставки поставщика{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row customer_cart">
+        <div class="customer_cart__width-auto">
+            <h1>Поставки {{ supplier_name }}</h1>
+        </div>
+        <div class="customer_cart__width-100">
+            <p>Общее кол-во единиц товаров: {{ total_quantity }} ед.</p>
+            <p>Общая сумма заказов(по закупочной цене): {{ total_purchase_price }} руб.</p>
+            <p>Общее кол-во заказов: {{ supply_items_count }} шт.</p>
+        </div>
+        <form method="get" class="customer_cart__width-100 customer_cart__jsutcontent-spabet">
+            {{ supply_items.form }}
+            <input type="submit">
+        </form>
+        {% if supply_items.qs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Закупочная цена</th>
+                    <th>Сумма поставки</th>
+                    <th>Поставщик</th>
+                    <th>№ заказа</th>
+                    <th>Дата создания</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+        {% endif %}
+            <tbody>
+                {% for item in supply_items.qs %}
+                    <tr>
+                        <td>{{ item.good }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.purchase_price }}</td>
+                        <td>{{ item.total_purchase_price }}</td>
+                        <td>{{ item.supplier }}</td>
+                        <td>{{ item.get_order_id }}</td>
+                        <td>{{ item.get_date_create }}</td>
+                        <td>{{ item.status }}</td>
+                    </tr>
+                {% empty %}
+                    <div> Список поставок пуст</div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,40 +1,44 @@
 {% extends "shop/base.html" %}
-
 {% block title %}Поставки{% endblock %}
-
 {% block content %}
 <div class="container">
-    <div class="row">
-
-<h1> Поставки: </h1>
-
-{% if supplies %}
-    <table>
-    <thead>
-        <tr>
-            <th>номер поставки</th>
-            <th>кол-во позиций</th>
-            <th>общая стоимость</th>
-            <th>дата создания</th>
-            <th>номер заказа</th>
-            <th>статус</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for supply in supplies %}
-            <tr>
-                <td><a href="/supplies/{{ supply.id }}/"> {{ supply.id }}</a></td>
-                <td>{{ supply.total_positions }}</td>
-                <td>{{ supply.total_purchase_price }}</td>
-                <td>{{ supply.time_create }}</td>
-                <td>{{ supply.get_order_id }}</td>
-                <td>{{ supply.status }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-    </table>
-
-{% endif %}
+    <div class="row customer_cart">
+        <h1 class="customer_cart__width-auto">Поставки</h1>
+        <div class="customer_cart__width-100">
+            <p>Общее кол-во позиций: {{ total_positions }}</p>
+            <p>Общая сумма заказов: {{ total_purchase_price }} руб.</p>
+            <p>Общее кол-во заказов: {{ supplies_count }} шт.</p>
+        </div>
+        {% if supplies %}
+        <form method="get" class="customer_cart__width-100 customer_cart__jsutcontent-spabet gap10">
+            {{ supplies.form }}
+            <input type="submit">
+        </form>
+        <table class="customer_cart__width-100">
+            <thead>
+                <tr>
+                    <th>номер поставки</th>
+                    <th>кол-во позиций</th>
+                    <th>общая стоимость</th>
+                    <th>дата создания</th>
+                    <th>номер заказа</th>
+                    <th>статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for supply in supplies.qs %}
+                    <tr>
+                        <td><a href="/supplies/{{ supply.id }}/"> {{ supply.id }}</a></td>
+                        <td>{{ supply.total_positions }}</td>
+                        <td>{{ supply.total_purchase_price }}</td>
+                        <td>{{ supply.time_create }}</td>
+                        <td>{{ supply.get_order_id }}</td>
+                        <td>{{ supply.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+{% endif %}
 {% endblock %}

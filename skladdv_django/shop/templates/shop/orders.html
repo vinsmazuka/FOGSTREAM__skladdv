@@ -4,12 +4,22 @@
 
 {% block content %}
 <div class="container">
-    <div class="row orders">
+    <div class="row customer_cart">
 
-<h1> Заказы пользователей </h1>
+<h1>Заказы покупателей</h1>
+
+<div class="customer_cart__width-100">
+    <p>Общее кол-во позиций: {{ total_count }}</p>
+    <p>Общая сумма заказов: {{ total_price }} руб.</p>
+    <p>Общее кол-во заказов: {{ orders_count }} шт.</p>
+</div>
 
 {% if orders %}
 
+<form method="get" class="customer_cart__width-100 customer_cart__jsutcontent-spabet">
+    {{ orders.form }}
+    <input type="submit">
+</form>
 <table>
     <thead>
         <tr>
@@ -19,10 +29,11 @@
             <th>дата создания</th>
             <th>статус</th>
             <th>заказчик</th>
+            <th>qr-код</th>
         </tr>
     </thead>
     <tbody>
-        {% for order in orders %}
+        {% for order in orders.qs %}
         <tr>
             <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
             <td>{{ order.positions }}</td>
@@ -30,12 +41,12 @@
             <td>{{ order.time_create }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.user }}</td>
-        </tr>
+            <td><form method="LINK" action="/qrcode/{{ order.id }}/"> <input type="submit" value="Показать qr-код"> </form></td>
         {% endfor %}
     </tbody>
 </table>
-
-{% endif %}
     </div>
 </div>
+
+{% endif %}
 {% endblock %}

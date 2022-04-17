@@ -14,11 +14,13 @@
                 <div>Артикул: {{ good.artikul }}</div>
                 <div>Цена: {{ good.price }} руб. за 1 {{ good.unit }}</div>
                 {% if user.is_authenticated %}
-                    <form method="post" action="">
-                        {% csrf_token %}
-                        {{ form.quantity }}
-                        <button type="submit" >Добавить в заказ</button>
-                    </form>
+                    {% if not user.is_staff %}
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {{ form.quantity }}
+                            <button type="submit" >Добавить в заказ</button>
+                        </form>
+                    {% endif %}
                 {% else %}
                     <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</div>
                 {% endif %}

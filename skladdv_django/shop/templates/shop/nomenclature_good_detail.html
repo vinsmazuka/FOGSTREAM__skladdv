@@ -1,7 +1,5 @@
 {% extends "shop/base.html" %}
-
 {% block title %}Заказ товара{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="row">
@@ -9,11 +7,9 @@
             <div class="good_detail__photo">
                 <img src="{{ good.photo.url }}">
             </div>
-
             <div class="good_detail__desc">
                 <h1>{{ good }}</h1>
                 <div>Артикул: {{ good.artikul }}</div>
-
                 <table class="nomenclature_good_detail">
                     <thead>
                         <tr>
@@ -30,7 +26,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-
                 {% if user.is_authenticated %}
                 <div class="nomenclature_good_detail__form">
                 <form method="post" action="">
@@ -44,7 +39,6 @@
                 {% else %}
                 <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в поставку</div>
                 {% endif %}
-
                 {% for message in messages %}
                     <div>{{ message }}</div>
                 {% endfor %}
@@ -52,5 +46,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
