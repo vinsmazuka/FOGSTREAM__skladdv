@@ -83,7 +83,7 @@ class SupplierCreate(Form):
                           label="Телефон", validators=[ph_numb_validator])
     telephone.widget.attrs.update(placeholder='79244067819', size='70')
 
-    email = EmailField(max_length=30, label="Email", )
+    email = EmailField(max_length=30, label="Email")
     email.widget.attrs.update(placeholder='djcatswill@mail.ru', size='70')
 
     good = ChoiceField(label="Товар")
@@ -102,6 +102,26 @@ class SupplierCreate(Form):
         self.fields['good'].choices = list((good.id, good.title) for
                                            good in Good.objects.filter(available_for_order=True))
         self.fields['good'].choices.append((0, ""))
+
+
+class CustomerCreate(Form):
+    """
+    форма для создания нового покупателя
+    """
+    ph_numb_validator = RegexValidator(regex=r"^7\d{10}$",
+                                       message='Значение в поле "Телефон" не соответствует маске')
+
+    username = CharField(max_length=20, label="Логин")
+    first_name = CharField(max_length=30, label="Имя")
+    last_name = CharField(max_length=30, label="Фамилия")
+    email = EmailField(max_length=30, label="Email")
+    telephone = CharField(max_length=11, min_length=11,
+                          label="Телефон", validators=[ph_numb_validator])
+    telephone.widget.attrs.update(placeholder='79244067819')
+    email.widget.attrs.update(placeholder='djcatswill@mail.ru')
+
+
+
 
 
 
