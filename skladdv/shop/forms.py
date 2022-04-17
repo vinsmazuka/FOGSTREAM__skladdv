@@ -1,7 +1,7 @@
 from django.core.validators import RegexValidator
-from django.forms import CharField, ChoiceField, Form, ModelForm, IntegerField, EmailField
+from django.forms import CharField, ChoiceField, Form, ModelForm, IntegerField, EmailField, DecimalField
 
-from .models import Supplier
+from .models import Supplier, Good
 
 
 class CartAddGood(Form):
@@ -85,6 +85,23 @@ class SupplierCreate(Form):
 
     email = EmailField(max_length=30, label="Email", )
     email.widget.attrs.update(placeholder='djcatswill@mail.ru', size='70')
+
+    good = ChoiceField(label="Товар")
+
+    purchase_price = DecimalField(
+        min_value=1,
+        max_digits=7,
+        decimal_places=2,
+        required=False,
+        label="Закупочная цена"
+    )
+    purchase_price.widget.attrs.update(placeholder='пример: 45,56')
+
+    def __init__(self, *args, **kwargs):
+        super(SupplierCreate, self).__init__(*args, **kwargs)
+        self.fields['good'].choices = list((good.id, good.title) for
+                                           good in Good.objects.filter(available_for_order=True))
+        self.fields['good'].choices.append((0, ""))
 
 
 
