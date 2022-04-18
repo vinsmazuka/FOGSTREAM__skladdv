@@ -27,7 +27,7 @@
                         </tr>
                         {% for order in orders %}
                         <tr>
-                            <td><a href="/order/{{ order.id }}/"> {{ order.id }}</a></td>
+                            <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
                             <td>{{ order.positions }}</td>
                             <td>{{ order.total_coast }}</td>
                             <td>{{ order.time_create }}</td>
