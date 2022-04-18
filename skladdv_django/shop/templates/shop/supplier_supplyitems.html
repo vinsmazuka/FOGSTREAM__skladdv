@@ -1,7 +1,5 @@
 {% extends "shop/base.html" %}
-
 {% block title %}Поставки поставщика{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="row customer_cart">
@@ -45,7 +43,7 @@
                         <td>{{ item.status }}</td>
                     </tr>
                 {% empty %}
-                    <div> Список поставок пуст</div>
+                    <div>Список поставок пуст</div>
                 {% endfor %}
             </tbody>
         </table>

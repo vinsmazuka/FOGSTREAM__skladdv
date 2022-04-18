@@ -112,4 +112,6 @@ LOGIN_REDIRECT_URL = '/'
 #EMAIL_USE_SSL = False
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-CART_SESSION_ID = 'cart'
+CUSTOM_CART_SESSION_ID = 'custom_cart'
+STAFF_CART_SESSION_ID = 'staff_cart'
+

@@ -1,14 +1,10 @@
 {% extends "shop/base.html" %}
-
 {% block title %}Корзина{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="row cart">
-
         <h1>Корзина</h1>
         {% if user.is_authenticated %}
-
         {% if cart %}
         <div class="cart__good">
             <table class="cart__desc">
@@ -35,23 +31,17 @@
             </table>
         </div>
         {% endif %}
-
         <div> Общее количестов товаров в корзине: {{ total_quantity }}</div>
         <div> Общая сумма заказа: {{ total_cost }} руб.</div>
-
         {% if cart %}
         <div class="cart__footer">
             <form method="LINK" action="/delete"> <input type="submit" value="очистить корзину"> </form>
             <form method="LINK" action="/makeorder/"> <input type="submit" value="сделать заказ"> </form>
         </div>
         {% endif %}
-
         {% else %}
-
         <i>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</i>
-
         {% endif %}
     </div>
 </div>
-
 {% endblock %}

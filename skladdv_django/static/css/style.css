@@ -707,7 +707,7 @@ header nav:hover {
 
 .search-catalog {
 	padding-bottom: 20px;
-	padding-top: 160px;
+	padding-top: 100px;
 	display: flex;
 	justify-content: space-between;
 }
@@ -1613,5 +1613,20 @@ footer {
 }
 
 .gap10 {
+	display: flex;
 	gap: 10px;
+}
+
+.btn_all {
+	padding: 15px;
+	font-weight: 700;
+	background: #ff5b35;
+	color: white;
+	border-radius: 5px;
+	border: none;
+	width: auto;
+}
+
+.btn_all:hover {
+	background: #07123c;
 }

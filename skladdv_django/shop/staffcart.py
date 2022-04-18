@@ -17,9 +17,9 @@ class StaffCart:
         class 'django.core.handlers.wsgi.WSGIRequest'
         """
         self.session = request.session
-        cart = self.session.get(settings.CART_SESSION_ID)
+        cart = self.session.get(settings.STAFF_CART_SESSION_ID)
         if not cart:
-            cart = self.session[settings.CART_SESSION_ID] = {}
+            cart = self.session[settings.STAFF_CART_SESSION_ID] = {}
         self.cart = cart
 
     def add(self, good, supplier, order=None, quantity=1, update_quantity=False):
@@ -63,7 +63,7 @@ class StaffCart:
 
     def save(self):
         """Сохраняет корзину для текущей сессии"""
-        self.session[settings.CART_SESSION_ID] = self.cart
+        self.session[settings.STAFF_CART_SESSION_ID] = self.cart
         self.session.modified = True
 
     def remove(self, good_id, supplier_id):
@@ -144,7 +144,7 @@ class StaffCart:
 
     def clear(self):
         """удаляет корзину из сессии"""
-        del self.session[settings.CART_SESSION_ID]
+        del self.session[settings.STAFF_CART_SESSION_ID]
         self.session.modified = True
 
     def count_positions(self):

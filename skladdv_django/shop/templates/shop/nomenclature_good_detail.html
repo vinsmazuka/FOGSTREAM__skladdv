@@ -20,8 +20,8 @@
                     <tbody>
                         {% for supplier in suppliers %}
                             <tr>
-                                <td> {{ supplier.name }} </td>
-                                <td> {{ supplier.purchase_price }} </td>
+                                <td>{{ supplier.name }}</td>
+                                <td>{{ supplier.purchase_price }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -33,11 +33,11 @@
                     {{ form.quantity }}
                     {{ form.supplier }}
                     {{ form.order }}
-                    <button type="submit" > Добавить в поставку </button>
+                    <button type="submit" >Добавить в поставку</button>
                 </form>
                 </div>
                 {% else %}
-                <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в поставку</div>
+                    <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в поставку</div>
                 {% endif %}
                 {% for message in messages %}
                     <div>{{ message }}</div>

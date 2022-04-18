@@ -6,22 +6,18 @@
         <div class="customer_cart__width-auto">
             <h1 class="customer_cart__width-auto">Заказы покупателя {{ customer.username }}</h1>
         </div>
-
         <div class="customer_cart__width-100">
             <h3 class="customer_cart__width-100">ФИО: {{ customer.last_name }} {{ customer.first_name }}</h3>
         </div>
-
         <div class="customer_cart__width-100">
             <p>Общее кол-во позиций: {{ total_count }}</p>
             <p>Общая сумма заказов: {{ total_price }} руб.</p>
             <p>Общее кол-во заказов: {{ orders_count }} шт.</p>
         </div>
-
         <form method="get" class="customer_cart__width-100 customer_cart__jsutcontent-spabet">
             {{ orders.form }}
             <input type="submit">
         </form>
-
         <table class="customer_cart__width-100">
             <thead>
                 <tr>
