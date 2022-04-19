@@ -97,6 +97,9 @@ STATICFILES_DIRS = [
     Path(BASE_DIR, "static"),
 ]
 
+MEDIA_ROOT = Path(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
