@@ -225,8 +225,8 @@ def order_detail(request, order_id):
             try:
                 email.send()
             except (SMTPDataError, SMTPAuthenticationError):
-                context['message'] = f'статус заказа изменен на "{new_status}, но письмо' \
-                                     f'о готовности заказа не было отправлено покупателю"'
+                context['message'] = f'статус заказа изменен на "{new_status}", но письмо ' \
+                                     f'о готовности заказа не было отправлено покупателю'
 
         def close_order():
             """закрывает заказ"""
