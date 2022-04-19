@@ -1,7 +1,7 @@
 import qrcode
 from decimal import Decimal
 from email.mime.image import MIMEImage
-from smtplib import SMTPDataError
+from smtplib import SMTPDataError, SMTPAuthenticationError
 
 from django.core.mail import EmailMessage
 from django.db.models import Sum
@@ -224,8 +224,9 @@ def order_detail(request, order_id):
             email.attach(data)
             try:
                 email.send()
-            except SMTPDataError:
-                pass
+            except (SMTPDataError, SMTPAuthenticationError):
+                context['message'] = f'статус заказа изменен на "{new_status}, но письмо' \
+                                     f'о готовности заказа не было отправлено покупателю"'
 
         def close_order():
             """закрывает заказ"""
@@ -393,8 +394,9 @@ def close_order(request, order_id):
             )
             try:
                 email.send()
-            except SMTPDataError:
+            except (SMTPDataError, SMTPAuthenticationError):
                 pass
+
     return redirect('/cabinet/')
 
 
