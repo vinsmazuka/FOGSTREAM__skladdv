@@ -1042,8 +1042,8 @@ def operations(request):
     supplies = Supply.objects.all().order_by('id')
     total_positions = (supplies.aggregate(
         Sum('total_positions'))['total_positions__sum'])
-    total_purchase_price = Decimal(supplies.aggregate(
-        Sum('total_purchase_price'))['total_purchase_price__sum'])
+    total_purchase_price = supplies.aggregate(
+        Sum('total_purchase_price'))['total_purchase_price__sum']
     context['supplies'] = supplies
     context['total_positions'] = total_positions if total_positions else 0
     context['total_purchase_price'] = total_purchase_price if total_purchase_price else 0
