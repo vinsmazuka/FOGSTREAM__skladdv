@@ -1,20 +1,17 @@
 {% extends "shop/base.html" %}
-
 {% block title %}Создание покупателя{% endblock %}
-
 {% block content %}
-
-
-<center>
-    <h1> Создание покупателя </h1><br>
-    <form method="post" action="">
-        {% csrf_token %}
-        <table>
-        {{ form.as_table }}
-        </table>
-        <h3> {{ message }} </h3><br>
-        <button type="submit" > Создать </button>
-    </form>
-</center>
-
+<div class="container">
+    <div class="row login create_users">
+        <h3>{{ message }}</h3>
+        <h1>Создание покупателя</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            <table>
+                {{ form.as_table }}
+            </table>
+            <button type="submit">Создать</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

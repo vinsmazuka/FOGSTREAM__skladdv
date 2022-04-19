@@ -1,73 +1,66 @@
 {% extends "shop/base.html" %}
 {% load mptt_tags %}
-
 {% block title %}Номенклатура{% endblock %}
-
 {% block content %}
-
-<h1>Перечень и остатки товаров на складе</h1>
-
-{% if categories %}
-
-<div>
-    <b> Общая стоимость товаров(продажная): {{ total_price }} руб. </b><br>
-    <b> Свободно: {{ free_quantity }} ед.</b><br>
-    <b> Зарезервировано: {{ reserve_quantity }} ед.</b><br>
-    <b> Общее кол-во товаров: {{ total_quantity }} ед.</b><br>
-    <b> Кол-во категорий: {{ count_categories }} </b><br>
-    <b> Кол-во подкатегорий: {{ count_subcategories }} </b>
-</div><br>
-
-<div>
-    <ul>
-        {% recursetree categories %}
-            <li>
-                <a href="/nomenclature/categorydetail/{{ node.id }}/"> {{ node.name }} ({{ node.count_goods }}) </a>
-                {% if not node.is_leaf_node %}
-                    <ul class="children">
-                        {{ children }}
-                    </ul>
-                {% else %}
-                    <ul>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Товар</th>
-                                    <th>Артикул</th>
-                                    <th>Цена продажи</th>
-                                    <th>Свободно</th>
-                                    <th>Зарезервировано</th>
-                                    <th>Итого кол-во</th>
-                                    <th>Общая стоимость</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for good in node.get_goods %}
-                                    {% if good.available_for_order %}
-                                        <tr>
-                                            <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
-                                            <td>{{ good.artikul }} </td>
-                                            <td>{{ good.price }} {{ good.unit }}</td>
-                                            <td>{{ good.storage_quantity }} {{ good.unit }}</td>
-                                            <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
-                                            <td> {{ good.get_total_quantity }} {{ good.unit }}</td>
-                                            <td> {{ good.get_total_price }} руб.</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </ul>
-                {% endif %}
-            </li>
-        {% endrecursetree %}
-    </ul>
+<div class="container">
+    <div class="row">
+        <h1>Перечень и остатки товаров на складе</h1>
+        <div>
+            <p>Общая стоимость товаров(продажная): {{ total_price }} руб.</p>
+            <p>Свободно: {{ free_quantity }} ед.</p>
+            <p>Зарезервировано: {{ reserve_quantity }} ед.</p>
+            <p>Общее кол-во товаров: {{ total_quantity }} ед.</p>
+            <p>Кол-во категорий: {{ count_categories }}</p>
+            <p>Кол-во подкатегорий: {{ count_subcategories }}</p>
+        </div>
+        {% if categories %}
+            <div class="nomenclature">
+                {% recursetree categories %}
+                    <div class="parent">
+                        <a href="/nomenclature/categorydetail/{{ node.id }}/">{{ node.name }}</a>
+                        {% if not node.is_leaf_node %}
+                            <div class="children">
+                                {{ children }}
+                            </div>
+                        {% else %}
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Товар</th>
+                                        <th>Количество на складе</th>
+                                        <th>Количество в резерве</th>
+                                        <th>Итого</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% if node.get_goods %}
+                                    {% for good in node.get_goods %}
+                                        {% if good.available_for_order %}
+                                            <tr>
+                                                <td><a href="/nomenclature/{{ good.id }}/"> {{ good.title }}</a></td>
+                                                <td>{{ good.storage_quantity }} {{ good.unit }}</td>
+                                                <td> {{ good.get_reserve_quantity }} {{ good.unit }}</td>
+                                                <td> {{ good.get_total_quantity }} {{ good.unit }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                {% endrecursetree %}
+            </div>
+        {% else %}
+            <p>Нет товаров для отображения</p>
+        {% endif %}
+    </div>
 </div>
-
-{% else %}
-
-<p>Нет товаров для отображения</p>
-
-{% endif %}
-
 {% endblock %}

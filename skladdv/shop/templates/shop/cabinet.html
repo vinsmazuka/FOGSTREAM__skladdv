@@ -4,37 +4,43 @@
 
 {% block content %}
 
-<h1> Личный кабинет пользователя {{ user.username }} </h1>
-<h1> {{ user.last_name }} {{ user.first_name }} </h1>
+<div class="container">
+        <div class="row">
+            <div class="supplier">
+                <div class="supplier__desc">
+                    <div><b>Личный кабинет пользователя {{ user.username }}</b></div>
+                    <div>{{ user.last_name }} {{ user.first_name }}</div>
+                </div>
+            </div>
+            {% if not user.is_staff %}
 
-{% if user_is_customer %}
+            {% if orders %}
+            <div class="deliveries">
+                <div class="deliveries__label">
+                    Заказы пользователя
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Номер заказа</th><th>Кол-во позиций</th><th>Общая стоимость</th>
+                            <th>Дата создания</th><th>Статус</th>
+                        </tr>
+                        {% for order in orders %}
+                        <tr>
+                            <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
+                            <td>{{ order.positions }}</td>
+                            <td>{{ order.total_coast }}</td>
+                            <td>{{ order.time_create }}</td>
+                            <td>{{ order.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
 
-{% if orders %}
-
-<table>
-    <thead>
-        <tr>
-            <th>номер заказа</th>
-            <th>кол-во позиций</th>
-            <th>общая стоимость</th>
-            <th>дата создания</th>
-            <th>статус</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-        <tr>
-            <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
-            <td>{{ order.positions }}</td>
-            <td>{{ order.total_coast }}</td>
-            <td>{{ order.time_create }}</td>
-            <td>{{ order.status }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% endif %}
-{% endif %}
 {% endblock %}
 
