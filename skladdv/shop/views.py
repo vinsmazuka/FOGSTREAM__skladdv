@@ -26,9 +26,11 @@ def index(request):
 
 def catalog(request):
     """показывает каталог товаров для покупателя"""
+    goods = Good.objects.all()
     return render(request,
                   'shop/catalog.html',
-                  {'categories': Category.objects.all()}
+                  {'categories': Category.objects.all(),
+                   'goods': goods}
                   )
 
 
