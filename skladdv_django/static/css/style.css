@@ -1465,6 +1465,7 @@ header nav:hover {
 
 .customer_cart form {
 	flex-wrap: wrap;
+	gap: 10px;
 }
 
 .customer_cart li {
@@ -1511,6 +1512,12 @@ header nav:hover {
 	color: black;
 	border-radius: 5px;
 	width: auto;
+
+	width: 24%;
+}
+
+.customer_cart label {
+	width: 24%;
 }
 
 /* customers */
@@ -1629,4 +1636,8 @@ footer {
 
 .btn_all:hover {
 	background: #07123c;
+}
+
+.btn49 {
+	width: 49% !important;
 }
