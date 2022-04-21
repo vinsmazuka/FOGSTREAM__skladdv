@@ -235,29 +235,30 @@ def order_detail(request, order_id):
 
         def close_order():
             """закрывает заказ"""
-            reserves = order.reserve_set.all()
             order.status = new_status
             order.save()
-            for reserve in reserves:
-                good = Good.objects.get(pk=reserve.good_id)
-                order_item = OrderItems.objects.get(pk=reserve.order_item_id)
-                if reserve.is_actual:
-                    reserve.is_actual = False
-                    reserve.save()
-                    if new_status == 'исполнен':
-                        new_storage_quantity = (
-                                good.storage_quantity
-                                + reserve.quantity
-                                - order_item.position_quantity
-                        )
-                        good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
-                    else:
+            order_items = order.orderitems_set.all()
+            try:
+                reserves = order.reserve_set.all()
+            except Reserve.DoesNotExist:
+                pass
+            else:
+                for reserve in reserves:
+                    good = Good.objects.get(pk=reserve.good_id)
+                    if reserve.is_actual:
+                        reserve.is_actual = False
+                        reserve.save()
                         good.storage_quantity = (
                                 good.storage_quantity
-                                + reserve.quantity
-                        )
-                good.save()
-                context['message'] = f'статус заказа изменен на "{new_status}"'
+                                + reserve.quantity)
+                        good.save()
+            if new_status == 'исполнен':
+                for item in order_items:
+                    good = Good.objects.get(pk=item.good_id)
+                    good.storage_quantity -= item.position_quantity
+                    good.save()
+
+            context['message'] = f'статус заказа изменен на "{new_status}"'
 
         def do_nothing():
             """
