@@ -1643,3 +1643,7 @@ footer {
 .btn49 {
 	width: 49% !important;
 }
+
+.btn_w_auto input {
+	width: 100% !important;
+}
