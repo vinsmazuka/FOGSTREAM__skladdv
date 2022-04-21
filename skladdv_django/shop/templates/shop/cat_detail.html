@@ -2,9 +2,15 @@
 {% block title %}Товары из категории{% endblock %}
 {% block content %}
     <div class="container">
-        <div class="row catalog padding-top-100">
-            {% if goods %}
-                {% for good in goods %}
+        <div class="row search-catalog width100">
+            <form method="get" class="form customer_cart__jsutcontent-spabet width100">
+                {{ goods.form }}
+                <input type="submit">
+            </form>
+        </div>
+        <div class="row catalog">
+            {% if goods.qs %}
+                {% for good in goods.qs %}
                     {% if good.available_for_order %}
                         <div class="catalog__card">
                             <img src="{{ good.photo.url }}">
