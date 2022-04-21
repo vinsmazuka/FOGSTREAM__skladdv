@@ -370,6 +370,7 @@ def close_order(request, order_id):
     order = Order.objects.get(pk=order_id)
     order.status = 'исполнен'
     order.save()
+    order_items = order.orderitems_set.all()
     try:
         reserves = order.reserve_set.all()
     except Reserve.DoesNotExist:
@@ -377,17 +378,17 @@ def close_order(request, order_id):
     else:
         for reserve in reserves:
             good = Good.objects.get(pk=reserve.good_id)
-            order_item = OrderItems.objects.get(pk=reserve.order_item_id)
             if reserve.is_actual:
                 reserve.is_actual = False
                 reserve.save()
-                new_storage_quantity = (
+                good.storage_quantity = (
                         good.storage_quantity
-                        + reserve.quantity
-                        - order_item.position_quantity
-                )
-                good.storage_quantity = new_storage_quantity if new_storage_quantity > 0 else 0
-            good.save()
+                        + reserve.quantity)
+                good.save()
+    for item in order_items:
+        good = Good.objects.get(pk=item.good_id)
+        good.storage_quantity -= item.position_quantity
+        good.save()
     users = User.objects.all()
     for user in users:
         if user.groups.filter(name='Персонал').exists():
