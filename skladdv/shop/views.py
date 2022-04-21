@@ -44,11 +44,13 @@ def category_detail(request, cat_id):
     cat = Category.objects.get(pk=cat_id)
     if cat.is_leaf_node():
         goods = Good.objects.filter(category_id=cat_id)
+        filtrator = CatalogGoodFilter(request.GET, queryset=goods)
     else:
         sub_cats = list(Category.objects.filter(parent=cat_id))
         goods = Good.objects.filter(category__in=sub_cats)
+        filtrator = CatalogGoodFilter(request.GET, queryset=goods)
 
-    context = {'goods': goods}
+    context = {'goods': filtrator}
     return render(request, 'shop/cat_detail.html', context)
 
 
