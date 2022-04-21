@@ -1012,7 +1012,7 @@ header nav:hover {
 /* login */
 
 .login {
-	height: calc(100vh - 58px);
+	min-height: calc(100vh - 58px);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
