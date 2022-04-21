@@ -1478,6 +1478,7 @@ header nav:hover {
 	border: 1px solid black;
 	box-sizing: border-box;
 	font-size: 14px;
+	width: 100%;
 }
 
 .customer_cart thead,
