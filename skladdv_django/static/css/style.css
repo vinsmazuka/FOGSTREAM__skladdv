@@ -1589,6 +1589,43 @@ header nav:hover {
 	box-sizing: border-box;
 }
 
+/* form */
+
+.form {
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.form input[type="submit"] {
+	font-weight: 500;
+	background: #ff5b35;
+	color: white;
+	border-radius: 5px;
+	border: none;
+	width: auto;
+	flex-grow: 1;
+}
+
+.form input[type="submit"]:hover {
+	background: #07123c;
+}
+
+.form input[type="text"],
+.form input[type="number"],
+.form select {
+	padding: 12px;
+	font-weight: 500;
+	border: 2px solid #ff5b35;
+	box-sizing: border-box;
+	color: black;
+	border-radius: 5px;
+	width: auto;
+}
+
+.form label {
+	font-size: 20px;
+}
+
 /* FOOTER */
 
 footer {

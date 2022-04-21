@@ -85,3 +85,15 @@ class CustomerOrderFilter(OrderFilter):
             'status',
             'time_create'
         ]
+
+
+class CatalogGoodFilter(django_filters.FilterSet):
+    """предназначен для создания фильтров
+    объекта qs класса Good
+    на странице "каталог товара" сайта"""
+    class Meta:
+        model = Good
+        fields = [
+            'title',
+            'artikul',
+        ] 

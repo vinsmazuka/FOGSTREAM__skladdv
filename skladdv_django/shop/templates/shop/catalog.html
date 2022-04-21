@@ -11,9 +11,9 @@
                 <span></span>
                 <span></span>
             </div>
-            <form>
-                <input type="text" placeholder="Введите название товара..." name="name">
-                <button type="submit">&gt;</button>
+            <form method="get" class="form">
+                {{ goods.form.as_p }}
+                <input type="submit">
             </form>
         </div>
         <div class="menu__categories">
@@ -42,11 +42,12 @@
             </div>
         </div>
         <div class="row catalog">
-            {% for good in goods %}
+            {% for good in goods.qs %}
             <div class="catalog__card">
                 <img src="{{ good.photo.url }}">
                 <h1>{{ good.price }} Руб.</h1>
                 <h2>{{ good.title }}</h2>
+                <h2>{{ good.artikul }}</h2>
                 <a href="/catalog/{{ good.id }}/">Смотреть</a>
             </div>
             {% endfor %}

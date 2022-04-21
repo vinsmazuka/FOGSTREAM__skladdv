@@ -9,7 +9,7 @@ from django.http import FileResponse, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 
-from .filters import CustomerOrderFilter, GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
+from .filters import CatalogGoodFilter, CustomerOrderFilter, GoodFilter, OrderFilter, SupplyFilter, SupplyItemsFilter
 from .forms import CartAddGood, CustomerCreate, OrderChangeStatus, StaffCartAddGood, SupplierCreate
 from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Reserve, Supplier, Supply, SupplyItems, \
     Contacts
@@ -27,10 +27,11 @@ def index(request):
 def catalog(request):
     """показывает каталог товаров для покупателя"""
     goods = Good.objects.all()
+    filtrator = CatalogGoodFilter(request.GET, queryset=goods)
     return render(request,
                 'shop/catalog.html',
                 {'categories': Category.objects.all(),
-                'goods': goods}
+                'goods': filtrator}
                 )
 
 
