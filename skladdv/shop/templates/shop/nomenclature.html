@@ -17,7 +17,7 @@
             <div class="nomenclature">
                 {% recursetree categories %}
                     <div class="parent">
-                        <a href="/nomenclature/categorydetail/{{ node.id }}/">{{ node.name }}</a>
+                        <a href="/nomenclature/categorydetail/{{ node.id }}/">{{ node.name }}: {{ node.count_goods }}</a>
                         {% if not node.is_leaf_node %}
                             <div class="children">
                                 {{ children }}

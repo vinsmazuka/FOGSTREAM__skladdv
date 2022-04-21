@@ -1012,7 +1012,7 @@ header nav:hover {
 /* login */
 
 .login {
-	height: calc(100vh - 58px);
+	min-height: calc(100vh - 58px);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -1465,6 +1465,7 @@ header nav:hover {
 
 .customer_cart form {
 	flex-wrap: wrap;
+	gap: 10px;
 }
 
 .customer_cart li {
@@ -1476,6 +1477,8 @@ header nav:hover {
 	border-collapse: collapse;
 	border: 1px solid black;
 	box-sizing: border-box;
+	font-size: 14px;
+	width: 100%;
 }
 
 .customer_cart thead,
@@ -1511,6 +1514,12 @@ header nav:hover {
 	color: black;
 	border-radius: 5px;
 	width: auto;
+
+	width: 24%;
+}
+
+.customer_cart label {
+	width: 24%;
 }
 
 /* customers */
@@ -1580,6 +1589,43 @@ header nav:hover {
 	box-sizing: border-box;
 }
 
+/* form */
+
+.form {
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.form input[type="submit"] {
+	font-weight: 500;
+	background: #ff5b35;
+	color: white;
+	border-radius: 5px;
+	border: none;
+	width: auto;
+	flex-grow: 1;
+}
+
+.form input[type="submit"]:hover {
+	background: #07123c;
+}
+
+.form input[type="text"],
+.form input[type="number"],
+.form select {
+	padding: 12px;
+	font-weight: 500;
+	border: 2px solid #ff5b35;
+	box-sizing: border-box;
+	color: black;
+	border-radius: 5px;
+	width: auto;
+}
+
+.form label {
+	font-size: 20px;
+}
+
 /* FOOTER */
 
 footer {
@@ -1629,4 +1675,16 @@ footer {
 
 .btn_all:hover {
 	background: #07123c;
+}
+
+.btn49 {
+	width: 49% !important;
+}
+
+.btn_w_auto input {
+	width: 100% !important;
+}
+
+.width100 {
+	width: 100% !important;
 }

@@ -11,7 +11,7 @@
                 <span></span>
                 <span></span>
             </div>
-            <form method="get" >
+            <form method="get" class="form">
                 {{ goods.form.as_p }}
                 <input type="submit">
             </form>
@@ -47,6 +47,7 @@
                 <img src="{{ good.photo.url }}">
                 <h1>{{ good.price }} Руб.</h1>
                 <h2>{{ good.title }}</h2>
+                <h2>{{ good.artikul }}</h2>
                 <a href="/catalog/{{ good.id }}/">Смотреть</a>
             </div>
             {% endfor %}
