@@ -25,10 +25,8 @@
                     <nav><a href="/">Главная</a></nav>
                     <nav><a href="/catalog/">Каталог</a></nav>
                     {% if user.is_authenticated %}
-
                         {% if not user.is_staff %}
                             <nav><a href="/catalog/cart/">Корзина</a></nav>
-                            <nav><a href="/cabinet/">Личный кабинет</a></nav>
                         {% else %}
                             <nav><a href="/orders/">Заказы</a></nav>
                             <nav><a href="/nomenclature/">Номенклатура</a></nav>
@@ -38,6 +36,7 @@
                             <nav><a href="/customers/">Покупатели</a></nav>
                             <nav><a href="/operations/">Операции склада</a></nav>
                         {% endif %}
+                        <nav><a href="/cabinet/">Личный кабинет</a></nav>
                         <nav><a href="/accounts/logout/">Разлогиниться</a></nav>
                     {% else %}
                         <nav><a href="/accounts/login/">Залогиниться</a></nav>
