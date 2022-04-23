@@ -926,7 +926,10 @@ def customer_orders(request, user_id):
 @staff_only
 def supplier_create(request):
     """показывает форму для создания нового поставщика"""
+    supplier_was_created = False
+
     def post_response():
+        nonlocal supplier_was_created
         """формирует ответ в случае поступления POST-запроса"""
         form = SupplierCreate(request.POST)
         if form.is_valid():
@@ -958,16 +961,14 @@ def supplier_create(request):
                     event.save()
                     good.suppliers.add(new_supplier)
                     new_purchase_price.save()
-                    context['message'] = 'Поставщик успешно создан'
-                    context['form'] = SupplierCreate()
+                    supplier_was_created = True
                 else:
                     context['message'] = 'Укажите закупочную цену'
                     context['form'] = SupplierCreate(request.POST)
             else:
                 new_supplier.save()
                 event.save()
-                context['message'] = 'Поставщик успешно создан'
-                context['form'] = SupplierCreate()
+                supplier_was_created = True
         else:
             context['form'] = SupplierCreate(request.POST)
 
@@ -983,14 +984,18 @@ def supplier_create(request):
     }
     responses[request.method]()
 
-    return render(request, 'shop/supplier_create.html', context)
+    return redirect('/suppliers/') if supplier_was_created else \
+        render(request, 'shop/supplier_create.html', context)
 
 
 @user_is_authenticated
 @staff_only
 def customer_create(request):
     """показывает форму для создания покупателя"""
+    customer_was_created = False
+
     def post_response():
+        nonlocal customer_was_created
         """формирует ответ в случае поступления POST-запроса"""
         form = CustomerCreate(request.POST)
         if form.is_valid():
@@ -1013,8 +1018,7 @@ def customer_create(request):
             new_customer.groups.add(2)
             contacts.save()
             event.save()
-            context['message'] = f'Пользователь "{new_customer.username}" успешно создан'
-            context['form'] = CustomerCreate()
+            customer_was_created = True
         else:
             context['form'] = CustomerCreate(request.POST)
 
@@ -1030,7 +1034,8 @@ def customer_create(request):
     }
     responses[request.method]()
 
-    return render(request, 'shop/customer_create.html', context)
+    return redirect('/customers/') if customer_was_created else \
+        render(request, 'shop/customer_create.html', context)
 
 
 @user_is_authenticated
