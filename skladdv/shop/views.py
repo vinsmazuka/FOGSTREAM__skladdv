@@ -16,7 +16,7 @@ from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Res
 
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
-from .decorators import customer_only, staff_only, user_is_authenticated
+from .decorators import check_created_by, customer_only, staff_only, user_is_authenticated
 
 
 def index(request):
@@ -192,6 +192,7 @@ def cabinet(request):
 
 
 @user_is_authenticated
+@check_created_by
 def order_detail(request, order_id):
     """показывает страницу заказа"""
 
