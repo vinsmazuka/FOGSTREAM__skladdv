@@ -1,5 +1,7 @@
 from django.shortcuts import HttpResponse
 
+from .models import Order
+
 
 def user_is_authenticated(func_to_deco):
     """проверяет, залогинен ли пользователь
@@ -47,6 +49,24 @@ def customer_only(func_to_deco):
         else:
             return HttpResponse('Доступ к данной странице есть только у покупателей,\n'
                                 'для получения доступа обратитесь к администратору')
+    return wrapper
+
+
+def check_created_by(func_to_deco):
+    """
+    Открывает доступ к странице пользователям из
+    группы "Персонал" или покупателю, кот создал заказ,
+    другим пользователям - блокирует доступ
+    """
+    def wrapper(request, *args, **kwargs):
+        """функция-обертка"""
+        order = Order.objects.get(pk=kwargs['order_id'])
+        if request.user.groups.filter(name="Персонал").exists():
+            return func_to_deco(request, *args, **kwargs)
+        elif request.user.id == order.user_id:
+            return func_to_deco(request, *args, **kwargs)
+        else:
+            return HttpResponse('У вас нет доступа к данной странице')
     return wrapper
 
 
