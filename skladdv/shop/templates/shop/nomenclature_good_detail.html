@@ -1,0 +1,49 @@
+{% extends "shop/base.html" %}
+{% block title %}Заказ товара{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="good_detail">
+            <div class="good_detail__photo">
+                <img src="{{ good.photo.url }}">
+            </div>
+            <div class="good_detail__desc">
+                <h1>{{ good }}</h1>
+                <div>Артикул: {{ good.artikul }}</div>
+                <table class="nomenclature_good_detail">
+                    <thead>
+                        <tr>
+                            <th>Поставщики</th>
+                            <th>Закупочная цена</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for supplier in suppliers %}
+                            <tr>
+                                <td>{{ supplier.name }}</td>
+                                <td>{{ supplier.purchase_price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if user.is_authenticated %}
+                <div class="nomenclature_good_detail__form">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    {{ form.quantity }}
+                    {{ form.supplier }}
+                    {{ form.order }}
+                    <button type="submit" >Добавить в поставку</button>
+                </form>
+                </div>
+                {% else %}
+                    <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в поставку</div>
+                {% endif %}
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

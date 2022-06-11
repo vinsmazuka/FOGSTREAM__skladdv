@@ -1,0 +1,65 @@
+{% extends "shop/base.html" %}
+{% block title %}Детализация заказа{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row orders">
+        <h1>Заказ № {{ order_id }}({{ order_status }})</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Сумма заказа по товару</th>
+                    {% if user_is_staff %}
+                        <th>Зарезервировано {{ good.unit }}</th>
+                        <th>Заказано</th>
+                        <th>Зарезервировать</th>
+                        <th>Дозаказать</th>
+                        <th>Свободный остаток на складе</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for good in order_details %}
+                <tr>
+                    <td>{{ good.get_good_title }}</td>
+                    <td>{{ good.position_quantity }} {{ good.get_unit }}</td>
+                    <td>{{ good.get_price }} руб.</td>
+                    <td>{{ good.position_price }} руб.</td>
+                    {% if user_is_staff %}
+                        <th>{{ good.get_reserve }}</th>
+                        <th>{{ good.get_ordered_quantity }}</th>
+                        <th><a href="/reserve/{{ good.id }}/">{{ good.get_for_reserve_quantity }}</a></th>
+                        <th>{{ good.get_for_order_quantity }}</th>
+                        <th>{{ good.get_storage_quantity }}</th>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if user_is_staff %}
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form.status }}
+                <button type="submit">Изменить статус заказа</button>
+            </form>
+        {% endif %}
+
+        {% if user_is_customer %}
+            {% if order_is_ready %}
+                <form method="LINK" action="/closeorder/{{ order_id }}/">
+                    <input type="submit" value="Подтвердить получение">
+                </form>
+            {% endif %}
+        {% endif %}
+        <form method="LINK" action="/qrcode/{{ order_id }}/">
+            <input type="submit" value="Показать qr-код">
+        </form>
+        {% if message %}
+            {{ message }}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

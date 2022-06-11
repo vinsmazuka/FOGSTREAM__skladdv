@@ -1,0 +1,47 @@
+{% extends "shop/base.html" %}
+{% block title %}Корзина{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row cart">
+        <h1>Корзина поставок</h1>
+        {% if user.is_authenticated %}
+            {% if cart %}
+                <div class="cart__good">
+                    <table class="cart__desc">
+                        <tr>
+                            <th>Товар</th>
+                            <th>Закупочная цена</th>
+                            <th>Кол-во по позиции</th>
+                            <th>Артикул</th>
+                            <th>Цена по позиции</th>
+                            <th>Поставщик</th>
+                            <th>Номер заказа</th>
+                            <th>Удалить</th>
+                        </tr>
+                        {% for good in cart %}
+                            <tr>
+                                <td>{{ good.title }}</td>
+                                <td>{{ good.purchase_price }}</td>
+                                <td>{{ good.quantity }}</td>
+                                <td>{{ good.artikul }}</td>
+                                <td>{{ good.total_price }}</td>
+                                <td>{{ good.supplier_name }}</td>
+                                <td>{{ good.order_id }}</td>
+                                <td><form method="LINK" action="/staffcart/delete/{{ good.good_id }}/{{ good.supplier_id }}"> <input type="submit" value="удалить"> </form></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+                <div>Общее количестов товаров в корзине: {{ total_quantity }}</div>
+                <div>Общая сумма заказа: {{ total_cost }} руб.</div>
+            {% if cart %}
+                <form method="LINK" action="/staffcart/delete"> <input type="submit" value="очистить корзину"></form>
+                <form method="LINK" action="/createsupply/"> <input type="submit" value="создать поставку"></form>
+            {% endif %}
+        {% else %}
+            <div>Авторизуйтесь, чтобы иметь возможность добавлять товары в корзину</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

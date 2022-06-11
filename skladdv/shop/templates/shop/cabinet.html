@@ -1,0 +1,46 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Личный кабиент{% endblock %}
+
+{% block content %}
+
+<div class="container">
+        <div class="row">
+            <div class="supplier">
+                <div class="supplier__desc">
+                    <div><b>Личный кабинет пользователя {{ user.username }}</b></div>
+                    <div>{{ user.last_name }} {{ user.first_name }}</div>
+                </div>
+            </div>
+            {% if not user.is_staff %}
+
+            {% if orders %}
+            <div class="deliveries">
+                <div class="deliveries__label">
+                    Заказы пользователя
+                </div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Номер заказа</th><th>Кол-во позиций</th><th>Общая стоимость</th>
+                            <th>Дата создания</th><th>Статус</th>
+                        </tr>
+                        {% for order in orders %}
+                        <tr>
+                            <td><a href="/orders/{{ order.id }}/"> {{ order.id }}</a></td>
+                            <td>{{ order.positions }}</td>
+                            <td>{{ order.total_coast }}</td>
+                            <td>{{ order.time_create }}</td>
+                            <td>{{ order.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
