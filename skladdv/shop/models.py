@@ -228,8 +228,8 @@ class SupplyItems(models.Model):
 class Good(models.Model):
     """представляет товар"""
     UNITS = (
-        ('кг', 'килограммы'),
-        ('шт', 'штуки')
+        ('кг', 'кг'),
+        ('шт', 'шт')
     )
     title = models.CharField(
         max_length=100,
