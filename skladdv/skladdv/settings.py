@@ -61,7 +61,8 @@ DATABASES = {
         'NAME': 'skladdv',
         'USER': configuration['user_name'],
         'PASSWORD': configuration['password'],
-        'HOST': '172.19.0.2',
+        'HOST': '172.19.0.2',#это внутренний ip контейнера с postgress(только так сработало)
+        #данный внутр ip назначает доккер когда запускает контейнер
         'PORT': '5432',
     }
 }
