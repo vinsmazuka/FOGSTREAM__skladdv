@@ -253,6 +253,7 @@ class Good(models.Model):
     unit = models.CharField(
         max_length=2,
         choices=UNITS,
+        default='шт',
         null=False,
         verbose_name='ед. измерения'
     )
