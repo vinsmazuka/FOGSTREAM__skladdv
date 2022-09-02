@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from .dbconfig import configuration
@@ -58,12 +59,11 @@ WSGI_APPLICATION = 'skladdv.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'skladdv',
-        'USER': configuration['user_name'],
-        'PASSWORD': configuration['password'],
-        'HOST': '172.19.0.2',#это внутренний ip контейнера с postgress(только так сработало)
-        #данный внутр ip назначает доккер когда запускает контейнер
-        'PORT': '5432',
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'HOST': os.environ['POSTGRES_IP'],
+        'PORT': os.environ['POSTGRES_PORT'],
     }
 }
 
