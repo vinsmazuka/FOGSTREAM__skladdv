@@ -61,7 +61,7 @@ DATABASES = {
         'NAME': 'skladdv',
         'USER': configuration['user_name'],
         'PASSWORD': configuration['password'],
-        'HOST': '127.0.0.1',
+        'HOST': '172.19.0.2',
         'PORT': '5432',
     }
 }
