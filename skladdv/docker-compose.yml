@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: scladdv_postgress
+    ports:
+      - '54321:5432'
+    environment:
+      POSTGRES_DB: 'skladdv'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_INITDB_ARGS: "-A md5"
+    restart: always
+    volumes:
+      - ./db_skladdv:/var/lib/mysql
+  web:
+    build: .
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_IP=db
+    links:
+     - db
+    command: ./run.sh
+    volumes:
+      - .:/web_django
+    ports:
+      - '80:80'
+    depends_on:
+      - db
+
