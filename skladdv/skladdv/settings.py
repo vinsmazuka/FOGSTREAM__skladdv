@@ -130,3 +130,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CUSTOM_CART_SESSION_ID = 'custom_cart'
 STAFF_CART_SESSION_ID = 'staff_cart'
 
+CELERY_BROKER_URL = 'amqp://guest:guest@172.17.0.2:5672/'
