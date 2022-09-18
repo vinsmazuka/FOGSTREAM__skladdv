@@ -17,10 +17,19 @@ from .models import Category, Event, Good, Order, OrderItems, PurchasePrice, Res
 from .castomcart import CustomerCart
 from .staffcart import StaffCart
 from .decorators import check_created_by, customer_only, staff_only, user_is_authenticated
+from .tasks import send_email
+from celery.result import AsyncResult
+from celery import Celery
+
+
+app = Celery('skladdv')
 
 
 def index(request):
     """показывает главную страницу сайта"""
+    result = send_email.delay()
+    result = AsyncResult(id=result, app=app)
+    print(vars(result))
     return render(request, 'shop/index.html')
 
 
