@@ -31,17 +31,18 @@ services:
       - "6379"
 
   web:
+    container_name: skladdv_web_dev
     build: .
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_PORT=5432
+      - DEBUG=True
       - POSTGRES_IP=db
+      - RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
     links:
      - db
     command: ./run.sh
     volumes:
-      - .:/web_django
+      - .:/scladdv
     ports:
       - '80:80'
     depends_on:
