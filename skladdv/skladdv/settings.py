@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-from .dbconfig import configuration
-
 from .smtp_email_conf import email_configuration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
