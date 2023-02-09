@@ -121,4 +121,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CUSTOM_CART_SESSION_ID = 'custom_cart'
 STAFF_CART_SESSION_ID = 'staff_cart'
 
-CELERY_BROKER_URL = 'amqp://guest:guest@172.17.0.2:5672/'
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', '127.0.0.1')
+RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'guest')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'guest')
+RABBITMQ_PORT = os.environ.get('RABBITMQ_PORT', '5672')
+
+CELERY_BROKER_URL = f'amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}'
+
+REDIS_DB_URL = os.environ.get('REDIS_HOST', '127.0.0.1')
+REDIS_DB_PORT = os.environ.get('REDIS_DB_PORT', '6379')
+CELERY_RESULT_BACKEND = f'redis://{REDIS_DB_URL}:{REDIS_DB_PORT}'
