@@ -47,4 +47,7 @@ services:
       - '80:80'
     depends_on:
       - db
+      - rabbitmq
+      - redis
+    restart: always
 
