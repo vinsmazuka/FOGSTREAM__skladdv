@@ -1,3 +1,4 @@
+FROM ubuntu:20.04
 FROM python:3.8
 RUN export DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install nano
