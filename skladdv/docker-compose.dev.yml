@@ -13,7 +13,23 @@ services:
       POSTGRES_INITDB_ARGS: "-A md5"
     restart: always
     volumes:
-      - ./db_skladdv:/var/lib/mysql
+      - ./db_skladdv:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.11.0-rc.1-management
+    container_name: scladdv_rabbitmq
+    expose:
+      - "15672"
+      - "5672"
+    restart: always
+
+  redis:
+    image: redis
+    container_name: scladdv_redis
+    restart: always
+    expose:
+      - "6379"
+
   web:
     build: .
     environment:
