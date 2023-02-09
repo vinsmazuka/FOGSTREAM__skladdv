@@ -64,10 +64,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'skladdv',
-        'USER': configuration['user_name'],
-        'PASSWORD': configuration['password'],
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': POSTGRES_IP,
+        'PORT': POSTGRES_PORT,
     }
 }
 
