@@ -54,17 +54,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'skladdv.wsgi.application'
 
-#настройки для прода
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'skladdv',
-#         'USER': os.environ['POSTGRES_USER'],
-#         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
-#         'HOST': os.environ['POSTGRES_IP'],
-#         'PORT': os.environ['POSTGRES_PORT'],
-#     }
-# }
+POSTGRES_USER = os.environ.get('POSTGRES_USER', 'postgres')
+POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'postgres')
+POSTGRES_IP = os.environ.get('POSTGRES_IP', '127.0.0.1')
+POSTGRES_PORT = os.environ.get('POSTGRES_PORT', '5432')
 
 #настройки для разработки
 DATABASES = {
